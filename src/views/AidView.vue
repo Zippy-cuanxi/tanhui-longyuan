@@ -44,9 +44,12 @@ async function load(): Promise<void> {
   error.value = ''
   try {
     const data = await aidApi.list({ page: 1, page_size: 12 })
-    projects.value = data.items
+    // 兼容返回结构差异：分页对象取 items，纯数组直接用，缺失则回退空列表，避免渲染期崩溃
+    const list = Array.isArray(data) ? data : data?.items
+    projects.value = Array.isArray(list) ? list : []
   } catch (err) {
     error.value = errorText(err)
+    projects.value = []
   } finally {
     loading.value = false
   }
