@@ -26,6 +26,8 @@ const hasLink = computed(() =>
     : isSafeInternalLink(linkUrl.value)
 )
 const linkTarget = computed(() => (linkType.value === 'external' ? linkUrl.value : linkUrl.value))
+const imgLoading = computed(() => (props.variant === 'page' ? 'eager' : 'lazy'))
+const imgFetchPriority = computed(() => (props.variant === 'page' ? 'high' : 'auto'))
 
 function onImageError(event: Event): void {
   const img = event.target as HTMLImageElement
@@ -44,13 +46,34 @@ function onImageError(event: Event): void {
       rel="noopener noreferrer"
       class="banner-link"
     >
-      <img :src="image" :alt="title" loading="lazy" decoding="async" @error="onImageError" />
+      <img
+        :src="image"
+        :alt="title"
+        :loading="imgLoading"
+        :fetchpriority="imgFetchPriority"
+        decoding="async"
+        @error="onImageError"
+      />
     </a>
     <RouterLink v-else-if="hasLink" :to="linkTarget" class="banner-link">
-      <img :src="image" :alt="title" loading="lazy" decoding="async" @error="onImageError" />
+      <img
+        :src="image"
+        :alt="title"
+        :loading="imgLoading"
+        :fetchpriority="imgFetchPriority"
+        decoding="async"
+        @error="onImageError"
+      />
     </RouterLink>
     <div v-else class="banner-link">
-      <img :src="image" :alt="title" loading="lazy" decoding="async" @error="onImageError" />
+      <img
+        :src="image"
+        :alt="title"
+        :loading="imgLoading"
+        :fetchpriority="imgFetchPriority"
+        decoding="async"
+        @error="onImageError"
+      />
     </div>
     <h1 v-if="variant === 'home'" class="sr-only">{{ title }}</h1>
   </section>

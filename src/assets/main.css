@@ -4613,6 +4613,7 @@ html.header-hidden {
   display: block;
   aspect-ratio: 2.15;
   overflow: hidden;
+  background: #e6f1e8;
 }
 .aid-card-image img {
   width: 100%;
