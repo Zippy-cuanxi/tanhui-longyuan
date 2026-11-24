@@ -162,6 +162,8 @@ def audit_product(
         if product.status != "pending_review":
             raise AppError("CONFLICT", "仅待审核商品可通过")
         product.status = "approved"
+        # 审核通过即上架：消费者端「全部商品」立即可见，无需商家再次上架。
+        product.is_listed = True
     elif action == "reject":
         if product.status != "pending_review":
             raise AppError("CONFLICT", "仅待审核商品可驳回")

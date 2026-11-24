@@ -175,16 +175,7 @@ def test_approve_triggers_full_sync_and_category_mapping(client):
     finally:
         db.close()
 
-    # 审核通过后未上架 → 消费者不可见；上架后消费者详情返回完整同步数据
-    merchant_headers = login_headers(client, "sync-owner@example.com")
-    resp = client.get(f"/api/v1/products/{product_id}")
-    assert resp.status_code == 404
-
-    resp = client.post(
-        f"/api/v1/merchant/products/{product_id}/list", headers=merchant_headers
-    )
-    assert resp.status_code == 200, resp.text
-
+    # 审核通过即上架 → 消费者端「全部商品」与详情立即可见
     resp = client.get(f"/api/v1/products/{product_id}")
     assert resp.status_code == 200, resp.text
     detail = resp.json()["data"]

@@ -1,6 +1,6 @@
 /**
  * 流程步骤4：管理员审批商品（4174 管理端 UI → 后端 POST /admin/products/{id}/audit）
- * 审批通过后商品状态 approved，但仍需商家上架才对消费者可见。
+ * 审批通过后商品状态 approved 并自动上架，消费者端「全部商品」立即可见。
  */
 import { chromium } from 'playwright'
 import fs from 'node:fs'
@@ -54,7 +54,7 @@ try {
   if (await msgConfirm.count()) await msgConfirm.first().click()
   await page.waitForTimeout(2500)
 
-  // 5. 后端核验：商品 status=approved，但 is_listed 仍 false（需商家上架）
+  // 5. 后端核验：商品 status=approved 且自动上架，消费者端立即可见
   const login = await fetch(`${API}/auth/login`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: 'admin@tanhui.example.com', password: 'Demo@123456' })
@@ -65,8 +65,9 @@ try {
   }).then((r) => r.json())
   const found = (products?.data?.items || []).find((p) => p.id === state.productId)
   check('后端商品状态 approved', found?.status === 'approved', `status=${found?.status}`)
-  check('审批通过后仍未直接上架', found?.is_listed === false, `is_listed=${found?.is_listed}`)
-  check('消费者端仍不可见（待商家上架）', true, '下一步由商家上架后才可见')
+  check('审批通过后自动上架', found?.is_listed === true, `is_listed=${found?.is_listed}`)
+  const consumer = await fetch(`${API}/products/${state.productId}`)
+  check('消费者端立即可见', consumer.status === 200, `HTTP ${consumer.status}`)
 
   fs.writeFileSync('scripts/flow-state.json', JSON.stringify(state, null, 2))
   check('无页面异常', errors.length === 0, errors.slice(0, 2).join(' | '))

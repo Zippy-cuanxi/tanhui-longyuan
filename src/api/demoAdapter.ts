@@ -21,6 +21,7 @@ import type {
 } from './types'
 import type { MerchantApplyResult } from './index'
 import demoSnapshot from 'virtual:demo-snapshot'
+import { readPublishedProducts, type DemoPublishedProduct } from './demoCatalog'
 
 interface Snapshot {
   generated_at: string
@@ -260,8 +261,58 @@ export async function demoRequest<T>(
       store_name: p.store_name ? String(p.store_name) : null
     }
   }
+  /** 管理端分类名 → 消费者端分类（演示快照中个别命名不同）。 */
+  const CATEGORY_ALIAS: Record<string, string> = { 甘味文创: '文创礼品' }
+  function resolvePublishedCategoryId(name: string): string | null {
+    const hit = s.categories.find(
+      (c) => String(c.name) === (CATEGORY_ALIAS[name] || name)
+    )
+    return hit ? String(hit.id) : null
+  }
+  function toPublishedProduct(p: DemoPublishedProduct): Product {
+    return {
+      id: p.id,
+      store_id: p.store_id,
+      category_id: resolvePublishedCategoryId(p.category_name),
+      aid_project_id: null,
+      title: p.title,
+      subtitle: p.subtitle,
+      is_listed: true,
+      created_at: p.created_at,
+      min_price: money(p.min_price),
+      cover_url: p.cover_url,
+      store_name: p.store_name
+    }
+  }
+  function toPublishedDetail(p: DemoPublishedProduct): ProductDetail {
+    return {
+      ...toPublishedProduct(p),
+      description: p.description,
+      status: 'approved',
+      audit_reason: null,
+      audited_at: p.created_at,
+      skus: p.skus.map((sku) => ({
+        id: sku.id,
+        product_id: p.id,
+        spec: sku.spec,
+        code: sku.code,
+        price: money(sku.price),
+        is_active: true
+      })),
+      images: p.images
+        .slice()
+        .sort((a, b) => a.sort - b.sort)
+        .map((img) => ({ id: img.id, url: img.url, sort: img.sort }))
+    }
+  }
   if (pathname === '/products' && method === 'GET') {
-    let items = s.products.map(toProduct)
+    // 快照 + 管理端审核通过后发布的商品；同名商品以快照为准，避免重复展示。
+    const snapshotItems = s.products.map(toProduct)
+    const snapshotTitles = new Set(snapshotItems.map((p) => p.title.trim()))
+    const publishedItems = readPublishedProducts()
+      .filter((p) => !snapshotTitles.has(p.title.trim()))
+      .map(toPublishedProduct)
+    let items = [...publishedItems, ...snapshotItems]
     const categoryId = query.get('category_id')
     const storeId = query.get('store_id')
     const keyword = (query.get('keyword') || '').trim().toLowerCase()
@@ -281,8 +332,13 @@ export async function demoRequest<T>(
   }
   const productMatch = pathname.match(/^\/products\/([^/]+)$/)
   if (productMatch && method === 'GET') {
-    const p = s.products.find((x) => x.id === decodeURIComponent(productMatch[1]))
-    if (!p) throw new Error('商品不存在')
+    const productId = decodeURIComponent(productMatch[1])
+    const p = s.products.find((x) => x.id === productId)
+    if (!p) {
+      const published = readPublishedProducts().find((x) => x.id === productId)
+      if (published) return toPublishedDetail(published) as unknown as T
+      throw new Error('商品不存在')
+    }
     const detail: ProductDetail = {
       ...toProduct(p),
       description: String(p.description || ''),
@@ -355,16 +411,22 @@ export async function demoRequest<T>(
   }
   const greenMatch = pathname.match(/^\/green\/products\/([^/]+)$/)
   if (greenMatch && method === 'GET') {
-    const p = s.products.find((x) => x.id === decodeURIComponent(greenMatch[1]))
+    const greenId = decodeURIComponent(greenMatch[1])
+    const p = s.products.find((x) => x.id === greenId)
+    const published = p ? null : readPublishedProducts().find((x) => x.id === greenId) || null
     const g = (p?.green as Record<string, unknown> | undefined) || {}
     return {
       profile: {
         id: uid('g'),
-        product_id: greenMatch[1],
-        origin: String(g.origin || '甘肃'),
-        planting_mode: g.planting_mode ? String(g.planting_mode) : null,
+        product_id: greenId,
+        origin: String(g.origin || published?.origin || '甘肃'),
+        planting_mode: g.planting_mode
+          ? String(g.planting_mode)
+          : published?.planting_mode || null,
         certifications: [],
-        description: g.description ? String(g.description) : null,
+        description: g.description
+          ? String(g.description)
+          : published?.green_description || null,
         status: 'approved'
       },
       carbon_assessment: {

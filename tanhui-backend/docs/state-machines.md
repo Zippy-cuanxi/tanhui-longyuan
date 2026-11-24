@@ -56,9 +56,9 @@ requested → rejected
 
 ```
 draft → pending_review（商家提交）
-pending_review → approved / rejected（管理员审核，驳回必填原因）
+pending_review → approved / rejected（管理员审核，驳回必填原因；通过即自动上架 is_listed=true）
 rejected → pending_review（修改后重新提交）
-approved + is_listed=false → 上架（商家自主）
+approved + is_listed=false → 上架（商家自主，如曾主动下架）
 已上架 → 下架（商家自主）
 任意非草稿 → removed（平台强制下架，需 product:remove 权限）
 ```

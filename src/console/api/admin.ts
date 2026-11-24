@@ -31,6 +31,7 @@ import { formatDateInput } from '@/console/utils/format'
 import { ensureSynced } from './bridge'
 import { bridgeRequest, unwrap } from './bridge/client'
 import { bindId, uuidFor as toUuid } from './bridge/identity'
+import { publishDemoProduct, unpublishDemoProduct } from '@/api/demoCatalog'
 
 export interface AdminMerchantRow extends MerchantAccount {
   storeId: string
@@ -582,6 +583,8 @@ export const adminApi = {
       const now = new Date().toISOString()
       if (action === 'approve') {
         product.status = 'approved'
+        // 审核通过即上架，确保消费者端「全部商品」立即可见（与真实后端一致）。
+        product.listed = true
         product.auditReason = undefined
         if (product.greenProfile.status === 'pending_review') {
           product.greenProfile.status = 'approved'
@@ -595,6 +598,7 @@ export const adminApi = {
         adminLog('product.audit', '商品', product.title, '商品审核通过', 'normal')
       } else {
         product.status = 'rejected'
+        product.listed = false
         product.auditReason = reason?.trim()
         product.greenProfile.status = 'rejected'
         product.auditRecords.unshift({
@@ -608,6 +612,11 @@ export const adminApi = {
       }
       product.auditedAt = now
       product.updatedAt = now
+      // 静态演示（GitHub Pages）没有后端：把审核结果写入消费者端发布区。
+      if (import.meta.env.VITE_STATIC_DEMO === '1') {
+        if (action === 'approve') publishDemoProduct(product)
+        else unpublishDemoProduct(product.id)
+      }
       saveDb()
       return clone({ ...product, ...syncInfo })
     })
@@ -641,6 +650,7 @@ export const adminApi = {
         createdAt: new Date().toISOString()
       })
       saveDb()
+      if (import.meta.env.VITE_STATIC_DEMO === '1') unpublishDemoProduct(product.id)
       adminLog('product.remove', '商品', product.title, `平台强制下架：${reason}`, 'high')
       return clone(product)
     })

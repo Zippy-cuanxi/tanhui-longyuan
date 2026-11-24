@@ -23,7 +23,13 @@ from sqlalchemy.orm import Session
 
 from app.core.base import utcnow
 from app.core.types import q2
-from app.modules.catalog.models import Category, Product, ProductImage, ProductSku
+from app.modules.catalog.models import (
+    Category,
+    Product,
+    ProductAuditRecord,
+    ProductImage,
+    ProductSku,
+)
 from app.modules.catalog.sync_models import (
     ConsumerCategory,
     ConsumerProduct,
@@ -559,6 +565,24 @@ def backfill_consumer_catalog(
     products = list(
         db.execute(select(Product).where(Product.status == "approved")).scalars()
     )
+    repaired = False
+    for product in products:
+        # 存量修复：历史审核通过但从未主动下架的商品，补齐为已上架，
+        # 否则消费者端「全部商品」看不到（仅在无 delist 记录时修复）。
+        if not product.is_listed:
+            delisted = db.execute(
+                select(ProductAuditRecord.id)
+                .where(
+                    ProductAuditRecord.product_id == product.id,
+                    ProductAuditRecord.action == "delist",
+                )
+                .limit(1)
+            ).first()
+            if delisted is None:
+                product.is_listed = True
+                repaired = True
+    if repaired:
+        db.flush()
     for product in products:
         try:
             report = consistency_report(db, product.id)

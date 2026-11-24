@@ -114,7 +114,7 @@ async function approve(): Promise<void> {
   if (!active.value) return
   try {
     await ElMessageBox.confirm(
-      `确认审核通过「${active.value.title}」？通过后将实时同步至消费者端商品库，商家可手动上架。`,
+      `确认审核通过「${active.value.title}」？通过后将立即上架并同步至消费者端商品库，消费者端「全部商品」可立即看到。`,
       '审核通过',
       { type: 'success', confirmButtonText: '审核通过' }
     )
