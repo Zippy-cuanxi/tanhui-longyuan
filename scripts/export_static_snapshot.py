@@ -29,6 +29,9 @@ def static_url(url):
         u = u.replace('/uploads/demo/products/', '/images/products/')
     elif '/uploads/demo/banners/' in u:
         u = u.replace('/uploads/demo/banners/', '/images/banners/')
+    elif '/uploads/demo/categories/' in u:
+        # 分类图标在静态站点里位于 public/assets/categories/
+        u = u.replace('/uploads/demo/categories/', '/assets/categories/')
     elif '/uploads/' in u:
         u = u.replace('/uploads/', '/images/')
     return u
@@ -127,11 +130,8 @@ snapshot = {
     "cms_config": cms_config,
 }
 
-os.makedirs(os.path.dirname(OUT), exist_ok=True)
-with open(OUT, "w", encoding="utf-8") as f:
-    json.dump(snapshot, f, ensure_ascii=False, indent=2)
-
 # --- 统一重写剩余 URL 字段（banners / aid / stores / categories / order_items）---
+# 必须在写盘之前执行，否则快照里仍残留后端 /uploads/... 路径，静态站点会 404
 URL_FIELDS = ('image_url', 'cover_url', 'icon_url', 'logo_url', 'url')
 def rewrite_urls(obj):
     if isinstance(obj, dict):
@@ -144,6 +144,35 @@ def rewrite_urls(obj):
         for item in obj:
             rewrite_urls(item)
 rewrite_urls(snapshot)
+
+# --- 校验：快照里引用的 /images/... 必须在 public/ 下真实存在 ---
+PUBLIC_DIR = r"C:\Users\85046\Desktop\碳惠陇原\public"
+missing = []
+
+def check_assets(obj):
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if k in URL_FIELDS and isinstance(v, str):
+                if v.startswith('/images/') or v.startswith('/assets/'):
+                    local = os.path.join(PUBLIC_DIR, v.lstrip('/').replace('/', os.sep))
+                    if not os.path.exists(local):
+                        missing.append(v)
+            else:
+                check_assets(v)
+    elif isinstance(obj, list):
+        for item in obj:
+            check_assets(item)
+
+check_assets(snapshot)
+if missing:
+    for m in sorted(set(missing)):
+        print(f"[warn] 快照引用的本地文件不存在: {m}")
+else:
+    print("[ok] 快照引用的图片均存在")
+
+os.makedirs(os.path.dirname(OUT), exist_ok=True)
+with open(OUT, "w", encoding="utf-8") as f:
+    json.dump(snapshot, f, ensure_ascii=False, indent=2)
 
 size = os.path.getsize(OUT)
 print(f"snapshot written: {OUT} ({size/1024:.1f} KB)")

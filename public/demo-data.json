@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T17:32:48.258316",
+  "generated_at": "2026-11-24T18:30:15.834044",
   "source": "tanhui_dev.db (含仿真测试数据)",
   "categories": [
     {
@@ -62,7 +62,7 @@
       "id": "ca394bf6-f0a1-4a8c-8f38-0a3729250641",
       "name": "水果生鲜",
       "parent_id": null,
-      "icon_url": "/uploads/demo/categories/fruit.webp",
+      "icon_url": "/assets/categories/fruit.webp",
       "sort": 10,
       "is_active": 1
     },
@@ -70,7 +70,7 @@
       "id": "1a50c59d-64ed-493c-84cb-e2eecd15f122",
       "name": "粮油杂粮",
       "parent_id": null,
-      "icon_url": "/uploads/demo/categories/grains.webp",
+      "icon_url": "/assets/categories/grains.webp",
       "sort": 20,
       "is_active": 1
     },
@@ -78,7 +78,7 @@
       "id": "79da9944-e9b4-402b-9690-e18235d36eee",
       "name": "特色食品",
       "parent_id": null,
-      "icon_url": "/uploads/demo/categories/food.webp",
+      "icon_url": "/assets/categories/food.webp",
       "sort": 30,
       "is_active": 1
     },
@@ -86,7 +86,7 @@
       "id": "0ded545d-6089-41de-ac61-b5fb36cf3e20",
       "name": "中药材",
       "parent_id": null,
-      "icon_url": "/uploads/demo/categories/food.webp",
+      "icon_url": "/assets/categories/food.webp",
       "sort": 40,
       "is_active": 1
     },
@@ -94,7 +94,7 @@
       "id": "7f4f7307-4b61-4d18-9541-76f42a69a483",
       "name": "甘肃特产",
       "parent_id": null,
-      "icon_url": "/uploads/demo/categories/culture.webp",
+      "icon_url": "/assets/categories/culture.webp",
       "sort": 50,
       "is_active": 1
     },
@@ -102,7 +102,7 @@
       "id": "bd6d04cc-9326-45b0-8889-921380c5ed47",
       "name": "文创礼品",
       "parent_id": null,
-      "icon_url": "/uploads/demo/categories/culture.webp",
+      "icon_url": "/assets/categories/culture.webp",
       "sort": 60,
       "is_active": 1
     }
@@ -670,7 +670,7 @@
     {
       "id": "14a3a548-0d4c-4ded-9217-3c656975b99a",
       "title": "民勤蜜瓜节水种植帮扶",
-      "cover_url": "/uploads/demo/banners/aid-card-farm.webp",
+      "cover_url": "/images/banners/aid-card-farm.webp",
       "description": "推广绿洲节水种植技术，帮助民勤瓜农稳定增收（演示项目）",
       "goal_amount": 60000,
       "raised_amount": 9850,
@@ -680,7 +680,7 @@
     {
       "id": "8a942dcb-56dd-4f9b-849a-f2288bb3a57c",
       "title": "静宁苹果产业提质计划",
-      "cover_url": "/uploads/demo/banners/aid-card-farmer.webp",
+      "cover_url": "/images/banners/aid-card-farmer.webp",
       "description": "支持静宁果园标准化管理与产地冷链建设，帮助好果出山（演示项目）",
       "goal_amount": 80000,
       "raised_amount": 19500,
@@ -690,7 +690,7 @@
     {
       "id": "4c22d245-7298-421a-8ecf-c9a7217bd826",
       "title": "陇南油橄榄产业帮扶",
-      "cover_url": "/uploads/demo/banners/aid-card-farm.webp",
+      "cover_url": "/images/banners/aid-card-farm.webp",
       "description": "支持油橄榄低产园改造，带动农户增收（演示项目）",
       "goal_amount": 50000,
       "raised_amount": 12800,
@@ -700,7 +700,7 @@
     {
       "id": "ea47cd31-532e-4be3-93f7-0d943fd7d557",
       "title": "定西马铃薯助农增收计划",
-      "cover_url": "/uploads/demo/banners/aid-card-farm.webp",
+      "cover_url": "/images/banners/aid-card-farm.webp",
       "description": "帮助定西薯农对接平台销售渠道，提升收购价（演示项目）",
       "goal_amount": 100000,
       "raised_amount": 32600,
@@ -864,7 +864,7 @@
               "product_id": "a42ef7bb-693f-4f28-b00c-f59584207d73",
               "title": "SIM-在售·静宁红富士苹果",
               "spec": "5kg 标准装",
-              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "image_url": "/images/products/jingning-apple-1.webp",
               "unit_price": 59.9,
               "quantity": 1,
               "subtotal": 59.9,
@@ -920,7 +920,7 @@
               "product_id": "952dfdf0-8fdf-4871-858e-0539b3560a28",
               "title": "SIM-在售·定西马铃薯",
               "spec": "5kg 标准装",
-              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "image_url": "/images/products/jingning-apple-1.webp",
               "unit_price": 29.9,
               "quantity": 2,
               "subtotal": 59.8,
@@ -989,7 +989,7 @@
               "product_id": "6f0d3f68-26d6-4a19-a06b-a4fc3e6f682c",
               "title": "SIM-在售·兰州百合",
               "spec": "5kg 标准装",
-              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "image_url": "/images/products/jingning-apple-1.webp",
               "unit_price": 69.9,
               "quantity": 1,
               "subtotal": 69.9,
@@ -1058,7 +1058,7 @@
               "product_id": "6f0d3f68-26d6-4a19-a06b-a4fc3e6f682c",
               "title": "SIM-在售·兰州百合",
               "spec": "5kg 标准装",
-              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "image_url": "/images/products/jingning-apple-1.webp",
               "unit_price": 69.9,
               "quantity": 1,
               "subtotal": 69.9,
@@ -1127,7 +1127,7 @@
               "product_id": "952dfdf0-8fdf-4871-858e-0539b3560a28",
               "title": "SIM-在售·定西马铃薯",
               "spec": "5kg 标准装",
-              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "image_url": "/images/products/jingning-apple-1.webp",
               "unit_price": 29.9,
               "quantity": 1,
               "subtotal": 29.9,
@@ -1183,7 +1183,7 @@
               "product_id": "a42ef7bb-693f-4f28-b00c-f59584207d73",
               "title": "SIM-在售·静宁红富士苹果",
               "spec": "5kg 标准装",
-              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "image_url": "/images/products/jingning-apple-1.webp",
               "unit_price": 59.9,
               "quantity": 1,
               "subtotal": 59.9,
@@ -1252,7 +1252,7 @@
               "product_id": "a42ef7bb-693f-4f28-b00c-f59584207d73",
               "title": "SIM-在售·静宁红富士苹果",
               "spec": "5kg 标准装",
-              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "image_url": "/images/products/jingning-apple-1.webp",
               "unit_price": 59.9,
               "quantity": 1,
               "subtotal": 59.9,
