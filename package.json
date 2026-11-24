@@ -1,0 +1,38 @@
+{
+  "name": "tanhui-longyuan-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "碳惠陇原消费者商城 Web（Vue 3 + TypeScript + Vite）",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173",
+    "build": "vue-tsc --noEmit && vite build",
+    "build:only": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173",
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write \"src/**/*.{ts,vue,css}\" \"scripts/*.mjs\"",
+    "format:check": "prettier --check \"src/**/*.{ts,vue,css}\"",
+    "test:smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "pinia": "^3.0.3",
+    "vue": "^3.5.21",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.6",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.12.1",
+    "globals": "^17.14.0",
+    "playwright": "^1.65.1",
+    "prettier": "^3.10.1",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.73.0",
+    "vite": "^7.1.7",
+    "vue-tsc": "^3.0.6"
+  }
+}

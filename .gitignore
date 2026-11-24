@@ -1,0 +1,25 @@
+node_modules
+dist
+dist-ssr
+.env.local
+.env.*.local
+*.local
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+coverage
+playwright-report
+test-results
+
+artifacts
+
+# Python (tanhui-backend)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/

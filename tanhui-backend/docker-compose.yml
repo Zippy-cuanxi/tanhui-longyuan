@@ -1,0 +1,68 @@
+# ============ 开发环境编排（PostgreSQL + Redis + API + Worker）============
+# 启动：docker compose up -d --build
+# 首次：docker compose run --rm migrate （执行数据库迁移）
+# 说明：本环境为开发/联调用途，业务参数全部为仿真配置（见 .env）
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: tanhui
+      POSTGRES_PASSWORD: tanhui_dev_pw   # 【仿真值】生产改用 secrets
+      POSTGRES_DB: tanhui
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tanhui"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  migrate:
+    build: .
+    command: alembic upgrade head
+    environment: &app_env
+      TANHUI_DATABASE_URL: postgresql+psycopg://tanhui:tanhui_dev_pw@db:5432/tanhui
+      TANHUI_REDIS_URL: redis://redis:6379/0
+      TANHUI_CELERY_BROKER_URL: redis://redis:6379/1
+      TANHUI_ENV: sandbox
+      TANHUI_DEBUG: "false"
+      TANHUI_SECRET_KEY: change-me-in-production   # 【仿真值】
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    environment: *app_env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./uploads:/srv/app/uploads
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+
+  worker:
+    build: .
+    # -B 启用内建 beat（周期任务）；生产建议独立部署 beat
+    command: celery -A app.worker.celery_app worker -B --loglevel=info
+    environment: *app_env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+
+volumes:
+  pgdata:
