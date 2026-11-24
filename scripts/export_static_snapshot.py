@@ -20,6 +20,19 @@ def rows(sql, params=()):
 def num(v):
     return float(v) if v is not None else 0.0
 
+def static_url(url):
+    """后端 /uploads/... 路径重写为静态站点 public/ 下已有的 /images/... 路径。"""
+    if not url:
+        return url
+    u = str(url)
+    if '/uploads/demo/products/' in u:
+        u = u.replace('/uploads/demo/products/', '/images/products/')
+    elif '/uploads/demo/banners/' in u:
+        u = u.replace('/uploads/demo/banners/', '/images/banners/')
+    elif '/uploads/' in u:
+        u = u.replace('/uploads/', '/images/')
+    return u
+
 # --- 分类 ---
 categories = rows("SELECT id,name,parent_id,icon_url,sort,is_active FROM categories WHERE is_active=1 ORDER BY sort")
 
@@ -36,12 +49,14 @@ for p in rows("""SELECT id,store_id,category_id,title,subtitle,description,statu
     item = dict(p)
     item['skus'] = rows("SELECT id,spec,code,price,is_active FROM product_skus WHERE product_id=? AND is_active=1", (p['id'],))
     item['images'] = rows("SELECT id,url,sort FROM product_images WHERE product_id=? ORDER BY sort", (p['id'],))
+    for img in item['images']:
+        img['url'] = static_url(img['url'])
     green = rows("SELECT origin,planting_mode,description,status FROM product_green_profiles WHERE product_id=?", (p['id'],))
     item['green'] = green[0] if green else None
     # 管理端字段：min_price / cover / store_name / sales
     prices = [num(s['price']) for s in item['skus']]
     item['min_price'] = min(prices) if prices else 0.0
-    item['cover_url'] = item['images'][0]['url'] if item['images'] else None
+    item['cover_url'] = static_url(item['images'][0]['url']) if item['images'] else None
     store = next((s for s in stores if s['id'] == p['store_id']), None)
     item['store_name'] = store['name'] if store else ''
     products.append(item)
@@ -115,6 +130,20 @@ snapshot = {
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, "w", encoding="utf-8") as f:
     json.dump(snapshot, f, ensure_ascii=False, indent=2)
+
+# --- 统一重写剩余 URL 字段（banners / aid / stores / categories / order_items）---
+URL_FIELDS = ('image_url', 'cover_url', 'icon_url', 'logo_url', 'url')
+def rewrite_urls(obj):
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if k in URL_FIELDS and isinstance(v, str):
+                obj[k] = static_url(v)
+            else:
+                rewrite_urls(v)
+    elif isinstance(obj, list):
+        for item in obj:
+            rewrite_urls(item)
+rewrite_urls(snapshot)
 
 size = os.path.getsize(OUT)
 print(f"snapshot written: {OUT} ({size/1024:.1f} KB)")

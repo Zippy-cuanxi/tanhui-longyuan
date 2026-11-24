@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import AppIcon from './AppIcon.vue'
 </script>
 
@@ -6,7 +7,7 @@ import AppIcon from './AppIcon.vue'
   <footer class="site-footer">
     <div class="footer-main">
       <div class="footer-brand">
-        <img src="/images/logo/logo.png" alt="碳惠陇原" loading="lazy" decoding="async" />
+        <img :src="assetUrl('/images/logo/logo.png')" alt="碳惠陇原" loading="lazy" decoding="async" />
         <p>绿色生态 · 品质优选 · 助力乡村振兴</p>
       </div>
       <div class="footer-links">

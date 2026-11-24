@@ -284,7 +284,7 @@ function thumbFor(product: Product): string {
 
 function onThumbError(event: Event): void {
   const img = event.target as HTMLImageElement
-  const fallback = '/images/products/jingning-apple.webp'
+  const fallback = assetUrl('/images/products/jingning-apple.webp')
   if (!img.src.endsWith(fallback)) img.src = fallback
 }
 
@@ -390,7 +390,7 @@ function badgeText(count: number): string {
   <header class="site-header" :class="{ 'header-hidden': headerHidden }">
     <div class="header-inner">
       <RouterLink to="/" class="brand" aria-label="碳惠陇原首页">
-        <img src="/images/logo/logo.png" alt="碳惠陇原 · 甘肃特色农产品绿色电商平台" />
+        <img :src="assetUrl('/images/logo/logo.png')" alt="碳惠陇原 · 甘肃特色农产品绿色电商平台" />
       </RouterLink>
 
       <nav class="main-nav" aria-label="主导航">

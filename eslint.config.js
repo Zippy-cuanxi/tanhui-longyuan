@@ -6,7 +6,7 @@ import globals from 'globals'
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'artifacts/**', 'node_modules/**', 'public/**', 'package-lock.json'],
+    ignores: ['dist/**', 'dist-demo/**', 'artifacts/**', 'node_modules/**', 'public/**', 'package-lock.json'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

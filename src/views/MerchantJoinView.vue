@@ -1,4 +1,5 @@
 ﻿<script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { computed, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import AppIcon from '@/components/AppIcon.vue'
@@ -34,30 +35,30 @@ const REGIONS: Record<string, string[]> = {
 }
 
 const STEPS = [
-  { icon: '/images/join/step-1-fill.png', title: '填写主体信息', hint: '约 10 分钟' },
-  { icon: '/images/join/step-2-upload.png', title: '上传资质证照', hint: '1-3 个工作日' },
-  { icon: '/images/join/step-3-review.png', title: '平台审核', hint: '审核结果短信通知' },
-  { icon: '/images/join/step-4-success.png', title: '入驻成功', hint: '开通店铺后台' }
+  { icon: assetUrl('/images/join/step-1-fill.png'), title: '填写主体信息', hint: '约 10 分钟' },
+  { icon: assetUrl('/images/join/step-2-upload.png'), title: '上传资质证照', hint: '1-3 个工作日' },
+  { icon: assetUrl('/images/join/step-3-review.png'), title: '平台审核', hint: '审核结果短信通知' },
+  { icon: assetUrl('/images/join/step-4-success.png'), title: '入驻成功', hint: '开通店铺后台' }
 ]
 
 const BENEFITS = [
   {
-    icon: '/images/join/benefit-origin.png',
+    icon: assetUrl('/images/join/benefit-origin.png'),
     title: '源头直采',
     desc: '对接甘肃产地，汇聚特色农产'
   },
   {
-    icon: '/images/join/benefit-cert.png',
+    icon: assetUrl('/images/join/benefit-cert.png'),
     title: '绿色认证',
     desc: '展示绿色食品认证，突出产品特色'
   },
   {
-    icon: '/images/join/benefit-settle.png',
+    icon: assetUrl('/images/join/benefit-settle.png'),
     title: '结算保障',
     desc: '规范对账流程，保障商家结算'
   },
   {
-    icon: '/images/join/benefit-logistics.png',
+    icon: assetUrl('/images/join/benefit-logistics.png'),
     title: '物流扶持',
     desc: '整合产地物流，助力农产品外运'
   }
@@ -186,7 +187,7 @@ async function submit(): Promise<void> {
 <template>
   <main class="page-main join-page">
     <section class="join-hero">
-      <img class="join-hero-img" src="/images/join/join-hero.png" alt="" aria-hidden="true" />
+      <img class="join-hero-img" :src="assetUrl('/images/join/join-hero.png')" alt="" aria-hidden="true" />
       <div class="join-hero-inner">
         <h1>商家入驻</h1>
         <p>加入碳惠陇原 · 把甘肃好物卖向万家餐桌</p>

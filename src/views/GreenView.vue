@@ -44,11 +44,11 @@ onMounted(load)
       <BannerSection
         :config="{
           title: '绿色消费专区',
-          image_url: '/images/banners/green.webp',
+          image_url: assetUrl('/images/banners/green.webp'),
           link_url: '/green'
         }"
         variant="page"
-        fallback-image="/images/banners/green.webp"
+        :fallback-image="assetUrl('/images/banners/green.webp')"
       />
 
       <section class="page-intro">

@@ -34,12 +34,28 @@ interface Snapshot {
 let snap: Snapshot | null = null
 let loading: Promise<Snapshot> | null = null
 
+/** 把站点根相对的图片路径（/images/...）补上部署 base（GitHub Pages 子路径）。 */
+function withBaseUrls<T>(value: T): T {
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
+  const fix = (v: unknown): unknown => {
+    if (typeof v === 'string' && /^\/images\//.test(v)) return `${base}${v}`
+    if (Array.isArray(v)) return v.map(fix)
+    if (v && typeof v === 'object') {
+      const out: Record<string, unknown> = {}
+      Object.entries(v as Record<string, unknown>).forEach(([k, val]) => { out[k] = fix(val) })
+      return out
+    }
+    return v
+  }
+  return fix(value) as T
+}
+
 async function getSnapshot(): Promise<Snapshot> {
   if (snap) return snap
   if (!loading) {
     loading = fetch(`${import.meta.env.BASE_URL || '/'}demo-data.json`)
       .then((r) => r.json())
-      .then((data) => { snap = data; return data })
+      .then((data) => { snap = withBaseUrls<Snapshot>(data); return snap })
   }
   return loading
 }

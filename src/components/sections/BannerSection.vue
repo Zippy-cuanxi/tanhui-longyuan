@@ -9,7 +9,7 @@ const props = withDefaults(
     variant?: 'home' | 'page'
     fallbackImage?: string
   }>(),
-  { variant: 'home', fallbackImage: '/images/banners/home-hero.webp' }
+  { variant: 'home', fallbackImage: assetUrl('/images/banners/home-hero.webp') }
 )
 
 const image = computed(() => {

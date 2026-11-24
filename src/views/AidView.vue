@@ -61,11 +61,11 @@ onMounted(load)
       <BannerSection
         :config="{
           title: '助农项目',
-          image_url: '/images/banners/aid.webp',
+          image_url: assetUrl('/images/banners/aid.webp'),
           link_url: '/aid#aid-projects'
         }"
         variant="page"
-        fallback-image="/images/banners/aid.webp"
+        :fallback-image="assetUrl('/images/banners/aid.webp')"
       />
 
       <section class="aid-stats" aria-label="助农项目数据概览">

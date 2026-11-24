@@ -36,31 +36,31 @@ const categoryDefs: CategoryDef[] = [
     key: 'fresh',
     label: '新鲜水果',
     categoryName: '水果生鲜',
-    linear: '/images/categories/linear/fruit.png'
+    linear: assetUrl('/images/categories/linear/fruit.png')
   },
   {
     key: 'grains',
     label: '粮油杂粮',
     categoryName: '粮油杂粮',
-    linear: '/images/categories/linear/grains.png'
+    linear: assetUrl('/images/categories/linear/grains.png')
   },
   {
     key: 'food',
     label: '特色食品',
     categoryName: '特色食品',
-    linear: '/images/categories/linear/food.png'
+    linear: assetUrl('/images/categories/linear/food.png')
   },
   {
     key: 'culture',
     label: '甘味文创',
     categoryName: '文创礼品',
-    linear: '/images/categories/linear/culture.png'
+    linear: assetUrl('/images/categories/linear/culture.png')
   },
   {
     key: 'points',
     label: '绿色积分',
     categoryName: '',
-    linear: '/images/categories/linear/points.png',
+    linear: assetUrl('/images/categories/linear/points.png'),
     to: '/account/points'
   }
 ]
@@ -324,7 +324,7 @@ useRefreshOnFocus(() => {
 
         <RouterLink to="/origin" class="catalog-category-card">
           <img
-            src="/images/banners/category-card.webp"
+            :src="assetUrl('/images/banners/category-card.webp')"
             alt="甘肃梯田与产地风光"
             loading="lazy"
             decoding="async"

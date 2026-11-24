@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T16:59:50.155226",
+  "generated_at": "2026-11-24T17:32:48.258316",
   "source": "tanhui_dev.db (含仿真测试数据)",
   "categories": [
     {
@@ -165,22 +165,22 @@
       "images": [
         {
           "id": "4db1f9e8-d7e9-4e9f-897d-5942f1c1387e",
-          "url": "/uploads/demo/products/jingning-apple-1.webp",
+          "url": "/images/products/jingning-apple-1.webp",
           "sort": 0
         },
         {
           "id": "8300b4dc-4a9f-4ed5-9210-3e3194ebf19c",
-          "url": "/uploads/demo/products/jingning-apple-2.webp",
+          "url": "/images/products/jingning-apple-2.webp",
           "sort": 1
         },
         {
           "id": "858fda26-6dad-49fe-95b0-874cfec0a73d",
-          "url": "/uploads/demo/products/jingning-apple-3.webp",
+          "url": "/images/products/jingning-apple-3.webp",
           "sort": 2
         },
         {
           "id": "c0625f7a-1aeb-4afa-9c6b-caade15562a5",
-          "url": "/uploads/demo/products/jingning-apple-4.webp",
+          "url": "/images/products/jingning-apple-4.webp",
           "sort": 3
         }
       ],
@@ -191,7 +191,7 @@
         "status": "approved"
       },
       "min_price": 59.9,
-      "cover_url": "/uploads/demo/products/jingning-apple-1.webp",
+      "cover_url": "/images/products/jingning-apple-1.webp",
       "store_name": "陇原甄选旗舰店"
     },
     {
@@ -222,22 +222,22 @@
       "images": [
         {
           "id": "2f57b484-5224-43ad-aded-57d42c711a02",
-          "url": "/uploads/demo/products/dingxi-potato-1.webp",
+          "url": "/images/products/dingxi-potato-1.webp",
           "sort": 0
         },
         {
           "id": "70ede513-0f29-4fac-8d2d-c8dac25d924c",
-          "url": "/uploads/demo/products/dingxi-potato-2.webp",
+          "url": "/images/products/dingxi-potato-2.webp",
           "sort": 1
         },
         {
           "id": "411a2dfe-eeeb-4954-9b9c-89766d780cbd",
-          "url": "/uploads/demo/products/dingxi-potato-3.webp",
+          "url": "/images/products/dingxi-potato-3.webp",
           "sort": 2
         },
         {
           "id": "20a43ed7-0ba0-4b83-b9b7-4341c47b29a9",
-          "url": "/uploads/demo/products/dingxi-potato-4.webp",
+          "url": "/images/products/dingxi-potato-4.webp",
           "sort": 3
         }
       ],
@@ -248,7 +248,7 @@
         "status": "approved"
       },
       "min_price": 29.9,
-      "cover_url": "/uploads/demo/products/dingxi-potato-1.webp",
+      "cover_url": "/images/products/dingxi-potato-1.webp",
       "store_name": "陇原甄选旗舰店"
     },
     {
@@ -279,22 +279,22 @@
       "images": [
         {
           "id": "0d404756-d982-468c-94aa-fb11b22940e6",
-          "url": "/uploads/demo/products/minqin-melon-1.webp",
+          "url": "/images/products/minqin-melon-1.webp",
           "sort": 0
         },
         {
           "id": "0de775d7-2ab1-4064-8115-06524609b8f0",
-          "url": "/uploads/demo/products/minqin-melon-2.webp",
+          "url": "/images/products/minqin-melon-2.webp",
           "sort": 1
         },
         {
           "id": "20bb4343-9e5e-4c72-98ef-6e7652b7c095",
-          "url": "/uploads/demo/products/minqin-melon-3.webp",
+          "url": "/images/products/minqin-melon-3.webp",
           "sort": 2
         },
         {
           "id": "593ced8e-faac-4e13-a522-81cfbef59728",
-          "url": "/uploads/demo/products/minqin-melon-4.webp",
+          "url": "/images/products/minqin-melon-4.webp",
           "sort": 3
         }
       ],
@@ -305,7 +305,7 @@
         "status": "approved"
       },
       "min_price": 39.9,
-      "cover_url": "/uploads/demo/products/minqin-melon-1.webp",
+      "cover_url": "/images/products/minqin-melon-1.webp",
       "store_name": "陇原甄选旗舰店"
     },
     {
@@ -336,22 +336,22 @@
       "images": [
         {
           "id": "d532393b-3fbb-448b-b311-552003e9da3d",
-          "url": "/uploads/demo/products/gansu-goji-1.webp",
+          "url": "/images/products/gansu-goji-1.webp",
           "sort": 0
         },
         {
           "id": "1f9591d2-277b-426c-88e1-e9681d38d1e3",
-          "url": "/uploads/demo/products/gansu-goji-2.webp",
+          "url": "/images/products/gansu-goji-2.webp",
           "sort": 1
         },
         {
           "id": "9c9a5965-5a1d-4c42-9e08-11a08a075738",
-          "url": "/uploads/demo/products/gansu-goji-3.webp",
+          "url": "/images/products/gansu-goji-3.webp",
           "sort": 2
         },
         {
           "id": "448e4a98-3096-4368-94e9-4cc9d5842df1",
-          "url": "/uploads/demo/products/gansu-goji-4.webp",
+          "url": "/images/products/gansu-goji-4.webp",
           "sort": 3
         }
       ],
@@ -362,7 +362,7 @@
         "status": "approved"
       },
       "min_price": 89.9,
-      "cover_url": "/uploads/demo/products/gansu-goji-1.webp",
+      "cover_url": "/images/products/gansu-goji-1.webp",
       "store_name": "陇原甄选旗舰店"
     },
     {
@@ -393,22 +393,22 @@
       "images": [
         {
           "id": "2638e591-a1c4-4cfd-9a66-3f1f3cdb4999",
-          "url": "/uploads/demo/products/linze-jujube-1.webp",
+          "url": "/images/products/linze-jujube-1.webp",
           "sort": 0
         },
         {
           "id": "f5f07675-84e1-478d-b3bb-c5ce7508ef8b",
-          "url": "/uploads/demo/products/linze-jujube-2.webp",
+          "url": "/images/products/linze-jujube-2.webp",
           "sort": 1
         },
         {
           "id": "6720d490-8152-4b35-97c0-3e8fb289e239",
-          "url": "/uploads/demo/products/linze-jujube-3.webp",
+          "url": "/images/products/linze-jujube-3.webp",
           "sort": 2
         },
         {
           "id": "aa780ab9-4795-4c56-a245-ed029674d1db",
-          "url": "/uploads/demo/products/linze-jujube-4.webp",
+          "url": "/images/products/linze-jujube-4.webp",
           "sort": 3
         }
       ],
@@ -419,7 +419,7 @@
         "status": "approved"
       },
       "min_price": 49.9,
-      "cover_url": "/uploads/demo/products/linze-jujube-1.webp",
+      "cover_url": "/images/products/linze-jujube-1.webp",
       "store_name": "陇原甄选旗舰店"
     },
     {
@@ -450,22 +450,22 @@
       "images": [
         {
           "id": "684df86f-8dd7-4f7d-917c-f16a9d70f9fa",
-          "url": "/uploads/demo/products/lanzhou-lily-1.webp",
+          "url": "/images/products/lanzhou-lily-1.webp",
           "sort": 0
         },
         {
           "id": "802cbfdc-2b97-46c3-be2f-89473c769879",
-          "url": "/uploads/demo/products/lanzhou-lily-2.webp",
+          "url": "/images/products/lanzhou-lily-2.webp",
           "sort": 1
         },
         {
           "id": "d5ebe3b5-6ae5-4e63-a58b-903064f81002",
-          "url": "/uploads/demo/products/lanzhou-lily-3.webp",
+          "url": "/images/products/lanzhou-lily-3.webp",
           "sort": 2
         },
         {
           "id": "6cabe86c-cf15-4867-bf83-7dfbd6842826",
-          "url": "/uploads/demo/products/lanzhou-lily-4.webp",
+          "url": "/images/products/lanzhou-lily-4.webp",
           "sort": 3
         }
       ],
@@ -476,7 +476,7 @@
         "status": "approved"
       },
       "min_price": 69.9,
-      "cover_url": "/uploads/demo/products/lanzhou-lily-1.webp",
+      "cover_url": "/images/products/lanzhou-lily-1.webp",
       "store_name": "百合源生态农场"
     },
     {
@@ -507,22 +507,22 @@
       "images": [
         {
           "id": "2024b48e-1b4f-4b93-9455-eefded413acd",
-          "url": "/uploads/demo/products/minxian-danggui-1.webp",
+          "url": "/images/products/minxian-danggui-1.webp",
           "sort": 0
         },
         {
           "id": "e8d6e8f0-4933-4690-8595-c02033d297ba",
-          "url": "/uploads/demo/products/minxian-danggui-2.webp",
+          "url": "/images/products/minxian-danggui-2.webp",
           "sort": 1
         },
         {
           "id": "24f8c66f-652a-4e61-a2c1-b4f779c649c0",
-          "url": "/uploads/demo/products/minxian-danggui-3.webp",
+          "url": "/images/products/minxian-danggui-3.webp",
           "sort": 2
         },
         {
           "id": "cfea0464-46f2-4824-af60-980156e785b7",
-          "url": "/uploads/demo/products/minxian-danggui-4.webp",
+          "url": "/images/products/minxian-danggui-4.webp",
           "sort": 3
         }
       ],
@@ -533,7 +533,7 @@
         "status": "approved"
       },
       "min_price": 79.9,
-      "cover_url": "/uploads/demo/products/minxian-danggui-1.webp",
+      "cover_url": "/images/products/minxian-danggui-1.webp",
       "store_name": "陇原甄选旗舰店"
     },
     {
@@ -557,7 +557,7 @@
       "images": [
         {
           "id": "ecb2ed78-8480-482d-97d7-8b8ec021c7bb",
-          "url": "/uploads/demo/products/lanzhou-lily-1.webp",
+          "url": "/images/products/lanzhou-lily-1.webp",
           "sort": 0
         }
       ],
@@ -568,7 +568,7 @@
         "status": "approved"
       },
       "min_price": 69.9,
-      "cover_url": "/uploads/demo/products/lanzhou-lily-1.webp",
+      "cover_url": "/images/products/lanzhou-lily-1.webp",
       "store_name": "百合源生态农场"
     },
     {
@@ -592,7 +592,7 @@
       "images": [
         {
           "id": "793b120a-4116-405c-bb5c-021fab8fb545",
-          "url": "/uploads/demo/products/dingxi-potato-1.webp",
+          "url": "/images/products/dingxi-potato-1.webp",
           "sort": 0
         }
       ],
@@ -603,7 +603,7 @@
         "status": "approved"
       },
       "min_price": 29.9,
-      "cover_url": "/uploads/demo/products/dingxi-potato-1.webp",
+      "cover_url": "/images/products/dingxi-potato-1.webp",
       "store_name": "陇原甄选旗舰店"
     },
     {
@@ -627,7 +627,7 @@
       "images": [
         {
           "id": "19eb1420-60ca-40aa-b434-ef59d3b8e3a5",
-          "url": "/uploads/demo/products/jingning-apple-1.webp",
+          "url": "/images/products/jingning-apple-1.webp",
           "sort": 0
         }
       ],
@@ -638,7 +638,7 @@
         "status": "approved"
       },
       "min_price": 59.9,
-      "cover_url": "/uploads/demo/products/jingning-apple-1.webp",
+      "cover_url": "/images/products/jingning-apple-1.webp",
       "store_name": "陇原甄选旗舰店"
     }
   ],

@@ -123,32 +123,32 @@ export const DESIGN_CATEGORY_ORDER = [
 
 export function categoryIcon(name?: string | null): string {
   const text = name || ''
-  if (/水果|生鲜|苹果|蜜瓜/.test(text)) return '/images/categories/flat/fruit.png'
-  if (/粮油|杂粮|马铃薯|土豆|米面/.test(text)) return '/images/categories/flat/grains.png'
-  if (/文创|礼品|非遗/.test(text)) return '/images/categories/flat/culture.png'
-  if (/积分|绿色/.test(text)) return '/images/categories/flat/points.png'
-  return '/images/categories/flat/food.png'
+  if (/水果|生鲜|苹果|蜜瓜/.test(text)) return assetUrl('/images/categories/flat/fruit.png')
+  if (/粮油|杂粮|马铃薯|土豆|米面/.test(text)) return assetUrl('/images/categories/flat/grains.png')
+  if (/文创|礼品|非遗/.test(text)) return assetUrl('/images/categories/flat/culture.png')
+  if (/积分|绿色/.test(text)) return assetUrl('/images/categories/flat/points.png')
+  return assetUrl('/images/categories/flat/food.png')
 }
 
 export function linearCategoryIcon(name?: string | null): string {
   const text = name || ''
-  if (/水果|生鲜|苹果|蜜瓜/.test(text)) return '/images/categories/linear/fruit.png'
-  if (/粮油|杂粮|马铃薯|土豆|米面/.test(text)) return '/images/categories/linear/grains.png'
-  if (/文创|礼品|非遗/.test(text)) return '/images/categories/linear/culture.png'
-  if (/积分|绿色/.test(text)) return '/images/categories/linear/points.png'
-  return '/images/categories/linear/food.png'
+  if (/水果|生鲜|苹果|蜜瓜/.test(text)) return assetUrl('/images/categories/linear/fruit.png')
+  if (/粮油|杂粮|马铃薯|土豆|米面/.test(text)) return assetUrl('/images/categories/linear/grains.png')
+  if (/文创|礼品|非遗/.test(text)) return assetUrl('/images/categories/linear/culture.png')
+  if (/积分|绿色/.test(text)) return assetUrl('/images/categories/linear/points.png')
+  return assetUrl('/images/categories/linear/food.png')
 }
 
 export function productFallbackImage(title?: string | null): string {
   const text = title || ''
-  if (/苹果/.test(text)) return '/images/products/jingning-apple.webp'
-  if (/马铃薯|土豆/.test(text)) return '/images/products/dingxi-potato.webp'
-  if (/蜜瓜/.test(text)) return '/images/products/minqin-melon.webp'
-  if (/枸杞/.test(text)) return '/images/products/gansu-goji.webp'
-  if (/小枣|枣/.test(text)) return '/images/products/linze-jujube.webp'
-  if (/百合/.test(text)) return '/images/products/lanzhou-lily.webp'
-  if (/当归/.test(text)) return '/images/products/minxian-danggui.webp'
-  return '/images/products/jingning-apple.webp'
+  if (/苹果/.test(text)) return assetUrl('/images/products/jingning-apple.webp')
+  if (/马铃薯|土豆/.test(text)) return assetUrl('/images/products/dingxi-potato.webp')
+  if (/蜜瓜/.test(text)) return assetUrl('/images/products/minqin-melon.webp')
+  if (/枸杞/.test(text)) return assetUrl('/images/products/gansu-goji.webp')
+  if (/小枣|枣/.test(text)) return assetUrl('/images/products/linze-jujube.webp')
+  if (/百合/.test(text)) return assetUrl('/images/products/lanzhou-lily.webp')
+  if (/当归/.test(text)) return assetUrl('/images/products/minxian-danggui.webp')
+  return assetUrl('/images/products/jingning-apple.webp')
 }
 
 export function productImage(product?: Partial<Product> | null): string {

@@ -304,6 +304,11 @@ export function assetUrl(path?: string | null, fallback = ''): string {
     return path
   }
   if (path.startsWith('/uploads')) return `${FILE_BASE}${path}`
+  // 站点静态资源：补上部署 base（GitHub Pages 项目站点为 /<repo>/ 子路径）
+  if (path.startsWith('/images/') || path.startsWith('/console-assets/') || path.startsWith('/geo/')) {
+    const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
+    return `${base}${path}`
+  }
   if (path.startsWith('/assets')) return path
   if (path.startsWith('/')) return path
   return `${FILE_BASE}/${path}`
