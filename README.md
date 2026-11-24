@@ -1,8 +1,18 @@
 # 碳惠陇原 · 消费者商城 Web
 
-基于设计稿与后端交接手册实现的甘肃特色农产品绿色电商平台消费者端。技术栈：**Vue 3 + TypeScript + Vite + Pinia + Vue Router**。
+基于设计稿与后端交接手册实现的甘肃特色农产品绿色电商平台。技术栈：**Vue 3 + TypeScript + Vite + Pinia + Vue Router**。
 
-> 本轮范围：**仅消费者商城 Web**。商家工作台、管理员后台、Android 端不在本轮范围内。
+## 🌐 线上演示（GitHub Pages，无需后端，所有人可访问）
+
+- **消费者商城**：https://zippy-cuanxi.github.io/tanhui-longyuan/
+- **管理端后台**：https://zippy-cuanxi.github.io/tanhui-longyuan/console/login
+
+线上为**静态演示版**：数据来自 `public/demo-data.json` 快照（含仿真测试数据），
+写操作在浏览器 localStorage 中模拟；管理端登录用 `admin_super` / `Demo@123456`（商家 `merchant01`）。
+推送到 `main` 后由 `.github/workflows/deploy-pages.yml` 自动重新构建部署。
+本地联调真实后端请按下方章节启动。
+
+> 历史说明：最初一轮范围为"仅消费者商城 Web"，后续已扩展到管理端（admin/merchant）并完成前后端数据统一。
 
 ---
 
