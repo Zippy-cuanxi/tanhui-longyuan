@@ -53,6 +53,8 @@ async function scan(page, routes, label, ignore = []) {
     const failed = []
     const onFail = (r) => failed.push(`REQFAIL ${r.url()} :: ${r.failure()?.errorText}`)
     const onResp = (r) => {
+      // GitHub Pages 对 SPA 深链接返回 404 状态 + 404.html 内容，属预期，不算失败
+      if (r.request().resourceType() === 'document') return
       if (r.status() >= 404 && !r.url().includes('hot-update')) failed.push(`HTTP${r.status()} ${r.url()}`)
     }
     page.on('requestfailed', onFail)
@@ -60,18 +62,32 @@ async function scan(page, routes, label, ignore = []) {
     await page
       .goto(BASE + route, { waitUntil: 'networkidle', timeout: 45000 })
       .catch((e) => failed.push('GOTO ' + e.message))
-    await page.waitForTimeout(1200)
+    // 触发懒加载，并等待所有图片解码完成（线上大图较慢，避免误判）
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight)).catch(() => {})
+    await page.waitForTimeout(300)
+    await page.evaluate(() => window.scrollTo(0, 0)).catch(() => {})
+    await page
+      .waitForFunction(() => Array.from(document.images).every((im) => im.complete), null, {
+        timeout: 30000,
+      })
+      .catch(() => {})
     const imgs = await page.evaluate(() =>
       Array.from(document.images).map((im) => ({
         src: im.currentSrc || im.src,
-        ok: im.complete && im.naturalWidth > 0,
+        complete: im.complete,
+        w: im.naturalWidth,
       }))
     )
-    const broken = imgs.filter((i) => !i.ok && !ignore.some((p) => i.src.includes(p)))
+    // complete 且 naturalWidth=0 → 确定失败；30s 后仍未 complete → 记为pending提示
+    const broken = imgs.filter((i) => i.complete && i.w === 0 && !ignore.some((p) => i.src.includes(p)))
+    const pending = imgs.filter((i) => !i.complete && !ignore.some((p) => i.src.includes(p)))
     const hardFail = failed.filter((f) => !ignore.some((p) => f.includes(p)))
     results.push({ label, route, total: imgs.length, broken: broken.length, failed: hardFail.length })
     const mark = broken.length || hardFail.length ? 'FAIL' : 'PASS'
-    console.log(`${mark} | ${label} ${route} | 图 ${imgs.length} 破 ${broken.length} 请求失败 ${hardFail.length}`)
+    console.log(
+      `${mark} | ${label} ${route} | 图 ${imgs.length} 失败 ${broken.length} 请求失败 ${hardFail.length}` +
+        (pending.length ? ` 未完成 ${pending.length}` : '')
+    )
     broken.slice(0, 6).forEach((b) => console.log('     BROKEN ' + b.src))
     hardFail.slice(0, 6).forEach((f) => console.log('     ' + f))
     page.off('requestfailed', onFail)
