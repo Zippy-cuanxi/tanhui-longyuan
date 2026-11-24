@@ -338,7 +338,7 @@ onMounted(async () => {
                 <h2>绿色积分</h2>
               </div>
               <span class="muted-text"
-                >当前 {{ pointsBalance === null ? '—' : pointsBalance }} 绿豆</span
+                >当前 {{ pointsBalance === null ? '—' : pointsBalance }} 绿色积分</span
               >
             </header>
             <label class="check-row points-toggle" :class="{ disabled: !pointsBalance }">
@@ -381,7 +381,7 @@ onMounted(async () => {
             </div>
             <div v-if="preview && preview.points_deduct !== '0.00'" class="deduct-row">
               <dt>
-                积分抵扣 <small>({{ preview.points_used }} 绿豆)</small>
+                积分抵扣 <small>({{ preview.points_used }} 绿色积分)</small>
               </dt>
               <dd>-¥{{ money(preview.points_deduct) }}</dd>
             </div>

@@ -201,7 +201,7 @@ onMounted(load)
               <dd class="muted-text">结算页计算</dd>
             </div>
           </dl>
-          <p class="summary-note">运费、绿豆抵扣与应付金额由服务端在下单预览时计算。</p>
+          <p class="summary-note">运费、绿色积分抵扣与应付金额由服务端在下单预览时计算。</p>
           <button
             class="primary-button full-button"
             type="button"

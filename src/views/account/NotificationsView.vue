@@ -2,12 +2,14 @@
 import { computed, onMounted, ref } from 'vue'
 import { notificationApi } from '@/api'
 import type { AppNotification } from '@/api/types'
-import { errorText, formatDateTime, notificationTypeLabel } from '@/utils/format'
+import { errorText, formatDateTime, notificationTypeLabel, pointsCopy } from '@/utils/format'
+import { useBadgeStore } from '@/stores/badges'
 import { useToastStore } from '@/stores/toast'
 import AppIcon from '@/components/AppIcon.vue'
 import StateBlock from '@/components/StateBlock.vue'
 
 const toast = useToastStore()
+const badges = useBadgeStore()
 const notifications = ref<AppNotification[]>([])
 const loading = ref(true)
 const error = ref('')
@@ -21,6 +23,7 @@ async function load(): Promise<void> {
   error.value = ''
   try {
     notifications.value = await notificationApi.list(unreadOnly.value)
+    badges.markNotificationsSeen()
   } catch (err) {
     error.value = errorText(err)
   } finally {
@@ -108,11 +111,11 @@ onMounted(load)
           <span class="notification-icon"><AppIcon name="bell" :size="18" /></span>
           <div>
             <div class="notification-title">
-              <strong>{{ item.title }}</strong>
+              <strong>{{ pointsCopy(item.title) }}</strong>
               <em>{{ notificationTypeLabel(item.type) }}</em>
               <span v-if="!item.read_at" class="unread-dot" />
             </div>
-            <p>{{ item.content }}</p>
+            <p>{{ pointsCopy(item.content) }}</p>
             <small>{{ formatDateTime(item.created_at) }}</small>
           </div>
         </li>

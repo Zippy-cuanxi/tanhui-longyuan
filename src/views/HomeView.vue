@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { catalogApi, cmsApi } from '@/api'
-import { assetUrl } from '@/api/http'
 import type { Category, CmsConfig, Product } from '@/api/types'
 import { errorText } from '@/utils/format'
 import AppIcon from '@/components/AppIcon.vue'
-import BannerSection from '@/components/sections/BannerSection.vue'
+import HomeCarousel from '@/components/HomeCarousel.vue'
+import HomeOriginMap from '@/components/HomeOriginMap.vue'
 import ProductGridSection from '@/components/sections/ProductGridSection.vue'
 import ProductCard from '@/components/ProductCard.vue'
 import StateBlock from '@/components/StateBlock.vue'
@@ -19,21 +19,53 @@ const error = ref('')
 const cmsWarning = ref('')
 
 const quickDefs = [
-  { label: '新鲜水果', category: '水果生鲜', icon: 'fruit' },
-  { label: '粮油杂粮', category: '粮油杂粮', icon: 'grains' },
-  { label: '特色食品', category: '特色食品', icon: 'food' },
-  { label: '甘肃文创', category: '文创礼品', icon: 'culture' },
-  { label: '绿色积分', category: '', icon: 'points', to: '/account/points' }
+  { label: '新鲜水果', category: '水果生鲜', icon: '/images/categories/flat/fruit.png' },
+  { label: '粮油杂粮', category: '粮油杂粮', icon: '/images/categories/flat/grains.png' },
+  { label: '特色食品', category: '特色食品', icon: '/images/categories/flat/food.png' },
+  { label: '甘味文创', category: '文创礼品', icon: '/images/categories/flat/culture.png' },
+  {
+    label: '绿色积分',
+    category: '',
+    icon: '/images/categories/flat/points.png',
+    to: '/account/points'
+  }
 ]
 
+const heroSlides = [
+  {
+    key: 'catalog',
+    label: '全部商品',
+    image: '/images/banners/home-main-visual.webp',
+    to: '/products',
+    alt: '全部商品——来自陇原的自然好物，绿色生态、品质优选、助力乡村振兴'
+  },
+  {
+    key: 'origin',
+    label: '甘肃产地',
+    image: '/images/banners/origin-map.webp',
+    to: '/origin',
+    alt: '甘肃产地地图——一县一品一好物，溯源直达原产地'
+  },
+  {
+    key: 'green',
+    label: '绿色消费区',
+    image: '/images/banners/green.webp',
+    to: '/green',
+    alt: '绿色消费专区——每一次购物，都在为地球减负'
+  },
+  {
+    key: 'aid',
+    label: '助农公益',
+    image: '/images/banners/aid.webp',
+    to: '/aid',
+    alt: '助农公益——每一份订单，都是一份助农力量'
+  }
+]
 const sections = computed(() =>
   (config.value?.sections || [])
     .filter((section) => section.enabled)
     .slice()
     .sort((a, b) => a.sort - b.sort)
-)
-const heroSection = computed(() =>
-  sections.value.find((section) => section.section_type === 'banner')
 )
 const gridSection = computed(() =>
   sections.value.find((section) => section.section_type === 'product_grid')
@@ -47,9 +79,7 @@ const quickCategories = computed(() =>
     const category = categories.value.find((item) => item.name === definition.category)
     return {
       ...definition,
-      iconUrl: category?.icon_url
-        ? assetUrl(category.icon_url, `/assets/categories/${definition.icon}.webp`)
-        : `/assets/categories/${definition.icon}.webp`,
+      iconUrl: definition.icon,
       to:
         definition.to ||
         (category
@@ -89,21 +119,7 @@ onMounted(load)
         首页动态配置暂不可用，已使用设计稿静态内容展示。
       </div>
 
-      <BannerSection
-        v-if="heroSection"
-        :config="heroSection.config"
-        variant="home"
-        fallback-image="/assets/banners/home-hero.webp"
-      />
-      <BannerSection
-        v-else
-        :config="{
-          title: '来自陇原的自然好物',
-          image_url: '/assets/banners/home-hero.webp',
-          link_url: '/products'
-        }"
-        variant="home"
-      />
+      <HomeCarousel :slides="heroSlides" />
 
       <section class="quick-categories" aria-label="快捷分类">
         <RouterLink
@@ -112,7 +128,9 @@ onMounted(load)
           :to="category.to"
           class="quick-category"
         >
-          <span class="category-icon"><img :src="category.iconUrl" :alt="category.label" /></span>
+          <span class="category-icon">
+            <img :src="category.iconUrl" :alt="category.label" loading="lazy" decoding="async" />
+          </span>
           <strong>{{ category.label }}</strong>
         </RouterLink>
       </section>
@@ -147,21 +165,17 @@ onMounted(load)
               探索更多 <AppIcon name="chevron-right" :size="14" />
             </RouterLink>
           </header>
-          <RouterLink to="/origin" class="origin-image-link">
-            <img
-              src="/assets/banners/origin-map-card.webp"
-              alt="甘肃产地地图——一县一品一好物，溯源直达原产地"
-            />
-            <span class="origin-image-copy">
-              <strong>一县一品一好物</strong>
-              <small>溯源直达原产地</small>
-            </span>
-          </RouterLink>
+          <HomeOriginMap />
         </aside>
       </div>
 
       <RouterLink to="/green" class="green-banner" aria-label="绿色消费专区">
-        <img src="/assets/banners/green-zone.webp" alt="绿色消费专区——每一次购物，都在为地球减负" />
+        <img
+          src="/images/banners/green.webp"
+          alt="绿色消费专区——每一次购物，都在为地球减负"
+          loading="lazy"
+          decoding="async"
+        />
       </RouterLink>
 
       <CmsSectionRenderer

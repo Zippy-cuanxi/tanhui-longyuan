@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { consoleRoutes } from '@/console/router'
+import { consoleGuard } from '@/console/router/guard'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
@@ -120,12 +122,6 @@ const router = createRouter({
       meta: { title: '甘肃产地' }
     },
     {
-      path: '/brand',
-      name: 'brand',
-      component: () => import('@/views/BrandView.vue'),
-      meta: { title: '品牌故事' }
-    },
-    {
       path: '/aid',
       name: 'aid',
       component: () => import('@/views/AidView.vue'),
@@ -136,6 +132,12 @@ const router = createRouter({
       name: 'aid-detail',
       component: () => import('@/views/AidDetailView.vue'),
       meta: { title: '助农项目详情' }
+    },
+    {
+      path: '/join',
+      name: 'merchant-join',
+      component: () => import('@/views/MerchantJoinView.vue'),
+      meta: { title: '商家入驻' }
     },
     {
       path: '/green',
@@ -161,6 +163,7 @@ const router = createRouter({
       component: () => import('@/views/HelpView.vue'),
       meta: { title: '帮助中心' }
     },
+    ...consoleRoutes,
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
@@ -175,7 +178,10 @@ const router = createRouter({
   }
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
+  const consoleResult = await consoleGuard(to)
+  if (consoleResult !== undefined) return consoleResult
+
   const auth = useAuthStore()
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
     return { name: 'login', query: { redirect: to.fullPath } }
@@ -188,8 +194,12 @@ router.beforeEach((to) => {
 })
 
 router.afterEach((to) => {
+  const isConsole = to.path.startsWith('/console')
+  document.body.classList.toggle('console-mode', isConsole)
   const title = typeof to.meta.title === 'string' ? to.meta.title : ''
-  document.title = title ? `${title} · 碳惠陇原` : '碳惠陇原 · 来自陇原的自然好物'
+  document.title = title
+    ? `${title} · ${isConsole ? '碳惠陇原后台' : '碳惠陇原'}`
+    : '碳惠陇原 · 来自陇原的自然好物'
 })
 
 export default router

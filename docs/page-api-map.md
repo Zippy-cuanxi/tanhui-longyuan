@@ -8,8 +8,10 @@
 | 首页 `/` | `GET /client/config/home` | `CmsConfig { page, sections[] }`；`section_type/config/sort/enabled` | 裸 JSON（不包 `ApiResponse`）；ETag 缓存；未知组件安全跳过 |
 | 首页 精选 | `GET /products?page_size=100` | `PageData<Product>`：`id/title/subtitle/min_price/cover_url/store_name/aid_project_id` | CMS `product_grid.product_ids` 按 ID 映射；避免 `GET /products/{id}` 未回填 `min_price/cover_url` 的缺口 |
 | 首页 分类 | `GET /categories` | `Category[]`：`id/name/parent_id/icon_url/sort` | 前端筛选设计稿 6 个一级分类 |
-| 全部商品 `/products` | `GET /products?category_id&store_id&keyword&sort&page&page_size` | `PageData<Product>`；`Pagination {page,page_size,total,total_pages}` | `sort` 仅 `created_desc/price_asc`；销量排序后端无字段，置灰 |
-| 全部商品 分类 | `GET /categories` | `Category[]` | 侧栏 + 快捷分类 |
+| 全部商品 `/products` | `GET /products?category_id&store_id&keyword&sort&page&page_size` | `PageData<Product>`；`Pagination {page,page_size,total,total_pages}` | `sort` 仅 `created_desc/price_asc`；销量排序后端无字段，置灰；顶部 5 分类 + 左产地 + 右网格 |
+| 全部商品 分类 | `GET /categories` | `Category[]` | 顶部 5 个分类胶囊与后端分类 ID 映射 |
+| 全部商品 甘肃产地 | `GET /green/products/{id}` | `GreenDetail.profile.origin` | 左栏产地名；无绿色资料回退店铺名，不新增字段 |
+| 全部商品 精选好评 | 无评价接口 | 本地 Mock：商品 ID 稳定哈希生成 4.6–5.0 演示分 | 页面显示「Mock 演示」「演示好评」，不代表真实评价 |
 | 商品详情 `/products/:id` | `GET /products/{id}` | `ProductDetail`：`skus[]/images[]/description/store_name/status` | 仅审核通过且上架可见，否则 404 |
 | 商品详情 绿色 | `GET /green/products/{id}` | `{ profile, carbon_assessment }`；`profile.origin/planting_mode/status`；`carbon.verified` | 404 → 隐藏绿色资料；未核验必须标注 |
 | 商品详情 关联 | `GET /products?store_id=...&page_size=8` | `PageData<Product>` | 同店关联商品；排除当前商品 |

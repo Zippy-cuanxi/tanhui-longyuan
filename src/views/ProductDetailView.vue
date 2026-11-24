@@ -5,6 +5,8 @@ import { aidApi, catalogApi, greenApi } from '@/api'
 import { assetUrl } from '@/api/http'
 import type { AidProject, GreenDetail, Product, ProductDetail, Sku } from '@/api/types'
 import { errorText, money, productFallbackGallery, productFallbackImage } from '@/utils/format'
+import { dishInfoForProduct } from '@/utils/productMedia'
+import { productExtraInfoFor } from '@/utils/productInfo'
 import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
 import { useCheckoutStore } from '@/stores/checkout'
@@ -21,6 +23,8 @@ const cart = useCartStore()
 const checkout = useCheckoutStore()
 
 const product = ref<ProductDetail | null>(null)
+const recipe = computed(() => dishInfoForProduct(product.value?.title))
+const extraInfo = computed(() => productExtraInfoFor(product.value?.title))
 const green = ref<GreenDetail | null>(null)
 const aidProject = ref<AidProject | null>(null)
 const related = ref<Product[]>([])
@@ -154,7 +158,13 @@ watch(() => route.params.id, load, { immediate: true })
         <div class="detail-layout">
           <section class="gallery-panel">
             <div class="main-product-image">
-              <img :src="images[activeImage]" :alt="product.title" @error="imageFallback" />
+              <img
+                :src="images[activeImage]"
+                :alt="product.title"
+                loading="eager"
+                decoding="async"
+                @error="imageFallback"
+              />
               <span class="gallery-corner"><AppIcon name="leaf" :size="13" /> 产地直供</span>
             </div>
             <div v-if="images.length > 1" class="thumbnail-list">
@@ -166,7 +176,12 @@ watch(() => route.params.id, load, { immediate: true })
                 :aria-label="`查看${product.title}图片${index + 1}`"
                 @click="activeImage = index"
               >
-                <img :src="image" :alt="`${product.title}图片${index + 1}`" />
+                <img
+                  :src="image"
+                  :alt="`${product.title}图片${index + 1}`"
+                  loading="lazy"
+                  decoding="async"
+                />
               </button>
             </div>
           </section>
@@ -293,6 +308,8 @@ watch(() => route.params.id, load, { immediate: true })
                 <img
                   :src="assetUrl(item.cover_url, productFallbackImage(item.title))"
                   :alt="item.title"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div>
                   <span>{{ item.store_name }}</span>
@@ -305,7 +322,12 @@ watch(() => route.params.id, load, { immediate: true })
               </RouterLink>
             </div>
             <div v-else class="store-card">
-              <img :src="images[0]" :alt="product.store_name || product.title" />
+              <img
+                :src="images[0]"
+                :alt="product.store_name || product.title"
+                loading="lazy"
+                decoding="async"
+              />
               <span>{{ product.store_name }}</span>
               <strong>甘肃产地直供</strong>
               <RouterLink
@@ -352,12 +374,47 @@ watch(() => route.params.id, load, { immediate: true })
 
           <div v-if="tab === 'detail'" class="detail-tab-body">
             <p class="detail-description">{{ product.description || '商家暂未提供商品描述。' }}</p>
+            <div v-if="extraInfo" class="product-info-grid">
+              <section class="product-info-card">
+                <h3>规格参数</h3>
+                <dl class="product-info-list">
+                  <div v-for="spec in extraInfo.specs" :key="spec.label">
+                    <dt>{{ spec.label }}</dt>
+                    <dd>{{ spec.value }}</dd>
+                  </div>
+                  <div>
+                    <dt>可选规格</dt>
+                    <dd>{{ product.skus.map((sku) => sku.spec).join('、') }}</dd>
+                  </div>
+                </dl>
+              </section>
+              <section class="product-info-card">
+                <h3>产品特点</h3>
+                <ul>
+                  <li v-for="item in extraInfo.features" :key="item">{{ item }}</li>
+                </ul>
+              </section>
+              <section class="product-info-card">
+                <h3>使用说明</h3>
+                <ul>
+                  <li v-for="item in extraInfo.usage" :key="item">{{ item }}</li>
+                </ul>
+              </section>
+              <section class="product-info-card">
+                <h3>注意事项</h3>
+                <ul>
+                  <li v-for="item in extraInfo.precautions" :key="item">{{ item }}</li>
+                </ul>
+              </section>
+            </div>
             <div class="detail-visual-row">
               <img
                 v-for="(image, index) in images.slice(0, 3)"
                 :key="image"
                 :src="image"
                 :alt="`${product.title}详情图${index + 1}`"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           </div>
@@ -376,6 +433,13 @@ watch(() => route.params.id, load, { immediate: true })
                 <tr>
                   <th>产地</th>
                   <td>{{ greenOrigin }}</td>
+                </tr>
+                <tr
+                  v-for="spec in (extraInfo?.specs || []).filter((item) => item.label !== '产地')"
+                  :key="spec.label"
+                >
+                  <th>{{ spec.label }}</th>
+                  <td>{{ spec.value }}</td>
                 </tr>
                 <tr>
                   <th>币种</th>
@@ -445,6 +509,19 @@ watch(() => route.params.id, load, { immediate: true })
               </span>
             </div>
             <p v-else class="muted-text">该商品暂无碳评估数据。</p>
+          </div>
+        </section>
+
+        <section v-if="recipe" class="recipe-section">
+          <div class="recipe-copy">
+            <span class="eyebrow">SERVING IDEA</span>
+            <h2>推荐吃法</h2>
+            <h3>{{ recipe.name }}</h3>
+            <p>{{ recipe.description }}</p>
+            <span class="recipe-note">菜品示意图 · 实际烹饪以个人口味为准</span>
+          </div>
+          <div class="recipe-image">
+            <img :src="recipe.image" :alt="`${recipe.name}菜品示意图`" loading="lazy" />
           </div>
         </section>
       </template>

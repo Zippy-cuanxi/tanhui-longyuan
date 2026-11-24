@@ -2,7 +2,8 @@
 import { onMounted, ref } from 'vue'
 import { pointsApi } from '@/api'
 import type { Pagination, PointTransaction, Redemption, RedeemResult } from '@/api/types'
-import { errorText, formatDateTime, pointTypeLabel } from '@/utils/format'
+import { errorText, formatDateTime, pointTypeLabel, pointsCopy } from '@/utils/format'
+import { useBadgeStore } from '@/stores/badges'
 import { usePointsStore } from '@/stores/points'
 import { useConfirmStore } from '@/stores/confirm'
 import { useToastStore } from '@/stores/toast'
@@ -11,6 +12,7 @@ import PaginationBar from '@/components/PaginationBar.vue'
 import StateBlock from '@/components/StateBlock.vue'
 
 const points = usePointsStore()
+const badges = useBadgeStore()
 const confirm = useConfirmStore()
 const toast = useToastStore()
 
@@ -65,6 +67,7 @@ async function load(): Promise<void> {
   loading.value = true
   error.value = ''
   await Promise.all([points.fetchBalance(), loadTransactions(1), loadCatalog()])
+  badges.markPointsSeen()
   loading.value = false
 }
 
@@ -80,7 +83,7 @@ function pageTo(page: number): void {
 async function redeem(item: Redemption): Promise<void> {
   const ok = await confirm.ask({
     title: '兑换权益',
-    message: `确认使用 ${item.points} 绿豆兑换「${item.name}」吗？兑换权益为 Mock 演示。`,
+    message: `确认使用 ${item.points} 绿色积分兑换「${pointsCopy(item.name)}」吗？兑换权益为 Mock 演示。`,
     confirmText: '确认兑换'
   })
   if (!ok) return
@@ -91,6 +94,7 @@ async function redeem(item: Redemption): Promise<void> {
     toast.show('兑换成功', 'success')
     await points.fetchBalance()
     await loadTransactions(1)
+    badges.markPointsSeen()
   } catch (err) {
     toast.show(errorText(err), 'error', (err as { requestId?: string }).requestId)
   } finally {
@@ -107,7 +111,7 @@ onMounted(load)
       <div>
         <span class="eyebrow">GREEN POINTS</span>
         <h2>绿色积分</h2>
-        <p>绿豆为平台内部激励，不等同于碳信用或现金。</p>
+        <p>绿色积分为平台内部激励，不等同于碳信用或现金。</p>
       </div>
       <RouterLink to="/green" class="outline-button small">
         <AppIcon name="leaf" :size="15" />绿色消费专区
@@ -118,7 +122,9 @@ onMounted(load)
       <div>
         <span class="eyebrow">MY BALANCE</span>
         <p>当前绿色积分</p>
-        <strong>{{ points.balance === null ? '—' : points.balance }}<small> 绿豆</small></strong>
+        <strong
+          >{{ points.balance === null ? '—' : points.balance }}<small> 绿色积分</small></strong
+        >
         <p class="points-hero-note">积分获取、抵扣与有效期规则以平台配置为准。</p>
       </div>
       <span class="points-hero-icon"><AppIcon name="leaf" :size="64" /></span>
@@ -138,8 +144,8 @@ onMounted(load)
           <article v-for="item in catalog" :key="item.reward_code" class="redemption-card">
             <span class="redemption-icon"><AppIcon name="gift" :size="22" /></span>
             <div>
-              <strong>{{ item.name }}</strong>
-              <span>{{ item.points }} 绿豆</span>
+              <strong>{{ pointsCopy(item.name) }}</strong>
+              <span>{{ item.points }} 绿色积分</span>
               <em v-if="item.mock">Mock 权益</em>
             </div>
             <button
@@ -187,7 +193,10 @@ onMounted(load)
               <AppIcon :name="txn.amount >= 0 ? 'plus' : 'minus'" :size="16" />
             </span>
             <div>
-              <strong>{{ pointTypeLabel(txn.type) }} · {{ txn.note || '绿色积分变动' }}</strong>
+              <strong
+                >{{ pointTypeLabel(txn.type) }} ·
+                {{ pointsCopy(txn.note) || '绿色积分变动' }}</strong
+              >
               <span>{{ formatDateTime(txn.created_at) }} · 余额 {{ txn.balance_after }}</span>
             </div>
             <strong class="transaction-amount" :class="{ positive: txn.amount >= 0 }">
@@ -211,9 +220,11 @@ onMounted(load)
             <span class="payment-result-icon"><AppIcon name="gift" :size="28" /></span>
             <span class="eyebrow">REDEEMED</span>
             <h2>兑换成功</h2>
-            <p>{{ voucher.reward_name }}</p>
+            <p>{{ pointsCopy(voucher.reward_name) }}</p>
             <div class="voucher-code">{{ voucher.voucher_code }}</div>
-            <p class="muted-text">消耗 {{ voucher.points_spent }} 绿豆 · Mock 凭证码，仅用于演示</p>
+            <p class="muted-text">
+              消耗 {{ voucher.points_spent }} 绿色积分 · Mock 凭证码，仅用于演示
+            </p>
             <button type="button" class="primary-button full-button" @click="voucher = null">
               知道了
             </button>

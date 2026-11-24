@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
 import { usePointsStore } from '@/stores/points'
 import AppIcon from '@/components/AppIcon.vue'
+import UserAvatar from '@/components/UserAvatar.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -47,7 +48,7 @@ onMounted(() => {
     <div class="page-container account-layout">
       <aside class="account-sidebar">
         <section class="account-profile">
-          <span class="avatar large">{{ auth.avatarText }}</span>
+          <UserAvatar :url="auth.avatarUrl" :text="auth.avatarText" :size="58" />
           <div>
             <span class="eyebrow">MEMBER</span>
             <h1>{{ auth.displayName }}</h1>

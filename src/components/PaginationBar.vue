@@ -36,6 +36,8 @@ function go(page: number): void {
       :key="page"
       type="button"
       :class="{ active: page === pagination.page }"
+      :aria-current="page === pagination.page ? 'page' : undefined"
+      :aria-label="`第 ${page} 页`"
       @click="go(page)"
     >
       {{ page }}

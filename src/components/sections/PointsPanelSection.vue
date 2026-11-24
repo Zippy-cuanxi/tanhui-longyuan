@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { asString } from '@/utils/cms'
+import { pointsCopy } from '@/utils/format'
 import AppIcon from '../AppIcon.vue'
 
 const props = defineProps<{ config: Record<string, unknown> }>()
-const title = asString(props.config.title, '绿色积分')
-const description = asString(props.config.description, '每一次绿色消费，都值得被记录。')
+const title = pointsCopy(asString(props.config.title, '绿色积分'))
+const description = pointsCopy(asString(props.config.description, '每一次绿色消费，都值得被记录。'))
 </script>
 
 <template>

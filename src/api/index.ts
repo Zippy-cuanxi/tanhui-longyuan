@@ -2,7 +2,10 @@ import { getCmsConfig, queryString, request, requestRaw } from './http'
 import type {
   Address,
   AddressInput,
+  AidDonation,
+  AidDonationInput,
   AidProject,
+  AidProjectDonation,
   AppNotification,
   Banner,
   Cart,
@@ -47,6 +50,11 @@ export const authApi = {
   me: () => request<Me>('/users/me'),
   updateMe: (payload: ProfileUpdateInput) =>
     request<Profile>('/users/me', { method: 'PATCH', body: payload }),
+  uploadAvatar: (file: File) => {
+    const form = new FormData()
+    form.append('file', file)
+    return request<Profile>('/users/me/avatar', { method: 'POST', body: form })
+  },
   sessions: () => request<unknown[]>('/auth/sessions'),
   revokeAll: () => request<null>('/auth/sessions/revoke-all', { method: 'POST' })
 }
@@ -54,6 +62,29 @@ export const authApi = {
 // 注册接口不自动刷新令牌
 function registerRequest(path: string, body: unknown): Promise<User> {
   return request<User>(path, { method: 'POST', body, skipAuthRefresh: true })
+}
+
+export interface MerchantApplyInput {
+  company_name: string
+  license_no: string
+  license_url?: string | null
+  legal_person: string
+  contact_phone: string
+  region?: string | null
+  store_name: string
+}
+
+export interface MerchantApplyResult {
+  id: string
+  status: string
+  company_name: string
+  store_name?: string
+}
+
+export const merchantApi = {
+  apply: (payload: MerchantApplyInput) =>
+    request<MerchantApplyResult>('/merchant/apply', { method: 'POST', body: payload }),
+  myMerchants: () => request<MerchantApplyResult[]>('/merchant/merchants/me')
 }
 
 export const catalogApi = {
@@ -162,7 +193,15 @@ export const aidApi = {
   list: (params: { page?: number; page_size?: number }) =>
     request<PageData<AidProject>>(`/aid/projects${queryString(params)}`),
   detail: (projectId: string) =>
-    request<AidProject>(`/aid/projects/${encodeURIComponent(projectId)}`)
+    request<AidProject>(`/aid/projects/${encodeURIComponent(projectId)}`),
+  projectDonations: (projectId: string) =>
+    request<AidProjectDonation[]>(`/aid/projects/${encodeURIComponent(projectId)}/donations`),
+  myDonations: () => request<AidDonation[]>('/aid/donations/me'),
+  donate: (projectId: string, payload: AidDonationInput) =>
+    request<AidDonation>(`/aid/projects/${encodeURIComponent(projectId)}/donations`, {
+      method: 'POST',
+      body: payload
+    })
 }
 
 export const greenApi = {

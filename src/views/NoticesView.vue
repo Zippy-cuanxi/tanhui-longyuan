@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { cmsApi } from '@/api'
 import type { Notice } from '@/api/types'
 import { errorText, formatDateTime } from '@/utils/format'
+import { useRefreshOnFocus } from '@/composables/useRefreshOnFocus'
 import AppIcon from '@/components/AppIcon.vue'
 import StateBlock from '@/components/StateBlock.vue'
 
@@ -23,6 +24,7 @@ async function load(): Promise<void> {
 }
 
 onMounted(load)
+useRefreshOnFocus(load)
 </script>
 
 <template>

@@ -1,0 +1,646 @@
+/* ============================================================
+   /origin 3D 热力地图专用样式（随地图舞台分包加载）
+   全部复用 main.css 的设计 Token；热力三色为改版规格指定，
+   与 src/utils/heatColor.ts 中的 JS 常量一一对应。
+   ============================================================ */
+
+.origin-map-stage {
+  --heat-low: #f6efd2;
+  --heat-mid: #e9b949;
+  --heat-high: #1f7a4d;
+  position: relative;
+  height: clamp(520px, 72vh, 760px);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: #dcefe3;
+  box-shadow: 0 8px 28px rgba(16, 99, 52, 0.09);
+}
+
+/* 提高优先级：maplibre-gl.css 的 .maplibregl-map{position:relative} 会覆盖单类选择器 */
+.origin-map-stage .heat-map-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.heat-map-canvas .maplibregl-canvas:focus {
+  outline: none;
+}
+
+/* 2D SVG 地图：不依赖 WebGL，宽屏与 3D 一样为右侧产地榜留出空间 */
+.heat-map-2d {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  touch-action: none;
+}
+@media (min-width: 900px) {
+  .heat-map-2d {
+    right: 372px;
+  }
+}
+.heat-map-2d-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+.heat-map-2d-svg:active {
+  cursor: grabbing;
+}
+.map2d-city {
+  cursor: pointer;
+  transition:
+    fill 0.45s ease,
+    stroke-width 0.2s ease;
+}
+.map2d-label {
+  font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  fill: #22362b;
+  stroke: rgba(250, 247, 238, 0.92);
+  stroke-width: 3px;
+  paint-order: stroke;
+  pointer-events: none;
+  user-select: none;
+}
+.map2d-pin {
+  cursor: pointer;
+  outline: none;
+  transition: filter 0.15s ease;
+}
+.map2d-pin path:first-child {
+  transition: fill 0.15s ease;
+}
+.map2d-pin.is-hovered,
+.map2d-pin.is-selected,
+.map2d-pin:focus-visible {
+  filter: drop-shadow(0 4px 8px rgba(4, 58, 38, 0.45));
+}
+.map2d-pin.is-hovered path:first-child,
+.map2d-pin.is-selected path:first-child,
+.map2d-pin:focus-visible path:first-child {
+  fill: #08603b;
+}
+
+/* 舞台右下角控件：旋转轮盘 + 3D/2D 切换 */
+.stage-controls {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+@media (max-width: 767px) {
+  .stage-controls {
+    right: 10px;
+    bottom: 10px;
+  }
+}
+.view-switch {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(31, 122, 77, 0.18);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(8px);
+}
+.view-switch button {
+  min-width: 42px;
+  height: 28px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #4c5f52;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+.view-switch button.active {
+  background: #0b7146;
+  color: #fff;
+}
+.rotate-dial {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(31, 122, 77, 0.22);
+  background: radial-gradient(circle at 50% 42%, #ffffff 0%, #f4f9f3 68%, #e7f0e8 100%);
+  box-shadow: 0 6px 16px rgba(20, 60, 42, 0.16);
+  cursor: grab;
+  touch-action: none;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+.rotate-dial:hover {
+  box-shadow: 0 8px 20px rgba(20, 60, 42, 0.22);
+}
+.rotate-dial:active {
+  cursor: grabbing;
+  transform: scale(0.97);
+}
+.rotate-dial:focus-visible {
+  outline: 2px solid #0b7146;
+  outline-offset: 3px;
+}
+.dial-ring {
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  border: 1px dashed rgba(31, 122, 77, 0.22);
+}
+.dial-needle {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.12s linear;
+}
+.dial-tip {
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  width: 0;
+  height: 0;
+  margin-left: -4px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 10px solid #0b7146;
+}
+.dial-tail {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  width: 2px;
+  height: 12px;
+  margin-left: -1px;
+  border-radius: 2px;
+  background: rgba(11, 113, 70, 0.4);
+}
+.dial-hub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: #0b7146;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
+}
+.dial-label {
+  position: absolute;
+  right: 7px;
+  top: 5px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #6b7f72;
+}
+
+/* 舞台占位骨架：地图 ready 前显示浅绿底 + 旋转环，不再用旧版 Banner 图 */
+.stage-placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  transition: opacity 0.6s ease;
+}
+.stage-placeholder.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.stage-skeleton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: linear-gradient(150deg, #f4f9f2, #e7f1e9 55%, #dbeade);
+}
+.stage-skeleton em {
+  font-style: normal;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: #6d7f72;
+}
+.skeleton-ring {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 3px solid rgba(31, 122, 77, 0.18);
+  border-top-color: #1f7a4d;
+  animation: skeleton-spin 0.9s linear infinite;
+}
+@keyframes skeleton-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-ring {
+    animation: none;
+  }
+}
+
+/* 地图不可用时的说明卡（不再渲染旧版 Banner 图） */
+.origin-fallback-note {
+  margin: 8px 0 20px;
+  padding: 30px 32px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(31, 122, 77, 0.14);
+}
+.origin-fallback-note h1 {
+  margin: 8px 0 10px;
+  font-size: 26px;
+  color: #1d2b22;
+}
+.origin-fallback-note p {
+  margin: 0 0 16px;
+  max-width: 560px;
+  line-height: 1.75;
+  color: #5c6d61;
+}
+
+/* 浮层统一：半透明白底 + 轻毛玻璃 + 圆角 */
+.stage-overlay {
+  position: absolute;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.stage-title {
+  top: 18px;
+  left: 18px;
+  max-width: 400px;
+  padding: 14px 18px;
+}
+.stage-title h1 {
+  margin: 4px 0 4px;
+  font-family: var(--font-display);
+  font-size: 26px;
+  color: var(--green-900);
+}
+.stage-title p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.stage-metric {
+  left: 18px;
+  bottom: 18px;
+  padding: 5px;
+}
+.metric-switch {
+  display: flex;
+  gap: 4px;
+}
+.metric-switch button {
+  padding: 7px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 13px;
+  color: var(--text);
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.metric-switch button:hover {
+  background: var(--green-100);
+}
+.metric-switch button.active {
+  background: var(--green-700);
+  color: #fff;
+}
+
+.stage-rank {
+  top: 18px;
+  right: 18px;
+  bottom: 18px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+}
+.stage-rank.collapsed {
+  bottom: auto;
+  width: auto;
+}
+.rank-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.rank-header h2 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--green-900);
+}
+.rank-toggle {
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 12px;
+  color: var(--muted);
+}
+.rank-toggle:hover {
+  background: var(--green-50);
+  color: var(--green-700);
+}
+.rank-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+.rank-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.92);
+  text-align: left;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.rank-item.is-hovered {
+  border-color: var(--green-500);
+  background: var(--green-50);
+}
+.rank-item.is-selected {
+  border-color: var(--green-700);
+  background: var(--green-100);
+}
+.rank-index {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--cream-deep);
+  color: var(--gold-strong);
+  font-size: 12px;
+  font-weight: 700;
+}
+.rank-list li:nth-child(-n + 3) .rank-index {
+  background: var(--gold-soft);
+}
+.rank-info {
+  flex: 1;
+  min-width: 0;
+}
+.rank-info strong {
+  display: block;
+  font-size: 14px;
+  color: var(--text);
+}
+.rank-info small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.rank-value {
+  flex: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--green-800);
+  white-space: nowrap;
+}
+.rank-value small {
+  margin-left: 2px;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.stage-legend {
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  padding: 10px 16px;
+}
+.legend-scale {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.legend-bar {
+  width: 140px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--heat-low) 0%,
+    var(--heat-mid) 50%,
+    var(--heat-high) 100%
+  );
+}
+.legend-range {
+  color: var(--text);
+}
+.legend-hint {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--muted-light);
+  text-align: center;
+}
+
+/* 产地定位针（maplibre DOM Marker） */
+.origin-pin-marker {
+  width: 34px;
+  height: 42px;
+  cursor: pointer;
+  /* deck 画布位于 control-container，默认盖在 marker 之上；抬高层级保证针不被地形压住 */
+  z-index: 4;
+}
+.origin-pin-marker .pin-inner {
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 100%;
+  transition: transform 0.18s ease;
+  filter: drop-shadow(0 3px 6px rgba(4, 58, 38, 0.35));
+}
+.origin-pin-marker.is-hovered .pin-inner,
+.origin-pin-marker:focus-visible .pin-inner {
+  transform: scale(1.3);
+}
+.origin-pin-marker svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* 市州地名：DOM 标注，随俯角抬到柱顶，纯展示不接收鼠标 */
+.origin-city-label {
+  /* 同上：必须压过 deck 3D 画布；再压过定位针，避免地名被针挡住 */
+  z-index: 6;
+  font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  color: #22362b;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  text-shadow:
+    0 0 2px #faf7ee,
+    0 0 2px #faf7ee,
+    0 0 3px #faf7ee,
+    1px 0 0 #faf7ee,
+    -1px 0 0 #faf7ee,
+    0 1px 0 #faf7ee,
+    0 -1px 0 #faf7ee;
+}
+@media (prefers-reduced-motion: reduce) {
+  .origin-pin-marker .pin-inner {
+    transition: none;
+  }
+}
+
+/* 吸顶产地条（与顶栏 sticky 衔接） */
+.origin-filter-bar {
+  position: sticky;
+  top: var(--header);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 4px;
+  padding: 10px 14px;
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.origin-filter-chip {
+  flex: none;
+  padding: 7px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+  color: var(--text);
+  white-space: nowrap;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+.origin-filter-chip:hover {
+  border-color: var(--green-500);
+  color: var(--green-700);
+}
+.origin-filter-chip.active {
+  border-color: var(--green-700);
+  background: var(--green-700);
+  color: #fff;
+}
+
+.grid-filter-label {
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--green-600);
+}
+.grid-filter-clear {
+  margin-left: 10px;
+  padding: 2px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 12px;
+  color: var(--muted);
+}
+.grid-filter-clear:hover {
+  background: var(--green-50);
+  color: var(--green-700);
+}
+
+.origin-filter-empty {
+  padding: 30px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: #fff;
+  text-align: center;
+  color: var(--muted);
+}
+.origin-filter-empty p {
+  margin-bottom: 12px;
+}
+
+/* 特色说明卡压缩版 */
+.origin-story-grid.compact {
+  margin-top: 26px;
+  gap: 16px;
+}
+.origin-story-grid.compact article {
+  padding: 16px 18px;
+}
+.origin-story-grid.compact article > span {
+  width: 36px;
+  height: 36px;
+}
+.origin-story-grid.compact h3 {
+  font-size: 15px;
+}
+.origin-story-grid.compact p {
+  font-size: 12.5px;
+}
+
+/* 窄屏基础适配（完整移动端方案在阶段三） */
+@media (max-width: 1100px) {
+  .stage-rank {
+    width: 272px;
+  }
+  .stage-title {
+    max-width: 320px;
+  }
+}
+@media (max-width: 767px) {
+  .origin-map-stage {
+    height: 56vh;
+    min-height: 420px;
+  }
+  .stage-rank {
+    display: none;
+  }
+  .stage-title {
+    max-width: 250px;
+    padding: 10px 14px;
+  }
+  .stage-title h1 {
+    font-size: 20px;
+  }
+  .stage-legend {
+    display: none;
+  }
+}

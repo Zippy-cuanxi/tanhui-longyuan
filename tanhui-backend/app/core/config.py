@@ -72,6 +72,7 @@ class Settings(BaseSettings):
     POINTS_DEDUCT_RATE: str = "100"  # 每多少绿豆抵扣 1 元
     POINTS_DEDUCT_MAX_PERCENT: str = "0.50"  # 绿豆最多抵扣应付金额的比例
     POINTS_REFUND_REVERSE_ENABLED: bool = True  # 退款时是否冲正已发放绿豆
+    POINTS_DONATION_RATE: str = "3"  # 每 1 元助农资助发放绿色积分数
 
     # ==================== 管理员 MFA【仿真模式】====================
     MFA_REQUIRED_FOR_ADMIN_LOGIN: bool = False  # 生产建议改为 true

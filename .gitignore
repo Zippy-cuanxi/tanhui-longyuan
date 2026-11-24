@@ -1,5 +1,6 @@
 node_modules
 dist
+dist-demo
 dist-ssr
 .env.local
 .env.*.local
@@ -23,3 +24,9 @@ venv/
 .mypy_cache/
 .ruff_cache/
 *.egg-info/
+
+# 本地数据库（含演示账号密码哈希与仿真数据，不入库）
+*.db
+*.db.bak-*
+*.sqlite
+*.sqlite3

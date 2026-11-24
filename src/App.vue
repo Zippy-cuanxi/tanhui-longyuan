@@ -42,6 +42,7 @@ watch(
 
 <template>
   <div class="app-shell">
+    <a href="#main-content" class="skip-link">跳到主要内容</a>
     <SiteHeader v-if="!bare" />
     <RouterView v-slot="{ Component }">
       <Transition name="page" mode="out-in">

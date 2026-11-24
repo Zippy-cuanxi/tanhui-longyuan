@@ -1,24 +1,30 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { catalogApi } from '@/api'
-import { assetUrl } from '@/api/http'
 import type { Product } from '@/api/types'
 import { errorText, money, productFallbackImage } from '@/utils/format'
+import { productMainImage } from '@/utils/productMedia'
 import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
 import { useToastStore } from '@/stores/toast'
 import AppIcon from './AppIcon.vue'
 
-const props = withDefaults(defineProps<{ product: Product; compact?: boolean }>(), {
-  compact: false
-})
+const props = withDefaults(
+  defineProps<{ product: Product; compact?: boolean; variant?: 'default' | 'catalog' }>(),
+  {
+    compact: false,
+    variant: 'default'
+  }
+)
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 const cart = useCartStore()
 const toast = useToastStore()
 const adding = ref(false)
+const displayImage = computed(() => productMainImage(props.product))
+const imageAlt = computed(() => props.product.title)
 
 function open(): void {
   router.push({ name: 'product-detail', params: { id: props.product.id } })
@@ -59,7 +65,7 @@ function imageFallback(event: Event): void {
 <template>
   <article
     class="product-card"
-    :class="{ compact }"
+    :class="{ compact, catalog: variant === 'catalog' }"
     tabindex="0"
     @click="open"
     @keydown.enter="open"
@@ -67,8 +73,8 @@ function imageFallback(event: Event): void {
     <div class="product-image-wrap">
       <img
         class="product-image"
-        :src="assetUrl(product.cover_url, productFallbackImage(product.title))"
-        :alt="product.title"
+        :src="displayImage"
+        :alt="imageAlt"
         loading="lazy"
         @error="imageFallback"
       />

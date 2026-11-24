@@ -136,6 +136,11 @@ export interface RequestOptions extends Omit<RequestInit, 'body'> {
 }
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  // 静态演示模式（GitHub Pages）：无后端时走本地快照适配器
+  if (import.meta.env.VITE_STATIC_DEMO === '1') {
+    const { demoRequest } = await import('./demoAdapter')
+    return demoRequest<T>(path, { method: options.method, body: options.body })
+  }
   const {
     body,
     timeout = REQUEST_TIMEOUT,
@@ -234,6 +239,11 @@ export async function requestRaw<T>(
   path: string,
   options: RequestOptions = {}
 ): Promise<RawResult<T>> {
+  if (import.meta.env.VITE_STATIC_DEMO === '1') {
+    const { demoRequest } = await import('./demoAdapter')
+    const data = await demoRequest<T>(path, { method: options.method, body: options.body })
+    return { data, etag: '', notModified: false }
+  }
   const { body, timeout = REQUEST_TIMEOUT, headers: initHeaders, ...rest } = options
   const controller = new AbortController()
   const timer = window.setTimeout(() => controller.abort(), timeout)

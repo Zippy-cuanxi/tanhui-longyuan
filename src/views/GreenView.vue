@@ -44,11 +44,11 @@ onMounted(load)
       <BannerSection
         :config="{
           title: '绿色消费专区',
-          image_url: '/assets/banners/green-zone.webp',
+          image_url: '/images/banners/green.webp',
           link_url: '/green'
         }"
         variant="page"
-        fallback-image="/assets/banners/green-zone.webp"
+        fallback-image="/images/banners/green.webp"
       />
 
       <section class="page-intro">
@@ -57,6 +57,12 @@ onMounted(load)
         <p>
           绿色消费专区汇集已提交绿色资料的商品。资料由商家提交、平台审核；未核验的碳评估数据会明确标记，不冒充已核验结论。
         </p>
+        <div class="green-intro-actions">
+          <RouterLink to="/account/points" class="primary-button">
+            <AppIcon name="leaf" :size="16" />
+            查看我的绿色积分
+          </RouterLink>
+        </div>
       </section>
 
       <StateBlock
@@ -72,6 +78,8 @@ onMounted(load)
               <img
                 :src="assetUrl(product.cover_url, productFallbackImage(product.title))"
                 :alt="product.title"
+                loading="lazy"
+                decoding="async"
               />
               <span class="green-product-badge"><AppIcon name="leaf" :size="13" />绿色资料</span>
             </RouterLink>

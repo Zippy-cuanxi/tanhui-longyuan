@@ -212,6 +212,8 @@ onMounted(load)
               <img
                 :src="assetUrl(item.image_url, productFallbackImage(item.title))"
                 :alt="item.title"
+                loading="lazy"
+                decoding="async"
               />
             </RouterLink>
             <div>

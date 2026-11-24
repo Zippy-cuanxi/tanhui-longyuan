@@ -23,7 +23,7 @@
 C:\Users\85046\Desktop\碳惠陇原统一后端-tanhui-backend\tanhui-backend
 ```
 
-该实例已补齐设计稿演示数据，并已应用助农接口序列化修复；其开发库已备份为 `tanhui_dev.db.bak-20261124`。
+该实例已补齐设计稿演示数据，并已应用助农接口序列化修复与 `price_asc` 排序修复；其开发库已备份为 `tanhui_dev.db.bak-20261124`。
 
 启动/重启 8000：
 
@@ -33,16 +33,11 @@ cd "C:/Users/85046/Desktop/碳惠陇原统一后端-tanhui-backend/tanhui-backen
 uvicorn app.main:app --reload --port 8000
 ```
 
-> 也可以使用交接提供的 `C:\Users\85046\Desktop\tanhui-backend`（同样已修复并补齐数据）另起 8001 作为备用：
->
-> ```bash
-> cd C:/Users/85046/Desktop/tanhui-backend
-> C:/Users/85046/Desktop/tanhui-backend-fixed/.venv/Scripts/python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001
-> ```
->
-> 8001 是额外 Python 进程，内存紧张时可能被系统回收；日常优先使用 8000。
+**重要后端修复**：
+- `app/modules/aid/router.py` 的 `ProjectOut.goal_amount/raised_amount` 改为 `MoneyOut`，否则 `GET /api/v1/aid/projects` 会 500；
+- `app/modules/catalog/service.py` 的 `price_asc` 排序原先被默认 `created_at DESC` 覆盖，已改为按排序参数二选一。
 
-**重要后端修复**：`app/modules/aid/router.py` 的 `ProjectOut.goal_amount/raised_amount` 原声明为 `str`，但 ORM 字段是 `Decimal`，导致 `GET /api/v1/aid/projects` 返回 500。已改为 `MoneyOut`（序列化为两位小数字符串），与 OpenAPI 契约一致。该修复已同时应用到 8000 实际运行目录和交接的 `tanhui-backend`。
+两处均只修复实现，不改变 API 契约。
 
 ### 1.3 补齐演示数据（已执行，可幂等重跑）
 
@@ -54,13 +49,6 @@ uvicorn app.main:app --reload --port 8000
 cd C:/Users/85046/Desktop/碳惠陇原
 TANHUI_BACKEND_DIR="C:/Users/85046/Desktop/碳惠陇原统一后端-tanhui-backend/tanhui-backend" \
 C:/Users/85046/Desktop/tanhui-backend-fixed/.venv/Scripts/python.exe scripts/seed_demo.py
-```
-
-对交接的 `tanhui-backend` 补齐（默认路径）：
-
-```bash
-cd C:/Users/85046/Desktop/tanhui-backend
-C:/Users/85046/Desktop/tanhui-backend-fixed/.venv/Scripts/python.exe "C:/Users/85046/Desktop/碳惠陇原/scripts/seed_demo.py"
 ```
 
 脚本会补齐：6 个设计稿分类、7 个设计稿商品与 SKU/库存/4 张详情图、绿色资料（审核通过，不虚构认证）、CMS 首页（Banner + 精选商品）、4 个助农项目、买家演示地址、绿色积分、3 笔示例订单。全部为演示数据。联调过程中还创建了若干测试订单、退款申请与积分兑换记录，均保留在开发库中。
@@ -104,10 +92,10 @@ $env:VITE_PROXY_TARGET="http://127.0.0.1:8001"; npm run dev
 素材包已转换为 Web 体积资源（WebP/PNG），如需重新生成：
 
 ```bash
-python scripts/prepare_assets.py
+python scripts/prepare_images2.py
 ```
 
-需要 Pillow。脚本会同时写入前端 `public/assets` 与后端 `uploads/demo`。
+需要 Pillow。脚本读取 `图片素材包2`，写入前端 `public/images`，并同步到运行中后端的 `uploads/demo`。
 
 ---
 
@@ -124,7 +112,7 @@ python scripts/prepare_assets.py
 | 模块 | 路由 | 说明 |
 |---|---|---|
 | 首页 | `/` | CMS Banner/精选商品、快捷分类、甘肃产地地图、绿色消费专区；CMS 失败时静态降级 |
-| 全部商品 | `/products` | 关键词/分类/排序/分页；加载/空/错误状态 |
+| 全部商品 | `/products` | 顶部 5 分类导航 + 右侧蓝天梯田小卡；左侧甘肃产地列表；右侧商品网格（生鲜主图/食材菜品图）；关键词/分类/排序/分页；加载/空/错误；好评推荐为明确标注的 Mock |
 | 商品详情 | `/products/:id` | 图集、SKU、数量、绿色资料、助农项目、产地关联商品、规格参数 |
 | 购物车 | `/cart` | 按店铺分组、勾选、改量、删除、服务端小计 |
 | 确认订单 | `/checkout` | 地址选择/新增、服务端预览计价、积分抵扣开关、备注、幂等下单 |
@@ -170,9 +158,9 @@ python scripts/prepare_assets.py
 
 ```
 碳惠陇原/
-├─ public/assets/            # 设计素材（商品图/横幅/分类图标/Logo/登录背景）
+├─ public/images/            # 设计素材（Logo/背景/横幅/分类图标/商品图/菜品图）
 ├─ scripts/
-│  ├─ prepare_assets.py      # 素材转换与裁切（系统 Python + Pillow）
+│  ├─ prepare_images2.py     # 图片素材包2 → public/images + 后端 uploads/demo
 │  ├─ seed_demo.py           # 演示数据补齐（后端 ORM）
 │  ├─ smoke.mjs              # 全流程 Playwright 冒烟
 │  ├─ buynow.mjs             # 立即购买直达结算验证

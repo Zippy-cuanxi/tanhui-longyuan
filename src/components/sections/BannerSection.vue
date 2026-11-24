@@ -9,7 +9,7 @@ const props = withDefaults(
     variant?: 'home' | 'page'
     fallbackImage?: string
   }>(),
-  { variant: 'home', fallbackImage: '/assets/banners/home-hero.webp' }
+  { variant: 'home', fallbackImage: '/images/banners/home-hero.webp' }
 )
 
 const image = computed(() => {
@@ -26,6 +26,13 @@ const hasLink = computed(() =>
     : isSafeInternalLink(linkUrl.value)
 )
 const linkTarget = computed(() => (linkType.value === 'external' ? linkUrl.value : linkUrl.value))
+
+function onImageError(event: Event): void {
+  const img = event.target as HTMLImageElement
+  const fallback = props.fallbackImage
+  if (img.src.endsWith(fallback)) return
+  img.src = fallback
+}
 </script>
 
 <template>
@@ -37,13 +44,13 @@ const linkTarget = computed(() => (linkType.value === 'external' ? linkUrl.value
       rel="noopener noreferrer"
       class="banner-link"
     >
-      <img :src="image" :alt="title" />
+      <img :src="image" :alt="title" loading="lazy" decoding="async" @error="onImageError" />
     </a>
     <RouterLink v-else-if="hasLink" :to="linkTarget" class="banner-link">
-      <img :src="image" :alt="title" />
+      <img :src="image" :alt="title" loading="lazy" decoding="async" @error="onImageError" />
     </RouterLink>
     <div v-else class="banner-link">
-      <img :src="image" :alt="title" />
+      <img :src="image" :alt="title" loading="lazy" decoding="async" @error="onImageError" />
     </div>
     <h1 v-if="variant === 'home'" class="sr-only">{{ title }}</h1>
   </section>

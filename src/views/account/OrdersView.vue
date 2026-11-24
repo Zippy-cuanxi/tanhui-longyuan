@@ -5,6 +5,8 @@ import { orderApi } from '@/api'
 import type { Order, Pagination } from '@/api/types'
 import { errorText } from '@/utils/format'
 import { useOrderActions } from '@/composables/useOrderActions'
+import { useBadgeStore } from '@/stores/badges'
+import { useRefreshOnFocus } from '@/composables/useRefreshOnFocus'
 import AppIcon from '@/components/AppIcon.vue'
 import OrderCard from '@/components/OrderCard.vue'
 import PaginationBar from '@/components/PaginationBar.vue'
@@ -12,6 +14,7 @@ import StateBlock from '@/components/StateBlock.vue'
 
 const route = useRoute()
 const router = useRouter()
+const badges = useBadgeStore()
 
 const tabs = [
   { key: 'all', label: '全部订单' },
@@ -69,6 +72,7 @@ async function load(): Promise<void> {
       orders.value = data.items
       pagination.value = data.pagination
     }
+    badges.markOrdersSeen()
   } catch (err) {
     error.value = errorText(err)
     orders.value = []
@@ -87,6 +91,7 @@ function pageTo(page: number): void {
 }
 
 watch(() => route.query, applyRoute, { immediate: true })
+useRefreshOnFocus(load)
 </script>
 
 <template>

@@ -1,0 +1,1328 @@
+{
+  "generated_at": "2026-11-24T16:59:50.155226",
+  "source": "tanhui_dev.db (含仿真测试数据)",
+  "categories": [
+    {
+      "id": "480f3458-f1cb-4cbd-ad78-250d66c6db05",
+      "name": "新鲜果蔬",
+      "parent_id": null,
+      "icon_url": null,
+      "sort": 0,
+      "is_active": 1
+    },
+    {
+      "id": "a8e7f8da-aa72-426b-b098-0a0dfe19c05f",
+      "name": "粮油副食",
+      "parent_id": null,
+      "icon_url": null,
+      "sort": 0,
+      "is_active": 1
+    },
+    {
+      "id": "48d74ca0-3a0c-4de6-ac48-b2ab71215175",
+      "name": "牛羊肉禽",
+      "parent_id": null,
+      "icon_url": null,
+      "sort": 0,
+      "is_active": 1
+    },
+    {
+      "id": "97fdc838-84da-48fd-864e-1377fd514089",
+      "name": "乳品烘焙",
+      "parent_id": null,
+      "icon_url": null,
+      "sort": 0,
+      "is_active": 1
+    },
+    {
+      "id": "65d870f0-b225-432d-a6b0-7fafa4d93047",
+      "name": "静宁苹果",
+      "parent_id": "480f3458-f1cb-4cbd-ad78-250d66c6db05",
+      "icon_url": null,
+      "sort": 0,
+      "is_active": 1
+    },
+    {
+      "id": "b1dde323-1fee-466d-9da0-23712a2721d4",
+      "name": "定西马铃薯",
+      "parent_id": "a8e7f8da-aa72-426b-b098-0a0dfe19c05f",
+      "icon_url": null,
+      "sort": 0,
+      "is_active": 1
+    },
+    {
+      "id": "498c5d61-a113-48cd-8d6f-64b79f9ef486",
+      "name": "兰州百合",
+      "parent_id": "480f3458-f1cb-4cbd-ad78-250d66c6db05",
+      "icon_url": null,
+      "sort": 0,
+      "is_active": 1
+    },
+    {
+      "id": "ca394bf6-f0a1-4a8c-8f38-0a3729250641",
+      "name": "水果生鲜",
+      "parent_id": null,
+      "icon_url": "/uploads/demo/categories/fruit.webp",
+      "sort": 10,
+      "is_active": 1
+    },
+    {
+      "id": "1a50c59d-64ed-493c-84cb-e2eecd15f122",
+      "name": "粮油杂粮",
+      "parent_id": null,
+      "icon_url": "/uploads/demo/categories/grains.webp",
+      "sort": 20,
+      "is_active": 1
+    },
+    {
+      "id": "79da9944-e9b4-402b-9690-e18235d36eee",
+      "name": "特色食品",
+      "parent_id": null,
+      "icon_url": "/uploads/demo/categories/food.webp",
+      "sort": 30,
+      "is_active": 1
+    },
+    {
+      "id": "0ded545d-6089-41de-ac61-b5fb36cf3e20",
+      "name": "中药材",
+      "parent_id": null,
+      "icon_url": "/uploads/demo/categories/food.webp",
+      "sort": 40,
+      "is_active": 1
+    },
+    {
+      "id": "7f4f7307-4b61-4d18-9541-76f42a69a483",
+      "name": "甘肃特产",
+      "parent_id": null,
+      "icon_url": "/uploads/demo/categories/culture.webp",
+      "sort": 50,
+      "is_active": 1
+    },
+    {
+      "id": "bd6d04cc-9326-45b0-8889-921380c5ed47",
+      "name": "文创礼品",
+      "parent_id": null,
+      "icon_url": "/uploads/demo/categories/culture.webp",
+      "sort": 60,
+      "is_active": 1
+    }
+  ],
+  "stores": [
+    {
+      "id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+      "name": "陇原甄选旗舰店",
+      "description": null,
+      "region": null,
+      "logo_url": null,
+      "merchant_id": "d4f50cdf-cc87-4198-8530-ec8f4a95b16d",
+      "company_name": "甘肃陇原甄选农业科技有限公司"
+    },
+    {
+      "id": "1da9b4e5-cf01-458f-b605-0c766ae3d5a3",
+      "name": "百合源生态农场",
+      "description": null,
+      "region": null,
+      "logo_url": null,
+      "merchant_id": "ac4cb230-30d8-4e93-a667-704c89bfe5d9",
+      "company_name": "兰州百合源生态农业合作社"
+    },
+    {
+      "id": "b3563233-d7f8-44d0-a0a1-46c139b1c04a",
+      "name": "SIM-SIM-花牛苹果旗舰店",
+      "description": "天水花牛苹果合作社 产地直供（仿真数据）",
+      "region": "甘肃省天水市麦积区",
+      "logo_url": null,
+      "merchant_id": "5b1e08ee-e4b2-49bc-ae9f-a2fe889364a2",
+      "company_name": "SIM-天水花牛苹果合作社"
+    }
+  ],
+  "products": [
+    {
+      "id": "4d21cb04-7cbc-491c-9376-f0e67b6c030b",
+      "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+      "category_id": "ca394bf6-f0a1-4a8c-8f38-0a3729250641",
+      "title": "静宁红富士苹果",
+      "subtitle": "高原红富士 · 脆甜多汁",
+      "description": "产自甘肃静宁的高原果园，日照充足、昼夜温差大。果肉脆甜多汁，果香清亮，适合鲜食与家庭分享。下单后由产地仓发货。",
+      "status": "approved",
+      "created_at": "2026-11-23 16:14:38.717210",
+      "skus": [
+        {
+          "id": "d2c2e682-4179-4723-a0d4-913b6a30f031",
+          "spec": "5kg 精选装",
+          "code": null,
+          "price": 59.9,
+          "is_active": 1
+        },
+        {
+          "id": "a81df4a1-95c6-4427-b12c-199b77a8f761",
+          "spec": "10kg 家庭装",
+          "code": null,
+          "price": 108,
+          "is_active": 1
+        }
+      ],
+      "images": [
+        {
+          "id": "4db1f9e8-d7e9-4e9f-897d-5942f1c1387e",
+          "url": "/uploads/demo/products/jingning-apple-1.webp",
+          "sort": 0
+        },
+        {
+          "id": "8300b4dc-4a9f-4ed5-9210-3e3194ebf19c",
+          "url": "/uploads/demo/products/jingning-apple-2.webp",
+          "sort": 1
+        },
+        {
+          "id": "858fda26-6dad-49fe-95b0-874cfec0a73d",
+          "url": "/uploads/demo/products/jingning-apple-3.webp",
+          "sort": 2
+        },
+        {
+          "id": "c0625f7a-1aeb-4afa-9c6b-caade15562a5",
+          "url": "/uploads/demo/products/jingning-apple-4.webp",
+          "sort": 3
+        }
+      ],
+      "green": {
+        "origin": "甘肃省平凉市静宁县",
+        "planting_mode": "高原梯田果园种植",
+        "description": "静宁高原果园种植，产地直发。",
+        "status": "approved"
+      },
+      "min_price": 59.9,
+      "cover_url": "/uploads/demo/products/jingning-apple-1.webp",
+      "store_name": "陇原甄选旗舰店"
+    },
+    {
+      "id": "51f5e18c-263d-47bd-ae44-0384fda0c497",
+      "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+      "category_id": "1a50c59d-64ed-493c-84cb-e2eecd15f122",
+      "title": "定西马铃薯",
+      "subtitle": "沙壤土豆 · 粉糯香甜",
+      "description": "定西沙壤土种植，薯形饱满、口感粉糯。适合蒸煮、炖菜，也可用于制作马铃薯主食。",
+      "status": "approved",
+      "created_at": "2026-11-23 16:08:38.794290",
+      "skus": [
+        {
+          "id": "fee88e8a-bcc4-4e6d-91cc-87d0827a1f6d",
+          "spec": "10kg 装",
+          "code": null,
+          "price": 29.9,
+          "is_active": 1
+        },
+        {
+          "id": "e1de6344-43c7-4fb8-9ae7-98c2a6b4cac0",
+          "spec": "20kg 家庭装",
+          "code": null,
+          "price": 49.9,
+          "is_active": 1
+        }
+      ],
+      "images": [
+        {
+          "id": "2f57b484-5224-43ad-aded-57d42c711a02",
+          "url": "/uploads/demo/products/dingxi-potato-1.webp",
+          "sort": 0
+        },
+        {
+          "id": "70ede513-0f29-4fac-8d2d-c8dac25d924c",
+          "url": "/uploads/demo/products/dingxi-potato-2.webp",
+          "sort": 1
+        },
+        {
+          "id": "411a2dfe-eeeb-4954-9b9c-89766d780cbd",
+          "url": "/uploads/demo/products/dingxi-potato-3.webp",
+          "sort": 2
+        },
+        {
+          "id": "20a43ed7-0ba0-4b83-b9b7-4341c47b29a9",
+          "url": "/uploads/demo/products/dingxi-potato-4.webp",
+          "sort": 3
+        }
+      ],
+      "green": {
+        "origin": "甘肃省定西市",
+        "planting_mode": "旱作梯田种植",
+        "description": "定西旱作农业区种植，沙壤土质，粉糯口感。",
+        "status": "approved"
+      },
+      "min_price": 29.9,
+      "cover_url": "/uploads/demo/products/dingxi-potato-1.webp",
+      "store_name": "陇原甄选旗舰店"
+    },
+    {
+      "id": "655c904f-ed06-4f52-a0f6-20a0bf3b4724",
+      "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+      "category_id": "ca394bf6-f0a1-4a8c-8f38-0a3729250641",
+      "title": "民勤蜜瓜",
+      "subtitle": "绿洲沙地 · 清甜多汁",
+      "description": "民勤绿洲沙地种植，光照充足、昼夜温差大。果肉橙黄，清甜多汁，成熟采摘后发货。",
+      "status": "approved",
+      "created_at": "2026-11-23 16:02:38.849178",
+      "skus": [
+        {
+          "id": "d65f9d13-cf20-42d4-9544-e25c95a5fe9e",
+          "spec": "5kg 装（2-3 个）",
+          "code": null,
+          "price": 39.9,
+          "is_active": 1
+        },
+        {
+          "id": "4a256aaf-4d54-4506-a437-a4bfed7c6faa",
+          "spec": "10kg 装（4-6 个）",
+          "code": null,
+          "price": 69.9,
+          "is_active": 1
+        }
+      ],
+      "images": [
+        {
+          "id": "0d404756-d982-468c-94aa-fb11b22940e6",
+          "url": "/uploads/demo/products/minqin-melon-1.webp",
+          "sort": 0
+        },
+        {
+          "id": "0de775d7-2ab1-4064-8115-06524609b8f0",
+          "url": "/uploads/demo/products/minqin-melon-2.webp",
+          "sort": 1
+        },
+        {
+          "id": "20bb4343-9e5e-4c72-98ef-6e7652b7c095",
+          "url": "/uploads/demo/products/minqin-melon-3.webp",
+          "sort": 2
+        },
+        {
+          "id": "593ced8e-faac-4e13-a522-81cfbef59728",
+          "url": "/uploads/demo/products/minqin-melon-4.webp",
+          "sort": 3
+        }
+      ],
+      "green": {
+        "origin": "甘肃省武威市民勤县",
+        "planting_mode": "绿洲沙地种植",
+        "description": "民勤绿洲沙地种植，光照充足。",
+        "status": "approved"
+      },
+      "min_price": 39.9,
+      "cover_url": "/uploads/demo/products/minqin-melon-1.webp",
+      "store_name": "陇原甄选旗舰店"
+    },
+    {
+      "id": "4ad12b83-1978-448b-88f2-1537e68fc0e4",
+      "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+      "category_id": "0ded545d-6089-41de-ac61-b5fb36cf3e20",
+      "title": "甘肃枸杞",
+      "subtitle": "果粒饱满 · 色泽自然",
+      "description": "甘肃产区枸杞，果粒饱满、色泽自然。可用于泡水、煮粥与煲汤，建议密封避光保存。",
+      "status": "approved",
+      "created_at": "2026-11-23 15:56:38.893621",
+      "skus": [
+        {
+          "id": "049ea83d-01c0-4dab-abde-a7c7db0a116d",
+          "spec": "500g 装",
+          "code": null,
+          "price": 89.9,
+          "is_active": 1
+        },
+        {
+          "id": "ebd728d4-e7cb-4729-88fa-06d2e9ddb42e",
+          "spec": "1kg 装",
+          "code": null,
+          "price": 169,
+          "is_active": 1
+        }
+      ],
+      "images": [
+        {
+          "id": "d532393b-3fbb-448b-b311-552003e9da3d",
+          "url": "/uploads/demo/products/gansu-goji-1.webp",
+          "sort": 0
+        },
+        {
+          "id": "1f9591d2-277b-426c-88e1-e9681d38d1e3",
+          "url": "/uploads/demo/products/gansu-goji-2.webp",
+          "sort": 1
+        },
+        {
+          "id": "9c9a5965-5a1d-4c42-9e08-11a08a075738",
+          "url": "/uploads/demo/products/gansu-goji-3.webp",
+          "sort": 2
+        },
+        {
+          "id": "448e4a98-3096-4368-94e9-4cc9d5842df1",
+          "url": "/uploads/demo/products/gansu-goji-4.webp",
+          "sort": 3
+        }
+      ],
+      "green": {
+        "origin": "甘肃省白银市景泰县",
+        "planting_mode": "盐碱地生态种植",
+        "description": "甘肃产区枸杞，自然晾晒，果粒饱满。",
+        "status": "approved"
+      },
+      "min_price": 89.9,
+      "cover_url": "/uploads/demo/products/gansu-goji-1.webp",
+      "store_name": "陇原甄选旗舰店"
+    },
+    {
+      "id": "a7633218-73be-4cc6-a317-8d6e6414bc2c",
+      "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+      "category_id": "7f4f7307-4b61-4d18-9541-76f42a69a483",
+      "title": "临泽小枣",
+      "subtitle": "绿洲枣园 · 枣香浓郁",
+      "description": "临泽绿洲枣园种植，自然晾晒。枣香浓郁、肉质厚实，适合直接食用或煮粥。",
+      "status": "approved",
+      "created_at": "2026-11-23 15:50:38.922710",
+      "skus": [
+        {
+          "id": "a56be7b4-9f9e-4570-bbfd-c1bb0370af1c",
+          "spec": "1kg 装",
+          "code": null,
+          "price": 49.9,
+          "is_active": 1
+        },
+        {
+          "id": "af25199f-2991-437d-b63e-8eee9276d55e",
+          "spec": "2kg 装",
+          "code": null,
+          "price": 89.9,
+          "is_active": 1
+        }
+      ],
+      "images": [
+        {
+          "id": "2638e591-a1c4-4cfd-9a66-3f1f3cdb4999",
+          "url": "/uploads/demo/products/linze-jujube-1.webp",
+          "sort": 0
+        },
+        {
+          "id": "f5f07675-84e1-478d-b3bb-c5ce7508ef8b",
+          "url": "/uploads/demo/products/linze-jujube-2.webp",
+          "sort": 1
+        },
+        {
+          "id": "6720d490-8152-4b35-97c0-3e8fb289e239",
+          "url": "/uploads/demo/products/linze-jujube-3.webp",
+          "sort": 2
+        },
+        {
+          "id": "aa780ab9-4795-4c56-a245-ed029674d1db",
+          "url": "/uploads/demo/products/linze-jujube-4.webp",
+          "sort": 3
+        }
+      ],
+      "green": {
+        "origin": "甘肃省张掖市临泽县",
+        "planting_mode": "绿洲枣园种植",
+        "description": "临泽绿洲枣园种植，自然晾晒。",
+        "status": "approved"
+      },
+      "min_price": 49.9,
+      "cover_url": "/uploads/demo/products/linze-jujube-1.webp",
+      "store_name": "陇原甄选旗舰店"
+    },
+    {
+      "id": "b5ca887a-e30c-4566-ba86-df723154c18e",
+      "store_id": "1da9b4e5-cf01-458f-b605-0c766ae3d5a3",
+      "category_id": "79da9944-e9b4-402b-9690-e18235d36eee",
+      "title": "兰州百合",
+      "subtitle": "瓣大肉厚 · 清甜粉糯",
+      "description": "兰州七里河区百合，瓣大肉厚、口感清甜。适合清炒、煲汤与制作甜品。",
+      "status": "approved",
+      "created_at": "2026-11-23 15:44:38.944476",
+      "skus": [
+        {
+          "id": "2bdfcc0a-6a52-4bd0-937b-74b8764a6717",
+          "spec": "500g 特级",
+          "code": null,
+          "price": 69.9,
+          "is_active": 1
+        },
+        {
+          "id": "c9057fa8-b5dc-4aec-9f48-af3ac79e37c0",
+          "spec": "1kg 特级",
+          "code": null,
+          "price": 129,
+          "is_active": 1
+        }
+      ],
+      "images": [
+        {
+          "id": "684df86f-8dd7-4f7d-917c-f16a9d70f9fa",
+          "url": "/uploads/demo/products/lanzhou-lily-1.webp",
+          "sort": 0
+        },
+        {
+          "id": "802cbfdc-2b97-46c3-be2f-89473c769879",
+          "url": "/uploads/demo/products/lanzhou-lily-2.webp",
+          "sort": 1
+        },
+        {
+          "id": "d5ebe3b5-6ae5-4e63-a58b-903064f81002",
+          "url": "/uploads/demo/products/lanzhou-lily-3.webp",
+          "sort": 2
+        },
+        {
+          "id": "6cabe86c-cf15-4867-bf83-7dfbd6842826",
+          "url": "/uploads/demo/products/lanzhou-lily-4.webp",
+          "sort": 3
+        }
+      ],
+      "green": {
+        "origin": "甘肃省兰州市七里河区",
+        "planting_mode": "山地百合种植",
+        "description": "兰州七里河区百合种植，瓣大肉厚。",
+        "status": "approved"
+      },
+      "min_price": 69.9,
+      "cover_url": "/uploads/demo/products/lanzhou-lily-1.webp",
+      "store_name": "百合源生态农场"
+    },
+    {
+      "id": "257ba1f9-2bdd-4f66-94b5-7a821307fba7",
+      "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+      "category_id": "0ded545d-6089-41de-ac61-b5fb36cf3e20",
+      "title": "岷县当归",
+      "subtitle": "根条完整 · 香气浓郁",
+      "description": "岷县高寒阴湿区种植当归，根条完整、香气浓郁。常用于煲汤与药膳，建议干燥保存。",
+      "status": "approved",
+      "created_at": "2026-11-23 15:38:38.969169",
+      "skus": [
+        {
+          "id": "019bdc9f-7b0b-4bde-a3a7-894c769ca012",
+          "spec": "500g 装",
+          "code": null,
+          "price": 79.9,
+          "is_active": 1
+        },
+        {
+          "id": "192d0e2a-8055-47e2-a1d2-08b7cc0353b2",
+          "spec": "1kg 装",
+          "code": null,
+          "price": 149,
+          "is_active": 1
+        }
+      ],
+      "images": [
+        {
+          "id": "2024b48e-1b4f-4b93-9455-eefded413acd",
+          "url": "/uploads/demo/products/minxian-danggui-1.webp",
+          "sort": 0
+        },
+        {
+          "id": "e8d6e8f0-4933-4690-8595-c02033d297ba",
+          "url": "/uploads/demo/products/minxian-danggui-2.webp",
+          "sort": 1
+        },
+        {
+          "id": "24f8c66f-652a-4e61-a2c1-b4f779c649c0",
+          "url": "/uploads/demo/products/minxian-danggui-3.webp",
+          "sort": 2
+        },
+        {
+          "id": "cfea0464-46f2-4824-af60-980156e785b7",
+          "url": "/uploads/demo/products/minxian-danggui-4.webp",
+          "sort": 3
+        }
+      ],
+      "green": {
+        "origin": "甘肃省定西市岷县",
+        "planting_mode": "高寒阴湿区种植",
+        "description": "岷县高寒阴湿区种植，根条完整。",
+        "status": "approved"
+      },
+      "min_price": 79.9,
+      "cover_url": "/uploads/demo/products/minxian-danggui-1.webp",
+      "store_name": "陇原甄选旗舰店"
+    },
+    {
+      "id": "6f0d3f68-26d6-4a19-a06b-a4fc3e6f682c",
+      "store_id": "1da9b4e5-cf01-458f-b605-0c766ae3d5a3",
+      "category_id": "7f4f7307-4b61-4d18-9541-76f42a69a483",
+      "title": "SIM-在售·兰州百合",
+      "subtitle": "仿真商品 · 测试用",
+      "description": "在售·兰州百合，仿真测试数据，用于功能验证。",
+      "status": "approved",
+      "created_at": "2026-10-29 10:00:00.000000",
+      "skus": [
+        {
+          "id": "4e5892a4-0cf9-4d1a-b5ef-dd8595520d58",
+          "spec": "5kg 标准装",
+          "code": "SIMSKU7e5925",
+          "price": 69.9,
+          "is_active": 1
+        }
+      ],
+      "images": [
+        {
+          "id": "ecb2ed78-8480-482d-97d7-8b8ec021c7bb",
+          "url": "/uploads/demo/products/lanzhou-lily-1.webp",
+          "sort": 0
+        }
+      ],
+      "green": {
+        "origin": "甘肃省",
+        "planting_mode": "绿色生态种植",
+        "description": "甘肃省 产地直供，仿真绿色资料。",
+        "status": "approved"
+      },
+      "min_price": 69.9,
+      "cover_url": "/uploads/demo/products/lanzhou-lily-1.webp",
+      "store_name": "百合源生态农场"
+    },
+    {
+      "id": "952dfdf0-8fdf-4871-858e-0539b3560a28",
+      "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+      "category_id": "1a50c59d-64ed-493c-84cb-e2eecd15f122",
+      "title": "SIM-在售·定西马铃薯",
+      "subtitle": "仿真商品 · 测试用",
+      "description": "在售·定西马铃薯，仿真测试数据，用于功能验证。",
+      "status": "approved",
+      "created_at": "2026-10-27 10:00:00.000000",
+      "skus": [
+        {
+          "id": "42b89573-c92b-4be0-9b8a-85587b9df04d",
+          "spec": "5kg 标准装",
+          "code": "SIMSKU66b902",
+          "price": 29.9,
+          "is_active": 1
+        }
+      ],
+      "images": [
+        {
+          "id": "793b120a-4116-405c-bb5c-021fab8fb545",
+          "url": "/uploads/demo/products/dingxi-potato-1.webp",
+          "sort": 0
+        }
+      ],
+      "green": {
+        "origin": "甘肃省",
+        "planting_mode": "绿色生态种植",
+        "description": "甘肃省 产地直供，仿真绿色资料。",
+        "status": "approved"
+      },
+      "min_price": 29.9,
+      "cover_url": "/uploads/demo/products/dingxi-potato-1.webp",
+      "store_name": "陇原甄选旗舰店"
+    },
+    {
+      "id": "a42ef7bb-693f-4f28-b00c-f59584207d73",
+      "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+      "category_id": "ca394bf6-f0a1-4a8c-8f38-0a3729250641",
+      "title": "SIM-在售·静宁红富士苹果",
+      "subtitle": "仿真商品 · 测试用",
+      "description": "在售·静宁红富士苹果，仿真测试数据，用于功能验证。",
+      "status": "approved",
+      "created_at": "2026-10-25 10:00:00.000000",
+      "skus": [
+        {
+          "id": "1bb15c4a-dcc1-41e9-b36a-177b68b3f4db",
+          "spec": "5kg 标准装",
+          "code": "SIMSKU2c3538",
+          "price": 59.9,
+          "is_active": 1
+        }
+      ],
+      "images": [
+        {
+          "id": "19eb1420-60ca-40aa-b434-ef59d3b8e3a5",
+          "url": "/uploads/demo/products/jingning-apple-1.webp",
+          "sort": 0
+        }
+      ],
+      "green": {
+        "origin": "甘肃省",
+        "planting_mode": "绿色生态种植",
+        "description": "甘肃省 产地直供，仿真绿色资料。",
+        "status": "approved"
+      },
+      "min_price": 59.9,
+      "cover_url": "/uploads/demo/products/jingning-apple-1.webp",
+      "store_name": "陇原甄选旗舰店"
+    }
+  ],
+  "notices": [
+    {
+      "id": "1fe4389d-9db7-49ee-b2b2-60af286ef8ff",
+      "title": "UI一致性公告-203293",
+      "content": "本公告由管理端界面创建并发布，用于端到端验证数据一致性。",
+      "status": "published",
+      "published_at": "2026-11-24 08:50:41.699163"
+    },
+    {
+      "id": "ead20514-1c71-4b2c-8a45-6f563b4e38c5",
+      "title": "平台试运营公告",
+      "content": "碳惠陇原平台当前为沙箱试运营阶段，所有交易与支付均为仿真数据。",
+      "status": "published",
+      "published_at": "2026-11-23 11:16:39.419475"
+    },
+    {
+      "id": "6f4701ef-8d29-4136-ac89-3e3e656fd73e",
+      "title": "SIM-平台公告：仿真数据说明",
+      "content": "SIM-平台公告：仿真数据说明。本公告为仿真测试数据，用于验证公告发布流程。",
+      "status": "published",
+      "published_at": "2026-11-23 10:00:00.000000"
+    }
+  ],
+  "banners": [],
+  "aid_projects": [
+    {
+      "id": "14a3a548-0d4c-4ded-9217-3c656975b99a",
+      "title": "民勤蜜瓜节水种植帮扶",
+      "cover_url": "/uploads/demo/banners/aid-card-farm.webp",
+      "description": "推广绿洲节水种植技术，帮助民勤瓜农稳定增收（演示项目）",
+      "goal_amount": 60000,
+      "raised_amount": 9850,
+      "status": "published",
+      "published_at": "2026-11-23 16:20:38.700071"
+    },
+    {
+      "id": "8a942dcb-56dd-4f9b-849a-f2288bb3a57c",
+      "title": "静宁苹果产业提质计划",
+      "cover_url": "/uploads/demo/banners/aid-card-farmer.webp",
+      "description": "支持静宁果园标准化管理与产地冷链建设，帮助好果出山（演示项目）",
+      "goal_amount": 80000,
+      "raised_amount": 19500,
+      "status": "published",
+      "published_at": "2026-11-23 16:20:38.694305"
+    },
+    {
+      "id": "4c22d245-7298-421a-8ecf-c9a7217bd826",
+      "title": "陇南油橄榄产业帮扶",
+      "cover_url": "/uploads/demo/banners/aid-card-farm.webp",
+      "description": "支持油橄榄低产园改造，带动农户增收（演示项目）",
+      "goal_amount": 50000,
+      "raised_amount": 12800,
+      "status": "published",
+      "published_at": "2026-11-23 16:20:38.680583"
+    },
+    {
+      "id": "ea47cd31-532e-4be3-93f7-0d943fd7d557",
+      "title": "定西马铃薯助农增收计划",
+      "cover_url": "/uploads/demo/banners/aid-card-farm.webp",
+      "description": "帮助定西薯农对接平台销售渠道，提升收购价（演示项目）",
+      "goal_amount": 100000,
+      "raised_amount": 32600,
+      "status": "published",
+      "published_at": "2026-11-23 16:20:38.676694"
+    }
+  ],
+  "point_catalog": [
+    {
+      "id": "p1",
+      "name": "5元无门槛券",
+      "points": 500,
+      "stock": 100
+    },
+    {
+      "id": "p2",
+      "name": "10元农产品券",
+      "points": 900,
+      "stock": 50
+    },
+    {
+      "id": "p3",
+      "name": "定制帆布袋",
+      "points": 1200,
+      "stock": 30
+    }
+  ],
+  "users": [
+    {
+      "id": "ae2dc167-b4ec-4b42-8228-5d5a6df0b57c",
+      "email": "buyer@tanhui.example.com",
+      "phone": null,
+      "nickname": "体验用户"
+    },
+    {
+      "id": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+      "email": "simbuyer1@tanhui.example.com",
+      "phone": "13900001001",
+      "nickname": "仿真买家·赵一"
+    },
+    {
+      "id": "10ab3e90-717a-48b2-9fb0-05f2406f10e8",
+      "email": "simbuyer2@tanhui.example.com",
+      "phone": "13900001002",
+      "nickname": "仿真买家·钱二"
+    },
+    {
+      "id": "6d64bcf2-a418-4cb8-b5d8-0ae9f677cf11",
+      "email": "simbuyer3@tanhui.example.com",
+      "phone": "13900001003",
+      "nickname": "仿真买家·孙三"
+    }
+  ],
+  "addresses": [
+    {
+      "id": "26bae233-310f-404a-bdd2-226ebd8a5e70",
+      "user_id": "ae2dc167-b4ec-4b42-8228-5d5a6df0b57c",
+      "receiver": "王小明",
+      "phone": "13800001234",
+      "province": "甘肃省",
+      "city": "兰州市",
+      "district": "城关区",
+      "detail": "张掖路街道 88 号 2 单元 501",
+      "is_default": 1
+    },
+    {
+      "id": "395af72a-f2f4-4d00-8076-81bdbefb605d",
+      "user_id": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+      "receiver": "仿真买家·赵一",
+      "phone": "13900001001",
+      "province": "甘肃省",
+      "city": "兰州市",
+      "district": "城关区",
+      "detail": "仿真路 fabd 号",
+      "is_default": 1
+    },
+    {
+      "id": "1d4d8095-e310-4810-b1bb-f503b33a432e",
+      "user_id": "10ab3e90-717a-48b2-9fb0-05f2406f10e8",
+      "receiver": "仿真买家·钱二",
+      "phone": "13900001002",
+      "province": "甘肃省",
+      "city": "兰州市",
+      "district": "城关区",
+      "detail": "仿真路 10ab 号",
+      "is_default": 1
+    },
+    {
+      "id": "854e757b-737a-4bc2-a9c1-4eada7da3b52",
+      "user_id": "6d64bcf2-a418-4cb8-b5d8-0ae9f677cf11",
+      "receiver": "仿真买家·孙三",
+      "phone": "13900001003",
+      "province": "甘肃省",
+      "city": "兰州市",
+      "district": "城关区",
+      "detail": "仿真路 6d64 号",
+      "is_default": 1
+    }
+  ],
+  "point_accounts": [
+    {
+      "user_id": "ae2dc167-b4ec-4b42-8228-5d5a6df0b57c",
+      "balance": 750
+    },
+    {
+      "user_id": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+      "balance": 500
+    },
+    {
+      "user_id": "10ab3e90-717a-48b2-9fb0-05f2406f10e8",
+      "balance": 500
+    },
+    {
+      "user_id": "6d64bcf2-a418-4cb8-b5d8-0ae9f677cf11",
+      "balance": 500
+    }
+  ],
+  "orders": [
+    {
+      "order_no": "SIM-TH202611241999AF",
+      "user_id": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+      "status": "pending_payment",
+      "receiver_name": "仿真买家8c0",
+      "receiver_phone": "13900001001",
+      "address": "甘肃省兰州市城关区仿真路 1 号",
+      "items_total": 59.9,
+      "shipping_fee": 8,
+      "points_deduct": 0,
+      "points_used": 0,
+      "pay_amount": 67.9,
+      "currency": "CNY",
+      "remark": "仿真订单 · 测试用",
+      "cancel_reason": null,
+      "paid_at": null,
+      "completed_at": null,
+      "cancelled_at": null,
+      "idempotency_key": "sim-a7a0c056",
+      "idempotency_payload_hash": "3ddc56df-6112-49e7-9da0-57d60a2efda6",
+      "id": "4b209788-7ba4-49fc-b639-f4ab0c438ab4",
+      "created_at": "2026-11-24 09:30:00.000000",
+      "updated_at": "2026-11-24 09:30:00.000000",
+      "store_orders": [
+        {
+          "store_order_no": "SIM-TS2026112443A3EB",
+          "order_id": "4b209788-7ba4-49fc-b639-f4ab0c438ab4",
+          "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+          "status": "pending_payment",
+          "items_total": 59.9,
+          "shipping_fee": 8,
+          "pay_amount": 67.9,
+          "refund_amount": 0,
+          "shipped_at": null,
+          "completed_at": null,
+          "id": "3bd2ff42-dcbc-4923-8f1b-234b7990a2e5",
+          "created_at": "2026-11-24 09:30:00.000000",
+          "updated_at": "2026-11-24 09:30:00.000000",
+          "items": [
+            {
+              "store_order_id": "3bd2ff42-dcbc-4923-8f1b-234b7990a2e5",
+              "sku_id": "1bb15c4a-dcc1-41e9-b36a-177b68b3f4db",
+              "product_id": "a42ef7bb-693f-4f28-b00c-f59584207d73",
+              "title": "SIM-在售·静宁红富士苹果",
+              "spec": "5kg 标准装",
+              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "unit_price": 59.9,
+              "quantity": 1,
+              "subtotal": 59.9,
+              "id": "1dd6494b-4230-4971-b097-f9b6b6bcb679"
+            }
+          ],
+          "shipments": []
+        }
+      ]
+    },
+    {
+      "order_no": "SIM-TH202611231B1E70",
+      "user_id": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+      "status": "shipped",
+      "receiver_name": "仿真买家337",
+      "receiver_phone": "13900001001",
+      "address": "甘肃省兰州市城关区仿真路 1 号",
+      "items_total": 59.8,
+      "shipping_fee": 8,
+      "points_deduct": 0,
+      "points_used": 0,
+      "pay_amount": 67.8,
+      "currency": "CNY",
+      "remark": "仿真订单 · 测试用",
+      "cancel_reason": null,
+      "paid_at": "2026-11-23 09:30:00.000000",
+      "completed_at": null,
+      "cancelled_at": null,
+      "idempotency_key": "sim-926f9334",
+      "idempotency_payload_hash": "537156d5-048b-4c07-a001-d746a8c9c599",
+      "id": "e22b4e42-0b8e-478b-888c-7ac90bb621ab",
+      "created_at": "2026-11-23 09:30:00.000000",
+      "updated_at": "2026-11-24 08:52:51.647951",
+      "store_orders": [
+        {
+          "store_order_no": "SIM-TS2026112373EA11",
+          "order_id": "e22b4e42-0b8e-478b-888c-7ac90bb621ab",
+          "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+          "status": "shipped",
+          "items_total": 59.8,
+          "shipping_fee": 8,
+          "pay_amount": 67.8,
+          "refund_amount": 0,
+          "shipped_at": "2026-11-24 08:52:51.645825",
+          "completed_at": null,
+          "id": "4605602a-4b98-4758-bbdf-b8c15dc71570",
+          "created_at": "2026-11-23 09:30:00.000000",
+          "updated_at": "2026-11-24 08:52:51.649120",
+          "items": [
+            {
+              "store_order_id": "4605602a-4b98-4758-bbdf-b8c15dc71570",
+              "sku_id": "42b89573-c92b-4be0-9b8a-85587b9df04d",
+              "product_id": "952dfdf0-8fdf-4871-858e-0539b3560a28",
+              "title": "SIM-在售·定西马铃薯",
+              "spec": "5kg 标准装",
+              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "unit_price": 29.9,
+              "quantity": 2,
+              "subtotal": 59.8,
+              "id": "735b7a36-d936-4cdb-84d4-89016223d266"
+            }
+          ],
+          "shipments": [
+            {
+              "store_order_id": "4605602a-4b98-4758-bbdf-b8c15dc71570",
+              "carrier": "顺丰速运",
+              "tracking_no": "SF5510371616",
+              "status": "shipped",
+              "shipped_by": "8b54a0e2-fa01-48cd-98fc-88a8dad62789",
+              "shipped_at": "2026-11-24 08:52:51.634600",
+              "delivered_at": null,
+              "id": "ae126de5-bf8c-4784-9f2f-2fcd1fc15a42",
+              "created_at": "2026-11-24 08:52:51.634637",
+              "updated_at": "2026-11-24 08:52:51.634640"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "order_no": "SIM-TH2026112244024D",
+      "user_id": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+      "status": "refunding",
+      "receiver_name": "仿真买家24d",
+      "receiver_phone": "13900001001",
+      "address": "甘肃省兰州市城关区仿真路 1 号",
+      "items_total": 69.9,
+      "shipping_fee": 8,
+      "points_deduct": 0,
+      "points_used": 0,
+      "pay_amount": 77.9,
+      "currency": "CNY",
+      "remark": "仿真订单 · 测试用",
+      "cancel_reason": null,
+      "paid_at": "2026-11-22 09:30:00.000000",
+      "completed_at": null,
+      "cancelled_at": null,
+      "idempotency_key": "sim-1eae2363",
+      "idempotency_payload_hash": "7fad5ac4-bd11-4433-a2c8-2f339c969a4f",
+      "id": "1bb7ba53-a282-45ce-b449-fc257d5c7c26",
+      "created_at": "2026-11-22 09:30:00.000000",
+      "updated_at": "2026-11-22 09:30:00.000000",
+      "store_orders": [
+        {
+          "store_order_no": "SIM-TS20261122324B75",
+          "order_id": "1bb7ba53-a282-45ce-b449-fc257d5c7c26",
+          "store_id": "1da9b4e5-cf01-458f-b605-0c766ae3d5a3",
+          "status": "refunding",
+          "items_total": 69.9,
+          "shipping_fee": 8,
+          "pay_amount": 77.9,
+          "refund_amount": 0,
+          "shipped_at": "2026-11-23 10:00:00.000000",
+          "completed_at": null,
+          "id": "744097ba-9a96-41aa-b5db-f05fb764fe36",
+          "created_at": "2026-11-22 09:30:00.000000",
+          "updated_at": "2026-11-22 09:30:00.000000",
+          "items": [
+            {
+              "store_order_id": "744097ba-9a96-41aa-b5db-f05fb764fe36",
+              "sku_id": "4e5892a4-0cf9-4d1a-b5ef-dd8595520d58",
+              "product_id": "6f0d3f68-26d6-4a19-a06b-a4fc3e6f682c",
+              "title": "SIM-在售·兰州百合",
+              "spec": "5kg 标准装",
+              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "unit_price": 69.9,
+              "quantity": 1,
+              "subtotal": 69.9,
+              "id": "a40dfd6d-832a-47f8-b7c4-8298356ee784"
+            }
+          ],
+          "shipments": [
+            {
+              "store_order_id": "744097ba-9a96-41aa-b5db-f05fb764fe36",
+              "carrier": "顺丰速运",
+              "tracking_no": "SIMSF6547B3C8-3",
+              "status": "shipped",
+              "shipped_by": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+              "shipped_at": "2026-11-23 10:00:00.000000",
+              "delivered_at": null,
+              "id": "34adf461-119a-4103-b17c-c6d5d8fe7a77",
+              "created_at": "2026-11-23 10:00:00.000000",
+              "updated_at": "2026-11-23 10:00:00.000000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "order_no": "SIM-TH202611214384C9",
+      "user_id": "10ab3e90-717a-48b2-9fb0-05f2406f10e8",
+      "status": "shipped",
+      "receiver_name": "仿真买家0ff",
+      "receiver_phone": "13900001001",
+      "address": "甘肃省兰州市城关区仿真路 1 号",
+      "items_total": 69.9,
+      "shipping_fee": 8,
+      "points_deduct": 0,
+      "points_used": 0,
+      "pay_amount": 77.9,
+      "currency": "CNY",
+      "remark": "仿真订单 · 测试用",
+      "cancel_reason": null,
+      "paid_at": "2026-11-21 09:30:00.000000",
+      "completed_at": null,
+      "cancelled_at": null,
+      "idempotency_key": "sim-1c378f8f",
+      "idempotency_payload_hash": "8a1f55eb-428c-4cb2-a754-631a21a84242",
+      "id": "4acabd1c-f7af-436f-946f-05e374dd8b86",
+      "created_at": "2026-11-21 09:30:00.000000",
+      "updated_at": "2026-11-21 09:30:00.000000",
+      "store_orders": [
+        {
+          "store_order_no": "SIM-TS20261121672293",
+          "order_id": "4acabd1c-f7af-436f-946f-05e374dd8b86",
+          "store_id": "1da9b4e5-cf01-458f-b605-0c766ae3d5a3",
+          "status": "shipped",
+          "items_total": 69.9,
+          "shipping_fee": 8,
+          "pay_amount": 77.9,
+          "refund_amount": 0,
+          "shipped_at": "2026-11-22 10:00:00.000000",
+          "completed_at": null,
+          "id": "89365de2-c86c-451c-9b1c-8c98b473f7e6",
+          "created_at": "2026-11-21 09:30:00.000000",
+          "updated_at": "2026-11-21 09:30:00.000000",
+          "items": [
+            {
+              "store_order_id": "89365de2-c86c-451c-9b1c-8c98b473f7e6",
+              "sku_id": "4e5892a4-0cf9-4d1a-b5ef-dd8595520d58",
+              "product_id": "6f0d3f68-26d6-4a19-a06b-a4fc3e6f682c",
+              "title": "SIM-在售·兰州百合",
+              "spec": "5kg 标准装",
+              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "unit_price": 69.9,
+              "quantity": 1,
+              "subtotal": 69.9,
+              "id": "d1a5eb11-73c3-423b-80ba-6406ac72f38f"
+            }
+          ],
+          "shipments": [
+            {
+              "store_order_id": "89365de2-c86c-451c-9b1c-8c98b473f7e6",
+              "carrier": "顺丰速运",
+              "tracking_no": "SIMSF723D784B-8",
+              "status": "shipped",
+              "shipped_by": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+              "shipped_at": "2026-11-22 10:00:00.000000",
+              "delivered_at": null,
+              "id": "a164be06-7e40-454e-ae7a-5abaae802cfb",
+              "created_at": "2026-11-22 10:00:00.000000",
+              "updated_at": "2026-11-22 10:00:00.000000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "order_no": "SIM-TH20261119150097",
+      "user_id": "6d64bcf2-a418-4cb8-b5d8-0ae9f677cf11",
+      "status": "cancelled",
+      "receiver_name": "仿真买家6a2",
+      "receiver_phone": "13900001001",
+      "address": "甘肃省兰州市城关区仿真路 1 号",
+      "items_total": 29.9,
+      "shipping_fee": 8,
+      "points_deduct": 0,
+      "points_used": 0,
+      "pay_amount": 37.9,
+      "currency": "CNY",
+      "remark": "仿真订单 · 测试用",
+      "cancel_reason": "仿真取消",
+      "paid_at": null,
+      "completed_at": null,
+      "cancelled_at": "2026-11-19 09:30:00.000000",
+      "idempotency_key": "sim-185c7d17",
+      "idempotency_payload_hash": "e2ef272b-d653-4948-b5e4-ba09454058c3",
+      "id": "2a2fa339-a927-420f-acfd-d0986a2a1592",
+      "created_at": "2026-11-19 09:30:00.000000",
+      "updated_at": "2026-11-19 09:30:00.000000",
+      "store_orders": [
+        {
+          "store_order_no": "SIM-TS2026111971D41C",
+          "order_id": "2a2fa339-a927-420f-acfd-d0986a2a1592",
+          "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+          "status": "cancelled",
+          "items_total": 29.9,
+          "shipping_fee": 8,
+          "pay_amount": 37.9,
+          "refund_amount": 0,
+          "shipped_at": null,
+          "completed_at": null,
+          "id": "9b485792-8960-40cd-b98b-de19e3ed2f4c",
+          "created_at": "2026-11-19 09:30:00.000000",
+          "updated_at": "2026-11-19 09:30:00.000000",
+          "items": [
+            {
+              "store_order_id": "9b485792-8960-40cd-b98b-de19e3ed2f4c",
+              "sku_id": "42b89573-c92b-4be0-9b8a-85587b9df04d",
+              "product_id": "952dfdf0-8fdf-4871-858e-0539b3560a28",
+              "title": "SIM-在售·定西马铃薯",
+              "spec": "5kg 标准装",
+              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "unit_price": 29.9,
+              "quantity": 1,
+              "subtotal": 29.9,
+              "id": "65236084-aafa-4440-89be-2a601572c95f"
+            }
+          ],
+          "shipments": []
+        }
+      ]
+    },
+    {
+      "order_no": "SIM-TH202611167111D7",
+      "user_id": "6d64bcf2-a418-4cb8-b5d8-0ae9f677cf11",
+      "status": "refunded",
+      "receiver_name": "仿真买家fea",
+      "receiver_phone": "13900001001",
+      "address": "甘肃省兰州市城关区仿真路 1 号",
+      "items_total": 59.9,
+      "shipping_fee": 8,
+      "points_deduct": 0,
+      "points_used": 0,
+      "pay_amount": 67.9,
+      "currency": "CNY",
+      "remark": "仿真订单 · 测试用",
+      "cancel_reason": null,
+      "paid_at": "2026-11-16 09:30:00.000000",
+      "completed_at": "2026-11-18 10:00:00.000000",
+      "cancelled_at": null,
+      "idempotency_key": "sim-debd976c",
+      "idempotency_payload_hash": "50a206e3-463f-49b6-8ddb-220579a781e0",
+      "id": "e23faa61-b915-446d-86b3-74429bfc9dc8",
+      "created_at": "2026-11-16 09:30:00.000000",
+      "updated_at": "2026-11-16 09:30:00.000000",
+      "store_orders": [
+        {
+          "store_order_no": "SIM-TS20261116A98590",
+          "order_id": "e23faa61-b915-446d-86b3-74429bfc9dc8",
+          "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+          "status": "refunded",
+          "items_total": 59.9,
+          "shipping_fee": 8,
+          "pay_amount": 67.9,
+          "refund_amount": 0,
+          "shipped_at": "2026-11-17 10:00:00.000000",
+          "completed_at": "2026-11-18 10:00:00.000000",
+          "id": "742334f5-2db5-4791-8368-25a5bed5d8b8",
+          "created_at": "2026-11-16 09:30:00.000000",
+          "updated_at": "2026-11-16 09:30:00.000000",
+          "items": [
+            {
+              "store_order_id": "742334f5-2db5-4791-8368-25a5bed5d8b8",
+              "sku_id": "1bb15c4a-dcc1-41e9-b36a-177b68b3f4db",
+              "product_id": "a42ef7bb-693f-4f28-b00c-f59584207d73",
+              "title": "SIM-在售·静宁红富士苹果",
+              "spec": "5kg 标准装",
+              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "unit_price": 59.9,
+              "quantity": 1,
+              "subtotal": 59.9,
+              "id": "9b9f295b-004c-454d-ac47-1e72a7ea8f6d"
+            }
+          ],
+          "shipments": [
+            {
+              "store_order_id": "742334f5-2db5-4791-8368-25a5bed5d8b8",
+              "carrier": "顺丰速运",
+              "tracking_no": "SIMSFF4AA7218-7",
+              "status": "delivered",
+              "shipped_by": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+              "shipped_at": "2026-11-17 10:00:00.000000",
+              "delivered_at": "2026-11-18 10:00:00.000000",
+              "id": "559744b2-0671-4fac-9a55-40f090837227",
+              "created_at": "2026-11-17 10:00:00.000000",
+              "updated_at": "2026-11-17 10:00:00.000000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "order_no": "SIM-TH202611149BCB94",
+      "user_id": "10ab3e90-717a-48b2-9fb0-05f2406f10e8",
+      "status": "completed",
+      "receiver_name": "仿真买家3dd",
+      "receiver_phone": "13900001001",
+      "address": "甘肃省兰州市城关区仿真路 1 号",
+      "items_total": 59.9,
+      "shipping_fee": 8,
+      "points_deduct": 0,
+      "points_used": 0,
+      "pay_amount": 67.9,
+      "currency": "CNY",
+      "remark": "仿真订单 · 测试用",
+      "cancel_reason": null,
+      "paid_at": "2026-11-14 09:30:00.000000",
+      "completed_at": "2026-11-16 10:00:00.000000",
+      "cancelled_at": null,
+      "idempotency_key": "sim-791550fc",
+      "idempotency_payload_hash": "fcc9d61e-45e4-4c9b-949a-ff31b54f9536",
+      "id": "9e33cf31-8b13-4aff-b0c6-f3e80706067b",
+      "created_at": "2026-11-14 09:30:00.000000",
+      "updated_at": "2026-11-14 09:30:00.000000",
+      "store_orders": [
+        {
+          "store_order_no": "SIM-TS20261114F4C448",
+          "order_id": "9e33cf31-8b13-4aff-b0c6-f3e80706067b",
+          "store_id": "ae566118-8c1c-43f2-863b-18338f117ba1",
+          "status": "completed",
+          "items_total": 59.9,
+          "shipping_fee": 8,
+          "pay_amount": 67.9,
+          "refund_amount": 0,
+          "shipped_at": "2026-11-15 10:00:00.000000",
+          "completed_at": "2026-11-16 10:00:00.000000",
+          "id": "edf91e47-f5b0-46d5-b472-b850b0ceb710",
+          "created_at": "2026-11-14 09:30:00.000000",
+          "updated_at": "2026-11-14 09:30:00.000000",
+          "items": [
+            {
+              "store_order_id": "edf91e47-f5b0-46d5-b472-b850b0ceb710",
+              "sku_id": "1bb15c4a-dcc1-41e9-b36a-177b68b3f4db",
+              "product_id": "a42ef7bb-693f-4f28-b00c-f59584207d73",
+              "title": "SIM-在售·静宁红富士苹果",
+              "spec": "5kg 标准装",
+              "image_url": "/uploads/demo/products/jingning-apple-1.webp",
+              "unit_price": 59.9,
+              "quantity": 1,
+              "subtotal": 59.9,
+              "id": "b22b1e0f-4caa-4f80-acc5-1137726d90e2"
+            }
+          ],
+          "shipments": [
+            {
+              "store_order_id": "edf91e47-f5b0-46d5-b472-b850b0ceb710",
+              "carrier": "顺丰速运",
+              "tracking_no": "SIMSF73C0D316-0",
+              "status": "delivered",
+              "shipped_by": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+              "shipped_at": "2026-11-15 10:00:00.000000",
+              "delivered_at": "2026-11-16 10:00:00.000000",
+              "id": "75fcedde-8d18-497b-b78c-6538b67cf93c",
+              "created_at": "2026-11-15 10:00:00.000000",
+              "updated_at": "2026-11-15 10:00:00.000000"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "refunds": [
+    {
+      "refund_no": "SIM-RF07F9B0E6",
+      "order_id": "1bb7ba53-a282-45ce-b449-fc257d5c7c26",
+      "store_order_id": "744097ba-9a96-41aa-b5db-f05fb764fe36",
+      "amount": 77.9,
+      "reason": "仿真：商品与描述不符，申请退款",
+      "status": "requested",
+      "requested_by": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+      "handled_by": null,
+      "handled_at": null,
+      "result_note": null,
+      "id": "f59bd881-6b70-4574-9398-84e96ab9f3f2",
+      "created_at": "2026-11-23 10:00:00.000000",
+      "updated_at": "2026-11-23 10:00:00.000000"
+    },
+    {
+      "refund_no": "SIM-RFC7D01F6D",
+      "order_id": "e23faa61-b915-446d-86b3-74429bfc9dc8",
+      "store_order_id": "742334f5-2db5-4791-8368-25a5bed5d8b8",
+      "amount": 67.9,
+      "reason": "仿真：坏果申请退款",
+      "status": "refunded",
+      "requested_by": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+      "handled_by": "ac42c0af-e5a4-45a3-99fc-15eb012b2ab5",
+      "handled_at": "2026-11-18 10:00:00.000000",
+      "result_note": "核实符合退款条件，已原路退回（仿真）",
+      "id": "f731c40f-f44f-44eb-b2ea-e7fe5b77f96c",
+      "created_at": "2026-11-18 10:00:00.000000",
+      "updated_at": "2026-11-18 10:00:00.000000"
+    },
+    {
+      "refund_no": "SIM-RFFF70E104",
+      "order_id": "9e33cf31-8b13-4aff-b0c6-f3e80706067b",
+      "store_order_id": "edf91e47-f5b0-46d5-b472-b850b0ceb710",
+      "amount": 67.9,
+      "reason": "仿真：无理由退货",
+      "status": "rejected",
+      "requested_by": "fabddfa8-9f9a-4a28-a490-d91fbe8ea6a2",
+      "handled_by": "ac42c0af-e5a4-45a3-99fc-15eb012b2ab5",
+      "handled_at": "2026-11-17 10:00:00.000000",
+      "result_note": "证据不足，维持原处理（仿真）",
+      "id": "b8c29714-1987-489a-b3d9-a1dd0352e9bd",
+      "created_at": "2026-11-17 10:00:00.000000",
+      "updated_at": "2026-11-17 10:00:00.000000"
+    }
+  ],
+  "cms_config": {}
+}

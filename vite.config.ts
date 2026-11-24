@@ -9,8 +9,13 @@ export default defineConfig(({ mode }) => {
   const proxyTarget =
     env.VITE_PROXY_TARGET || process.env.VITE_PROXY_TARGET || 'http://127.0.0.1:8000'
 
+  const isDemo = env.VITE_STATIC_DEMO === '1' || process.env.VITE_STATIC_DEMO === '1'
+  // GitHub Pages 项目站点部署在 /<repo>/ 子路径下；静态演示模式自动使用该 base。
+  const base = isDemo ? '/tanhui-longyuan/' : '/'
+
   return {
     plugins: [vue()],
+    base,
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

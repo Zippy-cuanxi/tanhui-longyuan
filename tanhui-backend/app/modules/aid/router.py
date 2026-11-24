@@ -1,6 +1,7 @@
 """助农服务 + 接口：消费者浏览、管理员维护与发布（内容为仿真数据）。"""
 import uuid
 from datetime import datetime
+from decimal import Decimal
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, ConfigDict, Field
@@ -8,11 +9,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Mapped, Session
 
 from app.core.database import get_db
-from app.core.deps import page_params, require_permissions
+from app.core.deps import get_current_user, page_params, require_permissions
 from app.core.errors import AppError
 from app.core.responses import ApiResponse, MoneyOut, PageOut, paginate
-from app.modules.aid.models import AidProject, Cooperative
+from app.modules.aid.models import AidDonation, AidProject, Cooperative
 from app.modules.audit import service as audit_service
+from app.modules.points import service as points_service
+from app.modules.users.models import User
 from app.core.base import utcnow
 
 # ---------------- Schema ----------------
@@ -44,6 +47,32 @@ class ReviewIn(BaseModel):
     action: str = Field(..., pattern="^(publish|offline)")
 
 
+class DonationIn(BaseModel):
+    amount: str = Field(..., max_length=20)
+    display_mode: str = Field("anonymous", pattern="^(anonymous|named)$")
+    display_name: str | None = Field(None, max_length=64)
+
+
+class DonationOut(BaseModel):
+    id: uuid.UUID
+    project_id: uuid.UUID
+    project_title: str | None = None
+    amount: MoneyOut
+    points_earned: int
+    display_mode: str
+    display_name: str | None = None
+    created_at: datetime
+    balance: int | None = None
+
+
+class ProjectDonationOut(BaseModel):
+    id: uuid.UUID
+    donor: str
+    display_mode: str
+    amount: MoneyOut
+    created_at: datetime
+
+
 # ---------------- 消费者 ----------------
 consumer_router = APIRouter(prefix="/aid", tags=["aid"])
 
@@ -63,6 +92,126 @@ def project_detail(project_id: uuid.UUID, db: Session = Depends(get_db)):
     if p is None or p.status != "published":
         raise AppError("NOT_FOUND", "项目不存在或未发布")
     return ApiResponse(data=ProjectOut.model_validate(p))
+
+
+@consumer_router.post(
+    "/projects/{project_id}/donations",
+    response_model=ApiResponse[DonationOut],
+    summary="资助助农项目（仿真支付，按 1 元 = 3 积分发放绿色积分）",
+)
+def create_donation(
+    project_id: uuid.UUID,
+    payload: DonationIn,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    project = db.get(AidProject, project_id)
+    if project is None or project.status != "published":
+        raise AppError("NOT_FOUND", "项目不存在或未发布")
+    try:
+        amount = Decimal(payload.amount).quantize(Decimal("0.01"))
+    except Exception:
+        raise AppError("VALIDATION_ERROR", "请输入有效的资助金额")
+    if not amount.is_finite() or amount <= 0:
+        raise AppError("VALIDATION_ERROR", "请输入有效的资助金额")
+
+    display_name = None
+    if payload.display_mode == "named":
+        display_name = (payload.display_name or "").strip() or user.email.split("@")[0]
+
+    donation = AidDonation(
+        user_id=user.id,
+        project_id=project.id,
+        amount=amount,
+        display_mode=payload.display_mode,
+        display_name=display_name,
+        points_earned=0,
+    )
+    db.add(donation)
+    db.flush()
+    transaction = points_service.award_for_donation(db, user.id, donation.id, amount)
+    donation.points_earned = transaction.amount if transaction else 0
+    project.raised_amount = Decimal(str(project.raised_amount or 0)) + amount
+    db.flush()
+    balance = points_service.get_balance(db, user.id)
+    return ApiResponse(
+        data=DonationOut(
+            id=donation.id,
+            project_id=project.id,
+            project_title=project.title,
+            amount=donation.amount,
+            points_earned=donation.points_earned,
+            display_mode=donation.display_mode,
+            display_name=donation.display_name,
+            created_at=donation.created_at,
+            balance=balance,
+        )
+    )
+
+
+@consumer_router.get(
+    "/donations/me",
+    response_model=ApiResponse[list[DonationOut]],
+    summary="我的助农资助记录",
+)
+def my_donations(
+    user: User = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    rows = db.execute(
+        select(AidDonation, AidProject.title)
+        .join(AidProject, AidDonation.project_id == AidProject.id)
+        .where(AidDonation.user_id == user.id)
+        .order_by(AidDonation.created_at.desc())
+        .limit(200)
+    ).all()
+    return ApiResponse(
+        data=[
+            DonationOut(
+                id=donation.id,
+                project_id=donation.project_id,
+                project_title=title,
+                amount=donation.amount,
+                points_earned=donation.points_earned,
+                display_mode=donation.display_mode,
+                display_name=donation.display_name,
+                created_at=donation.created_at,
+            )
+            for donation, title in rows
+        ]
+    )
+
+
+@consumer_router.get(
+    "/projects/{project_id}/donations",
+    response_model=ApiResponse[list[ProjectDonationOut]],
+    summary="项目资助名单（匿名展示）",
+)
+def project_donations(project_id: uuid.UUID, db: Session = Depends(get_db)):
+    project = db.get(AidProject, project_id)
+    if project is None or project.status != "published":
+        raise AppError("NOT_FOUND", "项目不存在或未发布")
+    donations = list(
+        db.execute(
+            select(AidDonation)
+            .where(AidDonation.project_id == project_id)
+            .order_by(AidDonation.created_at.desc())
+            .limit(50)
+        ).scalars()
+    )
+    return ApiResponse(
+        data=[
+            ProjectDonationOut(
+                id=donation.id,
+                donor="匿名爱心人士"
+                if donation.display_mode == "anonymous"
+                else (donation.display_name or "爱心用户"),
+                display_mode=donation.display_mode,
+                amount=donation.amount,
+                created_at=donation.created_at,
+            )
+            for donation in donations
+        ]
+    )
 
 
 # ---------------- 管理端 ----------------

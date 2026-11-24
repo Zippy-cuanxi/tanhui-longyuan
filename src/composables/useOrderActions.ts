@@ -31,6 +31,7 @@ export function useOrderActions(refresh: () => void | Promise<void>) {
       await orderApi.cancel(order.id, '买家取消')
       toast.show('订单已取消', 'success')
       await refresh()
+      window.dispatchEvent(new CustomEvent('points:changed'))
     } catch (error) {
       fail(error)
     }
@@ -47,6 +48,7 @@ export function useOrderActions(refresh: () => void | Promise<void>) {
       await orderApi.confirmReceipt(order.id)
       toast.show('已确认收货，订单完成', 'success')
       await refresh()
+      window.dispatchEvent(new CustomEvent('points:changed'))
     } catch (error) {
       fail(error)
     }

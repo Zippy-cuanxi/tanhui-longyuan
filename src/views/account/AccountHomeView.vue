@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import { orderApi } from '@/api'
-import type { Order } from '@/api/types'
-import { errorText } from '@/utils/format'
+import { aidApi, orderApi } from '@/api'
+import type { AidDonation, Order } from '@/api/types'
+import { errorText, formatDateTime, money } from '@/utils/format'
 import { useAuthStore } from '@/stores/auth'
 import { usePointsStore } from '@/stores/points'
 import { useOrderActions } from '@/composables/useOrderActions'
@@ -13,8 +13,11 @@ import StateBlock from '@/components/StateBlock.vue'
 const auth = useAuthStore()
 const points = usePointsStore()
 const recentOrders = ref<Order[]>([])
+const donations = ref<AidDonation[]>([])
 const loading = ref(true)
 const error = ref('')
+const donationsLoading = ref(true)
+const donationsError = ref('')
 const counts = reactive<Record<string, number>>({
   pending_payment: 0,
   paid: 0,
@@ -61,7 +64,23 @@ async function load(): Promise<void> {
   }
 }
 
-onMounted(load)
+async function loadDonations(): Promise<void> {
+  donationsLoading.value = true
+  donationsError.value = ''
+  try {
+    donations.value = await aidApi.myDonations()
+  } catch (err) {
+    donationsError.value = errorText(err)
+    donations.value = []
+  } finally {
+    donationsLoading.value = false
+  }
+}
+
+onMounted(() => {
+  load()
+  loadDonations()
+})
 </script>
 
 <template>
@@ -75,7 +94,7 @@ onMounted(load)
       <RouterLink to="/account/points" class="welcome-points">
         <span><AppIcon name="leaf" :size="20" />绿色积分</span>
         <strong>{{ points.balance === null ? '—' : points.balance }}</strong>
-        <small>绿豆</small>
+        <small>绿色积分</small>
       </RouterLink>
     </section>
 
@@ -117,6 +136,42 @@ onMounted(load)
           <p>还没有订单，去挑选几件陇原好物吧。</p>
           <RouterLink to="/products" class="outline-button small">去逛逛</RouterLink>
         </div>
+      </StateBlock>
+    </section>
+
+    <section class="account-section">
+      <header class="section-heading">
+        <h2>我的资助记录</h2>
+        <RouterLink to="/aid" class="more-link">
+          去支持助农 <AppIcon name="chevron-right" :size="14" />
+        </RouterLink>
+      </header>
+      <StateBlock
+        :loading="donationsLoading"
+        :error="donationsError"
+        :empty="!donationsLoading && !donationsError && !donations.length"
+        empty-text="暂无资助记录"
+        @retry="loadDonations"
+      >
+        <ul class="aid-record-list">
+          <li v-for="donation in donations" :key="donation.id">
+            <span class="aid-record-icon"><AppIcon name="heart" :size="18" /></span>
+            <div class="aid-record-main">
+              <strong>{{ donation.project_title || '助农项目' }}</strong>
+              <span>
+                {{ formatDateTime(donation.created_at) }} ·
+                {{ donation.display_mode === 'anonymous' ? '匿名资助' : '实名资助' }}
+              </span>
+            </div>
+            <div class="aid-record-value">
+              <em>¥{{ money(donation.amount) }}</em>
+              <small>+{{ donation.points_earned }} 绿色积分</small>
+            </div>
+            <RouterLink :to="`/aid/${donation.project_id}`" class="aid-record-link">
+              查看项目
+            </RouterLink>
+          </li>
+        </ul>
       </StateBlock>
     </section>
 

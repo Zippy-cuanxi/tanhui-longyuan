@@ -1,12 +1,13 @@
 """消费者侧用户接口：GET/PATCH /users/me、收货地址管理。"""
 import uuid
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.core.responses import ApiResponse
+from app.modules.catalog import storage
 from app.modules.users import service
 from app.modules.users.models import User
 from app.modules.users.schemas import (
@@ -36,6 +37,18 @@ def update_me(
     db: Session = Depends(get_db),
 ):
     profile = service.update_profile(db, user.id, payload)
+    return ApiResponse(data=ProfileOut.model_validate(profile))
+
+
+@router.post("/me/avatar", response_model=ApiResponse[ProfileOut], summary="上传个人头像")
+async def upload_avatar(
+    file: UploadFile = File(...),
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    data, filename = await storage.validate_and_read(file)
+    url = storage.get_storage().save(data, filename)
+    profile = service.update_profile(db, user.id, ProfileUpdateIn(avatar_url=url))
     return ApiResponse(data=ProfileOut.model_validate(profile))
 
 

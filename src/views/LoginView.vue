@@ -16,6 +16,10 @@ const mfaRequired = ref(false)
 const showPassword = ref(false)
 const loading = ref(false)
 const error = ref('')
+const emailRef = ref<HTMLInputElement | null>(null)
+const passwordRef = ref<HTMLInputElement | null>(null)
+const emailInvalid = ref(false)
+const passwordInvalid = ref(false)
 
 const redirect = computed(() =>
   typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/')
@@ -30,8 +34,12 @@ function fillDemo(): void {
 
 async function submit(): Promise<void> {
   error.value = ''
-  if (!email.value.trim() || !password.value) {
+  emailInvalid.value = !email.value.trim()
+  passwordInvalid.value = !password.value
+  if (emailInvalid.value || passwordInvalid.value) {
     error.value = '请填写邮箱和密码'
+    const target = emailInvalid.value ? emailRef.value : passwordRef.value
+    target?.focus()
     return
   }
   loading.value = true
@@ -43,6 +51,8 @@ async function submit(): Promise<void> {
     })
     router.replace(redirect.value)
   } catch (err) {
+    emailInvalid.value = false
+    passwordInvalid.value = false
     const code = (err as { code?: string }).code
     if (code === 'MFA_REQUIRED') {
       mfaRequired.value = true
@@ -59,14 +69,14 @@ async function submit(): Promise<void> {
 </script>
 
 <template>
-  <main class="auth-page" :style="{ backgroundImage: 'url(/assets/brand/login-bg.webp)' }">
+  <main class="auth-page" :style="{ backgroundImage: 'url(/images/backgrounds/login-bg.webp)' }">
     <div class="auth-overlay" />
     <RouterLink to="/" class="auth-back">
       <AppIcon name="chevron-left" :size="16" />返回商城
     </RouterLink>
 
     <section class="auth-brand">
-      <img src="/assets/brand/logo.png" alt="碳惠陇原" class="auth-logo" />
+      <img src="/images/logo/logo.png" alt="碳惠陇原" class="auth-logo" />
       <span class="eyebrow">GANSU GREEN COMMERCE</span>
       <h1>来自陇原的<br />自然好物</h1>
       <p>绿色生态 · 品质优选 · 助力乡村振兴</p>
@@ -86,22 +96,30 @@ async function submit(): Promise<void> {
         <label class="field">
           <span>邮箱</span>
           <input
+            ref="emailRef"
             v-model="email"
             type="email"
             autocomplete="username"
             maxlength="255"
             placeholder="请输入邮箱"
+            :aria-invalid="emailInvalid || undefined"
+            aria-describedby="login-error"
+            @input="emailInvalid = false"
           />
         </label>
         <label class="field">
           <span>密码</span>
           <span class="password-field">
             <input
+              ref="passwordRef"
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               autocomplete="current-password"
               maxlength="128"
               placeholder="请输入密码"
+              :aria-invalid="passwordInvalid || undefined"
+              aria-describedby="login-error"
+              @input="passwordInvalid = false"
             />
             <button
               type="button"
@@ -123,9 +141,14 @@ async function submit(): Promise<void> {
           />
         </label>
 
-        <p v-if="error" class="form-error">{{ error }}</p>
+        <p v-if="error" id="login-error" class="form-error" role="alert">{{ error }}</p>
 
-        <button class="primary-button full-button auth-submit" type="submit" :disabled="loading">
+        <button
+          class="primary-button full-button auth-submit"
+          :class="{ 'is-loading': loading }"
+          type="submit"
+          :disabled="loading"
+        >
           <span v-if="loading" class="mini-spinner" />
           {{ loading ? '登录中…' : '登录' }}
         </button>

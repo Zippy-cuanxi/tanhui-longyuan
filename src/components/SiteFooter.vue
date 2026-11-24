@@ -6,7 +6,7 @@ import AppIcon from './AppIcon.vue'
   <footer class="site-footer">
     <div class="footer-main">
       <div class="footer-brand">
-        <img src="/assets/brand/logo.png" alt="碳惠陇原" />
+        <img src="/images/logo/logo.png" alt="碳惠陇原" loading="lazy" decoding="async" />
         <p>绿色生态 · 品质优选 · 助力乡村振兴</p>
       </div>
       <div class="footer-links">
@@ -18,7 +18,7 @@ import AppIcon from './AppIcon.vue'
         </div>
         <div>
           <h3>了解我们</h3>
-          <RouterLink to="/brand">品牌故事</RouterLink>
+          <RouterLink to="/account/points">绿色积分</RouterLink>
           <RouterLink to="/aid">助农项目</RouterLink>
           <RouterLink to="/notices">平台公告</RouterLink>
         </div>

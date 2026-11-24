@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { logisticsApi, orderApi } from '@/api'
 import type { Order, Shipment } from '@/api/types'
 import { errorText, formatDateTime } from '@/utils/format'
+import { useRefreshOnFocus } from '@/composables/useRefreshOnFocus'
 import AppIcon from '@/components/AppIcon.vue'
 import OrderStatusTag from '@/components/OrderStatusTag.vue'
 import StateBlock from '@/components/StateBlock.vue'
@@ -34,6 +35,7 @@ async function load(): Promise<void> {
 }
 
 onMounted(load)
+useRefreshOnFocus(load)
 </script>
 
 <template>

@@ -4,13 +4,18 @@ import { errorText, formatDate, toDateInput } from '@/utils/format'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 import AppIcon from '@/components/AppIcon.vue'
+import UserAvatar from '@/components/UserAvatar.vue'
 import StateBlock from '@/components/StateBlock.vue'
 
 const auth = useAuthStore()
 const toast = useToastStore()
 const loading = ref(true)
 const saving = ref(false)
+const avatarUploading = ref(false)
+const avatarInput = ref<HTMLInputElement | null>(null)
 const error = ref('')
+
+const MAX_AVATAR_MB = 5
 
 const form = reactive({
   nickname: '',
@@ -41,6 +46,49 @@ async function load(): Promise<void> {
   }
 }
 
+function pickAvatar(): void {
+  avatarInput.value?.click()
+}
+
+async function onAvatarChange(event: Event): Promise<void> {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file) return
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    toast.show('仅支持 JPG、PNG、WebP 格式的图片', 'warning')
+    return
+  }
+  if (file.size > MAX_AVATAR_MB * 1024 * 1024) {
+    toast.show(`头像图片不能超过 ${MAX_AVATAR_MB}MB`, 'warning')
+    return
+  }
+  avatarUploading.value = true
+  try {
+    const updated = await auth.uploadAvatar(file)
+    form.avatar_url = updated.avatar_url || ''
+    toast.show('头像已更新', 'success')
+  } catch (err) {
+    toast.show(errorText(err), 'error', (err as { requestId?: string }).requestId)
+  } finally {
+    avatarUploading.value = false
+  }
+}
+
+async function removeAvatar(): Promise<void> {
+  if (!form.avatar_url || avatarUploading.value) return
+  avatarUploading.value = true
+  try {
+    await auth.updateProfile({ avatar_url: null })
+    form.avatar_url = ''
+    toast.show('已恢复默认头像', 'success')
+  } catch (err) {
+    toast.show(errorText(err), 'error', (err as { requestId?: string }).requestId)
+  } finally {
+    avatarUploading.value = false
+  }
+}
+
 async function submit(): Promise<void> {
   error.value = ''
   if (form.nickname.length > 64) {
@@ -49,10 +97,6 @@ async function submit(): Promise<void> {
   }
   if (form.bio.length > 255) {
     error.value = '个人简介不能超过 255 个字符'
-    return
-  }
-  if (form.avatar_url && !/^https?:\/\//.test(form.avatar_url)) {
-    error.value = '头像地址需以 http:// 或 https:// 开头'
     return
   }
   saving.value = true
@@ -91,7 +135,7 @@ onMounted(load)
 
     <template v-else-if="auth.user">
       <section class="profile-summary">
-        <span class="avatar large">{{ auth.avatarText }}</span>
+        <UserAvatar :url="form.avatar_url" :text="auth.avatarText" :size="58" />
         <div>
           <span class="eyebrow">ACCOUNT</span>
           <h3>{{ auth.displayName }}</h3>
@@ -135,10 +179,44 @@ onMounted(load)
               <span>生日</span>
               <input v-model="form.birthday" type="date" />
             </label>
-            <label class="field">
-              <span>头像图片地址（选填）</span>
-              <input v-model="form.avatar_url" maxlength="512" placeholder="https://…" />
-            </label>
+            <div class="field field-wide">
+              <span>头像</span>
+              <div class="avatar-editor">
+                <UserAvatar :url="form.avatar_url" :text="auth.avatarText" :size="72" />
+                <div class="avatar-editor-copy">
+                  <div class="avatar-editor-actions">
+                    <button
+                      type="button"
+                      class="outline-button small"
+                      :disabled="avatarUploading"
+                      @click="pickAvatar"
+                    >
+                      <span v-if="avatarUploading" class="mini-spinner dark" />
+                      {{ avatarUploading ? '上传中…' : '上传头像' }}
+                    </button>
+                    <button
+                      v-if="form.avatar_url"
+                      type="button"
+                      class="avatar-remove"
+                      :disabled="avatarUploading"
+                      @click="removeAvatar"
+                    >
+                      移除头像
+                    </button>
+                  </div>
+                  <small class="avatar-editor-hint">
+                    支持 JPG、PNG、WebP，单张不超过 {{ MAX_AVATAR_MB }}MB；上传后立即生效。
+                  </small>
+                </div>
+              </div>
+              <input
+                ref="avatarInput"
+                class="avatar-file-input"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                @change="onAvatarChange"
+              />
+            </div>
             <label class="field field-wide">
               <span>个人简介</span>
               <textarea
@@ -149,9 +227,6 @@ onMounted(load)
               />
             </label>
           </div>
-          <p class="muted-text">
-            当前未提供头像上传接口，可填写已存在的图片地址；留空则使用昵称首字头像。
-          </p>
         </section>
 
         <p v-if="error" class="form-error">{{ error }}</p>

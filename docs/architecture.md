@@ -66,7 +66,7 @@ views（页面）
 
 ## 7. 素材策略
 
-- 设计素材包 → `public/assets` 的 WebP/PNG（商品 900px 卡片 + 1200px 详情图；横幅 2000–2200px）。
+- 设计素材包2 → `public/images` 的 WebP/PNG（商品 900px 卡片 + 1200px 详情图；横幅 2000–2200px；Logo/分类图标为透明 PNG；4 张菜品图 WebP）。
 - 同一份商品图写入后端 `uploads/demo`，API 的 `cover_url/image_url` 指向上传路径，避免前端伪造图片字段。
 - 无 `cover_url` 时按商品名映射设计稿素材，代码中标注为视觉兜底。
 - 助农卡片、首页产地卡片从横幅中裁切，避开画面内的大字文案。

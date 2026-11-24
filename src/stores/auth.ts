@@ -18,6 +18,7 @@ export const useAuthStore = defineStore('auth', () => {
     () => profile.value?.nickname || user.value?.email?.split('@')[0] || '陇原用户'
   )
   const avatarText = computed(() => displayName.value.slice(0, 1).toUpperCase())
+  const avatarUrl = computed(() => profile.value?.avatar_url || '')
   const email = computed(() => user.value?.email || '')
 
   async function login(payload: { email: string; password: string; mfa_code?: string }) {
@@ -80,6 +81,12 @@ export const useAuthStore = defineStore('auth', () => {
     return updated
   }
 
+  async function uploadAvatar(file: File): Promise<Profile> {
+    const updated = await authApi.uploadAvatar(file)
+    profile.value = updated
+    return updated
+  }
+
   async function logout(): Promise<void> {
     try {
       if (tokenStorage.access) await authApi.logout()
@@ -118,11 +125,13 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     displayName,
     avatarText,
+    avatarUrl,
     email,
     login,
     register,
     fetchMe,
     updateProfile,
+    uploadAvatar,
     logout,
     clearLocal,
     bootstrap

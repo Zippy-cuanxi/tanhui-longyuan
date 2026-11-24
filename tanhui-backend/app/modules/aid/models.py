@@ -3,7 +3,7 @@ import uuid
 from decimal import Decimal
 from datetime import datetime
 
-from sqlalchemy import ForeignKey, Numeric, String, Text
+from sqlalchemy import ForeignKey, Integer, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.base import Base, TimestampMixin, UUIDPKMixin, utcnow
@@ -35,6 +35,22 @@ class AidProject(UUIDPKMixin, TimestampMixin, Base):
     status: Mapped[str] = mapped_column(String(16), default="draft", index=True)
     reviewed_by: Mapped[uuid.UUID | None] = mapped_column(GUID())
     published_at: Mapped[datetime | None] = mapped_column(UTCDatetime())
+
+
+class AidDonation(UUIDPKMixin, Base):
+    """用户对助农项目的资助记录（仿真支付，积分按 1 元 = 3 积分发放）。"""
+
+    __tablename__ = "aid_donations"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(GUID(), index=True)
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        GUID(), ForeignKey("aid_projects.id"), index=True
+    )
+    amount: Mapped[Decimal] = mapped_column(Amount())
+    display_mode: Mapped[str] = mapped_column(String(16), default="anonymous")
+    display_name: Mapped[str | None] = mapped_column(String(64))
+    points_earned: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(UTCDatetime(), default=utcnow)
 
 
 class AidRecord(UUIDPKMixin, Base):

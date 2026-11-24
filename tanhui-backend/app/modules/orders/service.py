@@ -344,7 +344,7 @@ def cancel_by_user(db: Session, user_id: uuid.UUID, order_id: uuid.UUID, reason:
     _do_cancel(db, order, reason=reason or "买家取消", operator_id=user_id)
     # 已扣绿豆返还
     if order.points_used > 0:
-        points_service.compensate(db, order.user_id, order.points_used, note="订单取消返还绿豆")
+        points_service.compensate(db, order.user_id, order.points_used, note="订单取消返还绿色积分")
     notify_service.notify(
         db, order.user_id, "order_cancelled",
         f"订单已取消 {order.order_no}", f"订单 {order.order_no} 已取消。"
@@ -469,7 +469,7 @@ def close_expired(db: Session) -> int:
     ).scalars():
         _do_cancel(db, order, reason="支付超时自动关闭", operator_id=None)
         if order.points_used > 0:
-            points_service.compensate(db, order.user_id, order.points_used, note="超时关闭返还绿豆")
+            points_service.compensate(db, order.user_id, order.points_used, note="超时关闭返还绿色积分")
         count += 1
     if count:
         db.commit()

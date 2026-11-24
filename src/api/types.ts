@@ -304,6 +304,32 @@ export interface AidProject {
   published_at?: string | null
 }
 
+export interface AidDonation {
+  id: string
+  project_id: string
+  project_title?: string | null
+  amount: string
+  points_earned: number
+  display_mode: 'anonymous' | 'named'
+  display_name?: string | null
+  created_at: string
+  balance?: number | null
+}
+
+export interface AidDonationInput {
+  amount: string
+  display_mode: 'anonymous' | 'named'
+  display_name?: string | null
+}
+
+export interface AidProjectDonation {
+  id: string
+  donor: string
+  display_mode: 'anonymous' | 'named'
+  amount: string
+  created_at: string
+}
+
 export interface GreenProfile {
   id: string
   product_id: string

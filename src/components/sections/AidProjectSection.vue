@@ -35,7 +35,7 @@ onMounted(load)
 <template>
   <section v-if="loading || project" class="cms-aid-card">
     <img
-      :src="assetUrl(project?.cover_url, '/assets/banners/aid-project.webp')"
+      :src="assetUrl(project?.cover_url, '/images/banners/aid-card-farmer.webp')"
       :alt="project?.title || '助农项目'"
     />
     <div class="cms-aid-copy">

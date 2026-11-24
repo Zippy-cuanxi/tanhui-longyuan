@@ -56,7 +56,7 @@ ERRORS: dict[str, ErrorDef] = {
     "REFUND_NOT_ALLOWED": ErrorDef("REFUND_NOT_ALLOWED", 409, "当前订单不允许申请退款"),
     "REFUND_EXCEED_LIMIT": ErrorDef("REFUND_EXCEED_LIMIT", 409, "退款金额超出可退限额"),
     # ---------- 积分 ----------
-    "POINTS_INSUFFICIENT": ErrorDef("POINTS_INSUFFICIENT", 409, "绿豆余额不足"),
+    "POINTS_INSUFFICIENT": ErrorDef("POINTS_INSUFFICIENT", 409, "绿色积分余额不足"),
     "POINTS_RULE_INVALID": ErrorDef("POINTS_RULE_INVALID", 409, "积分规则配置无效"),
     # ---------- 商家与店铺 ----------
     "STORE_REQUIRED": ErrorDef("STORE_REQUIRED", 400, "请指定操作的店铺(store_id)"),

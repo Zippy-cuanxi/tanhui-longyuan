@@ -25,7 +25,7 @@ from app.modules.points.models import (
 REDEMPTION_CATALOG: dict[str, dict] = {
     "coupon_5": {"name": "5元无门槛优惠券(Mock)", "points": 500},
     "coupon_10": {"name": "10元无门槛优惠券(Mock)", "points": 900},
-    "green_donation": {"name": "绿豆捐助助农项目(Mock)", "points": 100},
+    "green_donation": {"name": "绿色积分捐助助农项目(Mock)", "points": 100},
 }
 
 
@@ -92,14 +92,14 @@ def ensure_rules_seeded(db: Session) -> None:
     """幂等初始化积分规则（从 settings 读默认值【仿真】）。"""
     defaults = {
         "order_earn": {
-            "name": "订单完成发放绿豆",
+            "name": "订单完成发放绿色积分",
             "config": {
                 "enabled": settings.POINTS_EARN_ENABLED,
                 "rate": settings.POINTS_EARN_RATE,  # 每消费 1 元发 N 绿豆
             },
         },
         "deduct": {
-            "name": "下单绿豆抵扣",
+            "name": "下单绿色积分抵扣",
             "config": {
                 "enabled": settings.POINTS_DEDUCTION_ENABLED,
                 "rate": settings.POINTS_DEDUCT_RATE,  # N 绿豆 = 1 元
@@ -107,7 +107,7 @@ def ensure_rules_seeded(db: Session) -> None:
             },
         },
         "refund_reverse": {
-            "name": "退款冲正绿豆",
+            "name": "退款冲正绿色积分",
             "config": {
                 "enabled": settings.POINTS_REFUND_REVERSE_ENABLED,
                 "proportional": True,  # 按退款金额比例冲正
@@ -188,6 +188,27 @@ def award_for_order(db: Session, order) -> PointTransaction | None:
         idempotency_key=f"order_complete:{order.id}",
         rule_version_id=rule_version_id,
         note=f"订单 {order.order_no} 完成发放",
+    )
+
+
+def award_for_donation(
+    db: Session, user_id: uuid.UUID, donation_id: uuid.UUID, amount: Decimal
+) -> PointTransaction | None:
+    """助农资助发放绿色积分（1 元 = POINTS_DONATION_RATE 积分，幂等）。"""
+    rate = Decimal(str(settings.POINTS_DONATION_RATE))
+    points = int((Decimal(str(amount)) * rate).to_integral_value(rounding="ROUND_DOWN"))
+    if points <= 0:
+        return None
+    account = get_or_create_account(db, user_id)
+    return _apply(
+        db,
+        account,
+        type_="earn",
+        amount=points,
+        source_type="aid_donation",
+        source_id=donation_id,
+        idempotency_key=f"aid_donation:{donation_id}",
+        note=f"资助助农项目获得 {points} 绿色积分",
     )
 
 

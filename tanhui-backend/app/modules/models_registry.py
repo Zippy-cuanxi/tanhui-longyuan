@@ -4,7 +4,7 @@
 """
 # noqa: F401
 from app.modules.admin.models import SystemSetting
-from app.modules.aid.models import AidProject, AidRecord, Cooperative
+from app.modules.aid.models import AidDonation, AidProject, AidRecord, Cooperative
 from app.modules.audit.models import LoginLog, OperationLog, SecurityEvent
 from app.modules.auth.models import AuthSession
 from app.modules.cart.models import Cart, CartItem
