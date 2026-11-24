@@ -34,6 +34,8 @@
   --radius-xl: 28px;
   --container: 1280px;
   --header: 82px;
+  /* 吸顶元素（如产地筛选条）的 top 偏移：顶栏隐藏时归零，避免悬在半空压住内容 */
+  --header-offset: var(--header);
   --font-body:
     'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', 'Source Han Sans SC', system-ui,
     -apple-system, sans-serif;
@@ -511,6 +513,10 @@ textarea {
 }
 .site-header.header-hidden {
   transform: translate3d(0, -100%, 0);
+}
+/* 顶栏收起时同步吸顶偏移，让吸附元素贴住视口顶部，不再悬空覆盖正文 */
+html.header-hidden {
+  --header-offset: 0px;
 }
 @media (prefers-reduced-motion: reduce) {
   .site-header {

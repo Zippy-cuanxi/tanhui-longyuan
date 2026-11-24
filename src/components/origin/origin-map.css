@@ -524,10 +524,10 @@
   }
 }
 
-/* 吸顶产地条（与顶栏 sticky 衔接） */
+/* 吸顶产地条（与顶栏 sticky 衔接；顶栏收起时 top 归零，见 main.css --header-offset） */
 .origin-filter-bar {
   position: sticky;
-  top: var(--header);
+  top: var(--header-offset, var(--header));
   z-index: 40;
   display: flex;
   align-items: center;
@@ -540,6 +540,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
+  transition: top 0.3s ease;
 }
 .origin-filter-chip {
   flex: none;

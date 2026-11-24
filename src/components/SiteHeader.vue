@@ -39,6 +39,11 @@ let upTravel = 0
 let scrollTicking = false
 let scrollFrame = 0
 
+/* 顶栏收起/展开时同步给 <html>，供吸顶元素用 --header-offset 贴边 */
+watch(headerHidden, (hidden) => {
+  document.documentElement.classList.toggle('header-hidden', hidden)
+})
+
 const RECENT_SEARCH_KEY = 'tanhui_recent_searches'
 const MAX_RECENT_SEARCHES = 10
 const discoveryTerms: Array<{ term: string; hot?: boolean }> = [
@@ -336,6 +341,7 @@ onMounted(() => {
   }, 60000)
 })
 onBeforeUnmount(() => {
+  document.documentElement.classList.remove('header-hidden')
   document.removeEventListener('pointerdown', handleDocumentPointerDown)
   window.removeEventListener('focus', handleWindowFocus)
   window.removeEventListener('scroll', onWindowScroll)
