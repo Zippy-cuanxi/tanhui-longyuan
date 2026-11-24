@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { assetUrl } from '@/api/http'
 import { useConsoleAuth } from '@/console/stores/auth'
 import ConsoleMockPanel from './ConsoleMockPanel.vue'
 import ConsoleNoticeBell from './ConsoleNoticeBell.vue'
@@ -16,6 +17,29 @@ const auth = useConsoleAuth()
 const roleLabel = computed(() => (auth.isMerchant ? '商家后台' : '管理后台'))
 const group = computed(() => String(route.meta.group || ''))
 const title = computed(() => String(route.meta.title || ''))
+
+/** 头像兜底：登录态里存的地址可能为空、带旧部署前缀或已失效，统一回落到内置头像。 */
+const defaultAvatar = computed(() =>
+  assetUrl(
+    auth.isMerchant
+      ? '/console-assets/images/avatar-merchant.png'
+      : '/console-assets/images/avatar-admin.png'
+  )
+)
+const avatarFailed = ref(false)
+watch(
+  () => auth.avatar,
+  () => {
+    avatarFailed.value = false
+  }
+)
+const avatarSrc = computed(() => {
+  if (avatarFailed.value) return defaultAvatar.value
+  return assetUrl(auth.avatar) || defaultAvatar.value
+})
+function onAvatarError(): void {
+  avatarFailed.value = true
+}
 
 async function onCommand(command: string): Promise<void> {
   if (command === 'home') {
@@ -58,7 +82,7 @@ function refresh(): void {
       <ConsoleNoticeBell />
       <el-dropdown trigger="click" @command="onCommand">
         <button type="button" class="console-topbar-user">
-          <img :src="auth.avatar" :alt="auth.accountName" />
+          <img :src="avatarSrc" :alt="auth.accountName" @error="onAvatarError" />
           <span>{{ auth.displayName }}</span>
           <el-icon><ArrowDown /></el-icon>
         </button>

@@ -3,6 +3,7 @@
  * 只映射桥接权威实体共有的字段；mock 独有字段由调用方保留原值。
  */
 import { assetUrl } from '@/api/http'
+import { productFallbackImage } from '@/utils/format'
 import type {
   Aftersale,
   Announcement,
@@ -69,15 +70,18 @@ export function mapOrder(
     buyerPhone: str(raw.receiver_phone),
     buyerEmail: '',
     address: str(raw.address),
-    items: itemsRaw.map((item, index) => ({
-      id: str(item.id, `${mockId}-i${index + 1}`),
-      productId: str(item.product_id),
-      title: str(item.title, '商品'),
-      spec: str(item.spec, '默认规格'),
-      price: str(item.unit_price, '0.00'),
-      quantity: Number(item.quantity) || 1,
-      image: str(item.image_url)
-    })),
+    items: itemsRaw.map((item, index) => {
+      const itemTitle = str(item.title, '商品')
+      return {
+        id: str(item.id, `${mockId}-i${index + 1}`),
+        productId: str(item.product_id),
+        title: itemTitle,
+        spec: str(item.spec, '默认规格'),
+        price: str(item.unit_price, '0.00'),
+        quantity: Number(item.quantity) || 1,
+        image: str(item.image_url) || productFallbackImage(itemTitle)
+      }
+    }),
     itemsTotal: str(raw.items_total, '0.00'),
     shippingFee: str(raw.shipping_fee, '0.00'),
     payAmount: str(raw.pay_amount, '0.00'),
@@ -106,14 +110,17 @@ export function mapProduct(raw: Record<string, unknown>, fallback: Partial<Produ
   const imagesRaw = Array.isArray(raw.images) ? (raw.images as Record<string, unknown>[]) : []
   const skusRaw = Array.isArray(raw.skus) ? (raw.skus as Record<string, unknown>[]) : []
   const price = str(raw.min_price, '') || str(skusRaw[0]?.price, '') || fallback.price || '0.00'
-  const cover = str(raw.cover_url) || fallback.cover || ''
+  const title = str(raw.title, '商品')
+  // 后端商品常常没有封面（cover_url 为空），直接留空会让列表退化成占位图。
+  // 这里按商品名兜底到内置产地实拍图，保证后台与演示画面始终有图。
+  const cover = str(raw.cover_url) || fallback.cover || productFallbackImage(title)
 
   return {
     id: mockId,
     merchantId: fallback.merchantId || '',
     storeId: str(raw.store_id),
     storeName: str(raw.store_name, fallback.storeName || ''),
-    title: str(raw.title, '商品'),
+    title,
     subtitle: str(raw.subtitle, fallback.subtitle || ''),
     categoryId: str(raw.category_id, fallback.categoryId || ''),
     categoryName: fallback.categoryName || '',

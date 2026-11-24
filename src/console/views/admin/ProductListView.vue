@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { assetUrl } from '@/api/http'
+import { productFallbackImage } from '@/utils/format'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -24,6 +25,17 @@ const auth = useConsoleAuth()
 const router = useRouter()
 const canRemove = computed(() => auth.can('product:remove') || auth.can('*'))
 const canApprove = computed(() => auth.can('product:approve') || auth.can('*'))
+
+/** 缩略图兜底：封面缺失或加载失败时，按商品名回落到内置产地实拍图。 */
+const brokenThumbs = ref<string[]>([])
+function rowCover(row: Product): string {
+  const fallback = productFallbackImage(row.title)
+  if (brokenThumbs.value.includes(row.id)) return fallback
+  return row.cover ? assetUrl(row.cover) : fallback
+}
+function onThumbError(row: Product): void {
+  if (!brokenThumbs.value.includes(row.id)) brokenThumbs.value = [...brokenThumbs.value, row.id]
+}
 
 const query = reactive({
   keyword: '',
@@ -52,6 +64,15 @@ const activeId = ref('')
 const removeVisible = ref(false)
 const removeTarget = ref<Product | null>(null)
 const acting = ref(false)
+
+/** 详情抽屉图集：统一补 base 前缀，缺图时回落到内置实拍图。 */
+const detailImages = computed<string[]>(() => {
+  const current = detail.value
+  if (!current) return []
+  const source = current.images?.length ? current.images : current.cover ? [current.cover] : []
+  const list = source.map((item) => assetUrl(item)).filter(Boolean)
+  return list.length ? list : [productFallbackImage(current.title)]
+})
 
 const tabs = computed(() => [
   { label: '全部', value: 'all', count: counts.value.all },
@@ -324,10 +345,7 @@ onMounted(() => {
 
       <template #product="{ row }">
         <div class="console-product-cell">
-          <img
-            :src="row.cover || assetUrl('/console-assets/images/image-empty.png')"
-            :alt="row.title"
-          />
+          <img :src="rowCover(row)" :alt="row.title" @error="onThumbError(row)" />
           <div>
             <strong>{{ row.title }}</strong>
             <span>{{ row.subtitle || '—' }}</span>
@@ -400,10 +418,10 @@ onMounted(() => {
           <h4>商品信息</h4>
           <div class="console-detail-images">
             <el-image
-              v-for="(image, index) in detail.images.length ? detail.images : [detail.cover]"
+              v-for="(image, index) in detailImages"
               :key="image + index"
               :src="image"
-              :preview-src-list="detail.images.length ? detail.images : [detail.cover]"
+              :preview-src-list="detailImages"
               fit="cover"
               style="width: 96px; height: 96px; border-radius: 8px"
               preview-teleported

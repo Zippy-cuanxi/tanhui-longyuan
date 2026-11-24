@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { assetUrl } from '@/api/http'
+import { productFallbackImage } from '@/utils/format'
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import ConsolePageHeader from '@/console/components/ConsolePageHeader.vue'
@@ -23,10 +24,30 @@ const error = ref('')
 const requestId = ref('')
 const drawerVisible = ref(false)
 const active = ref<Product | null>(null)
+
+/** 详情图集：统一补 base 前缀，缺图时回落到内置实拍图。 */
+const activeImages = computed<string[]>(() => {
+  const current = active.value
+  if (!current) return []
+  const source = current.images?.length ? current.images : current.cover ? [current.cover] : []
+  const list = source.map((item) => assetUrl(item)).filter(Boolean)
+  return list.length ? list : [productFallbackImage(current.title)]
+})
 const acting = ref(false)
 const rejectVisible = ref(false)
 
 const isChange = (product: Product): boolean => Boolean(product.change?.length)
+
+/** 缩略图兜底：封面缺失或加载失败时，按商品名回落到内置产地实拍图。 */
+const brokenThumbs = ref<string[]>([])
+function rowCover(row: Product): string {
+  const fallback = productFallbackImage(row.title)
+  if (brokenThumbs.value.includes(row.id)) return fallback
+  return row.cover ? assetUrl(row.cover) : fallback
+}
+function onThumbError(row: Product): void {
+  if (!brokenThumbs.value.includes(row.id)) brokenThumbs.value = [...brokenThumbs.value, row.id]
+}
 
 const rows = computed(() => {
   const word = keyword.value.trim().toLowerCase()
@@ -196,10 +217,7 @@ onMounted(load)
     >
       <template #product="{ row }">
         <div class="console-product-cell">
-          <img
-            :src="row.cover || assetUrl('/console-assets/images/image-empty.png')"
-            :alt="row.title"
-          />
+          <img :src="rowCover(row)" :alt="row.title" @error="onThumbError(row)" />
           <div>
             <strong>{{ row.title }}</strong>
             <span>{{ row.subtitle || '—' }}</span>
@@ -265,10 +283,10 @@ onMounted(load)
           <h4>商品图片</h4>
           <div class="console-detail-images">
             <el-image
-              v-for="(image, index) in active.images.length ? active.images : [active.cover]"
+              v-for="(image, index) in activeImages"
               :key="image + index"
               :src="image"
-              :preview-src-list="active.images.length ? active.images : [active.cover]"
+              :preview-src-list="activeImages"
               fit="cover"
               style="width: 96px; height: 96px; border-radius: 8px"
               preview-teleported

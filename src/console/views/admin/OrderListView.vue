@@ -376,7 +376,7 @@ onMounted(() => {
             <el-table-column label="商品" min-width="220">
               <template #default="{ row }">
                 <div class="console-product-cell small">
-                  <img :src="row.image" :alt="row.title" />
+                  <img :src="assetUrl(row.image)" :alt="row.title" />
                   <div>
                     <strong>{{ row.title }}</strong>
                     <span>{{ row.spec }}</span>

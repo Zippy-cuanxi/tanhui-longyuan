@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { assetUrl } from '@/api/http'
 import ConsolePageHeader from '@/console/components/ConsolePageHeader.vue'
 import ConsoleStatusTag from '@/console/components/ConsoleStatusTag.vue'
 import ConsoleMasked from '@/console/components/ConsoleMasked.vue'
@@ -144,7 +145,7 @@ onMounted(load)
               <el-table-column label="商品" min-width="240">
                 <template #default="{ row }">
                   <div class="console-product-cell">
-                    <img :src="row.image" :alt="row.title" />
+                    <img :src="assetUrl(row.image)" :alt="row.title" />
                     <div>
                       <strong>{{ row.title }}</strong>
                       <span>{{ row.spec }}</span>

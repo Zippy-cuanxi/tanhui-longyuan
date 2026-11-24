@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { assetUrl } from '@/api/http'
+import { productFallbackImage } from '@/utils/format'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -18,6 +19,17 @@ import { toErrorState } from '@/console/utils/errors'
 const auth = useConsoleAuth()
 const router = useRouter()
 const merchantId = computed(() => auth.merchantAccount?.id || '')
+
+/** 缩略图兜底：封面缺失或加载失败时，按商品名回落到内置产地实拍图。 */
+const brokenThumbs = ref<string[]>([])
+function rowCover(row: Product): string {
+  const fallback = productFallbackImage(row.title)
+  if (brokenThumbs.value.includes(row.id)) return fallback
+  return row.cover ? assetUrl(row.cover) : fallback
+}
+function onThumbError(row: Product): void {
+  if (!brokenThumbs.value.includes(row.id)) brokenThumbs.value = [...brokenThumbs.value, row.id]
+}
 
 const query = reactive({
   keyword: '',
@@ -298,10 +310,7 @@ onMounted(() => {
 
       <template #product="{ row }">
         <div class="console-product-cell">
-          <img
-            :src="row.cover || assetUrl('/console-assets/images/image-empty.png')"
-            :alt="row.title"
-          />
+          <img :src="rowCover(row)" :alt="row.title" @error="onThumbError(row)" />
           <div>
             <strong>{{ row.title }}</strong>
             <span>{{ row.subtitle || '—' }}</span>

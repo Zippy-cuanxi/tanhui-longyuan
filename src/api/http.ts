@@ -298,25 +298,47 @@ export async function requestRaw<T>(
   }
 }
 
+/** 站点静态资源根目录，用于把历史遗留的部署前缀还原成根相对路径。 */
+const STATIC_ROOTS = ['/console-assets/', '/images/', '/geo/', '/assets/', '/uploads/']
+
+/**
+ * 把路径还原成站点根相对（以已知静态根截断）。
+ * 有些数据会被写进 localStorage 持久化（商品封面、头像等），如果当时处于
+ * /tanhui-longyuan/ 子路径部署，存下来的就是带前缀的绝对路径；换到 base 为 /
+ * 的开发环境就会 404。这里统一剥离旧前缀，保证 assetUrl 幂等。
+ */
+function toRootRelative(path: string): string {
+  let cut = -1
+  for (const root of STATIC_ROOTS) {
+    const index = path.indexOf(root)
+    // 已是最靠前的静态根（如 /console-assets/...），本身就是根相对，直接返回，
+    // 否则 /console-assets/images/x 会被 /images/ 二次截断成 /images/x。
+    if (index === 0) return path
+    if (index > 0 && (cut === -1 || index < cut)) cut = index
+  }
+  return cut === -1 ? path : path.slice(cut)
+}
+
 export function assetUrl(path?: string | null, fallback = ''): string {
   if (!path) return fallback
   if (/^(https?:)?\/\//.test(path) || path.startsWith('data:') || path.startsWith('blob:')) {
     return path
   }
-  if (path.startsWith('/uploads')) return `${FILE_BASE}${path}`
+  const relative = toRootRelative(path.startsWith('/') ? path : `/${path}`)
+  if (relative.startsWith('/uploads')) return `${FILE_BASE}${relative}`
   // 站点静态资源：补上部署 base（GitHub Pages 项目站点为 /<repo>/ 子路径）
   if (
-    path.startsWith('/images/') ||
-    path.startsWith('/console-assets/') ||
-    path.startsWith('/geo/') ||
-    path.startsWith('/assets/')
+    relative.startsWith('/images/') ||
+    relative.startsWith('/console-assets/') ||
+    relative.startsWith('/geo/') ||
+    relative.startsWith('/assets/')
   ) {
     const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
-    return `${base}${path}`
+    return `${base}${relative}`
   }
-  if (path.startsWith('/assets')) return path
-  if (path.startsWith('/')) return path
-  return `${FILE_BASE}/${path}`
+  if (relative.startsWith('/assets')) return relative
+  if (relative.startsWith('/')) return relative
+  return `${FILE_BASE}/${relative}`
 }
 
 const CMS_CACHE_PREFIX = 'tanhui_cms_'
