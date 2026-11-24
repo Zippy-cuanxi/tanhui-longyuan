@@ -78,13 +78,13 @@ const originalSkuSignature = ref('')
 const imageDialog = ref(false)
 
 const imageOptions = [
-  assetUrl('/console-assets/images/apple.png'),
-  assetUrl('/console-assets/images/potato.png'),
-  assetUrl('/console-assets/images/melon.png'),
-  assetUrl('/console-assets/images/goji.png'),
-  assetUrl('/console-assets/images/jujube.png'),
-  assetUrl('/console-assets/images/lily.png'),
-  assetUrl('/console-assets/images/danggui.png')
+  assetUrl('/console-assets/images/apple.webp'),
+  assetUrl('/console-assets/images/potato.webp'),
+  assetUrl('/console-assets/images/melon.webp'),
+  assetUrl('/console-assets/images/goji.webp'),
+  assetUrl('/console-assets/images/jujube.webp'),
+  assetUrl('/console-assets/images/lily.webp'),
+  assetUrl('/console-assets/images/danggui.webp')
 ]
 
 const rules: FormRules = {

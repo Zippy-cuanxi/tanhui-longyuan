@@ -58,13 +58,13 @@ const DB_VERSION = 3
 const DAY = 24 * 60 * 60 * 1000
 const NOW = Date.now()
 const IMG = {
-  apple: assetUrl('/console-assets/images/apple.png'),
-  potato: assetUrl('/console-assets/images/potato.png'),
-  melon: assetUrl('/console-assets/images/melon.png'),
-  goji: assetUrl('/console-assets/images/goji.png'),
-  jujube: assetUrl('/console-assets/images/jujube.png'),
-  lily: assetUrl('/console-assets/images/lily.png'),
-  danggui: assetUrl('/console-assets/images/danggui.png'),
+  apple: assetUrl('/console-assets/images/apple.webp'),
+  potato: assetUrl('/console-assets/images/potato.webp'),
+  melon: assetUrl('/console-assets/images/melon.webp'),
+  goji: assetUrl('/console-assets/images/goji.webp'),
+  jujube: assetUrl('/console-assets/images/jujube.webp'),
+  lily: assetUrl('/console-assets/images/lily.webp'),
+  danggui: assetUrl('/console-assets/images/danggui.webp'),
   merchant: assetUrl('/console-assets/images/avatar-merchant.png'),
   admin: assetUrl('/console-assets/images/avatar-admin.png')
 }

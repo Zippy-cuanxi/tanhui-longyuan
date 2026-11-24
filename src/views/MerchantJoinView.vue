@@ -187,7 +187,7 @@ async function submit(): Promise<void> {
 <template>
   <main class="page-main join-page">
     <section class="join-hero">
-      <img class="join-hero-img" :src="assetUrl('/images/join/join-hero.png')" alt="" aria-hidden="true" />
+      <img class="join-hero-img" :src="assetUrl('/images/join/join-hero.webp')" alt="" aria-hidden="true" />
       <div class="join-hero-inner">
         <h1>商家入驻</h1>
         <p>加入碳惠陇原 · 把甘肃好物卖向万家餐桌</p>

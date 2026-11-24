@@ -51,7 +51,13 @@ const browser = await chromium.launch({ channel: 'msedge', headless: true })
 async function scan(page, routes, label, ignore = []) {
   for (const route of routes) {
     const failed = []
-    const onFail = (r) => failed.push(`REQFAIL ${r.url()} :: ${r.failure()?.errorText}`)
+    const soft = []
+    const onFail = (r) => {
+      const msg = `${r.url()} :: ${r.failure()?.errorText}`
+      // ERR_ABORTED 多为元素重渲染/切页取消，不代表资源缺失
+      if (/ERR_ABORTED/.test(msg)) soft.push(msg)
+      else failed.push('REQFAIL ' + msg)
+    }
     const onResp = (r) => {
       // GitHub Pages 对 SPA 深链接返回 404 状态 + 404.html 内容，属预期，不算失败
       if (r.request().resourceType() === 'document') return
@@ -62,9 +68,10 @@ async function scan(page, routes, label, ignore = []) {
     await page
       .goto(BASE + route, { waitUntil: 'networkidle', timeout: 45000 })
       .catch((e) => failed.push('GOTO ' + e.message))
-    // 触发懒加载，并等待所有图片解码完成（线上大图较慢，避免误判）
+    // 等页面异步数据渲染出图片，再触发懒加载并等待解码完成（线上大图较慢，避免误判）
+    await page.waitForTimeout(1500)
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight)).catch(() => {})
-    await page.waitForTimeout(300)
+    await page.waitForTimeout(400)
     await page.evaluate(() => window.scrollTo(0, 0)).catch(() => {})
     await page
       .waitForFunction(() => Array.from(document.images).every((im) => im.complete), null, {

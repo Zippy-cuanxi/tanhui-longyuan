@@ -9,7 +9,7 @@
  */
 import type {
   PageData, Product, ProductDetail, CartItem, Order,
-  Preview, Address, TokenPair
+  Preview, Address, TokenPair, AidProject
 } from './types'
 import type { MerchantApplyResult } from './index'
 
@@ -34,11 +34,11 @@ interface Snapshot {
 let snap: Snapshot | null = null
 let loading: Promise<Snapshot> | null = null
 
-/** 把站点根相对的图片路径（/images/...）补上部署 base（GitHub Pages 子路径）。 */
+/** 把站点根相对的图片路径（/images/...、/uploads/...）补上部署 base（GitHub Pages 子路径）。 */
 function withBaseUrls<T>(value: T): T {
   const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
   const fix = (v: unknown): unknown => {
-    if (typeof v === 'string' && /^\/images\//.test(v)) return `${base}${v}`
+    if (typeof v === 'string' && /^\/(images|uploads)\//.test(v)) return `${base}${v}`
     if (Array.isArray(v)) return v.map(fix)
     if (v && typeof v === 'object') {
       const out: Record<string, unknown> = {}
@@ -184,14 +184,34 @@ export async function demoRequest<T>(path: string, options: { method?: string; b
       link_type: 'internal', link_url: b.link_url || '/products'
     })) as unknown as T
   }
-  if (pathname === '/aid/projects' && method === 'GET') {
-    return s.aid_projects.map((a) => ({
-      id: a.id, cooperative_id: a.cooperative_id, title: a.title,
-      cover_url: a.cover_url || null, description: a.description || null,
+  // ---- 助农项目：列表按分页结构返回，详情按单对象返回（与真实后端对齐）----
+  function toAidProject(a: Record<string, unknown>): AidProject {
+    return {
+      id: String(a.id),
+      cooperative_id: a.cooperative_id ? String(a.cooperative_id) : '',
+      title: String(a.title),
+      cover_url: a.cover_url ? String(a.cover_url) : null,
+      description: a.description ? String(a.description) : null,
       goal_amount: a.goal_amount != null ? money(Number(a.goal_amount)) : null,
-      raised_amount: money(Number(a.raised_amount)), status: a.status,
+      raised_amount: money(Number(a.raised_amount)),
+      status: String(a.status || 'published'),
       published_at: a.published_at ? String(a.published_at).replace(' ', 'T') + 'Z' : null
-    })) as unknown as T
+    }
+  }
+  if (pathname === '/aid/projects' && method === 'GET') {
+    return paginate(
+      (s.aid_projects || []).map(toAidProject),
+      Number(query.get('page') || 1),
+      Number(query.get('page_size') || 12)
+    ) as unknown as T
+  }
+  const aidProjectMatch = pathname.match(/^\/aid\/projects\/([^/]+)$/)
+  if (aidProjectMatch && method === 'GET') {
+    const project = (s.aid_projects || []).find(
+      (a) => String(a.id) === decodeURIComponent(aidProjectMatch[1])
+    )
+    if (!project) throw new Error('助农项目不存在或已下线')
+    return toAidProject(project) as unknown as T
   }
   const greenMatch = pathname.match(/^\/green\/products\/([^/]+)$/)
   if (greenMatch && method === 'GET') {
