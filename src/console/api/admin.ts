@@ -548,14 +548,31 @@ export const adminApi = {
       }
     })
     const backendId = toUuid(id)
+    let syncInfo: Pick<Product, 'syncStatus' | 'syncAttempts' | 'syncError' | 'syncMessage'> = {}
     if (backendId !== id) {
-      const result = await bridgeRequest(`/admin/products/${backendId}/audit`, {
+      const result = await bridgeRequest<{
+        data?: {
+          sync_status?: string
+          sync_attempts?: number
+          sync_error?: string
+          sync_message?: string
+        }
+      }>(`/admin/products/${backendId}/audit`, {
         method: 'POST',
         body: { action, reason: reason?.trim() || undefined },
         role: 'admin'
       })
       if (!result.ok)
         throw new MockApiError('BACKEND_ERROR', `后端商品审核失败（HTTP ${result.status}）`)
+      const payload = result.data?.data
+      if (payload?.sync_status === 'success' || payload?.sync_status === 'failed') {
+        syncInfo = {
+          syncStatus: payload.sync_status,
+          syncAttempts: payload.sync_attempts,
+          syncError: payload.sync_error,
+          syncMessage: payload.sync_message
+        }
+      }
     }
     return mockCall(() => {
       const db = getDb()
@@ -592,7 +609,7 @@ export const adminApi = {
       product.auditedAt = now
       product.updatedAt = now
       saveDb()
-      return clone(product)
+      return clone({ ...product, ...syncInfo })
     })
   },
 

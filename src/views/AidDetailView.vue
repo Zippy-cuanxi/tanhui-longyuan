@@ -124,7 +124,10 @@ async function submitDonation(): Promise<void> {
 }
 
 async function loadProject(): Promise<void> {
-  project.value = await aidApi.detail(projectId.value)
+  const detail = await aidApi.detail(projectId.value)
+  // 接口异常时可能返回空值/空数组，这里统一按“项目不存在”处理，避免白屏
+  project.value = detail && !Array.isArray(detail) && detail.id ? detail : null
+  if (!project.value) throw new Error('助农项目不存在或已下线')
 }
 
 async function loadDonations(): Promise<void> {

@@ -93,7 +93,7 @@ async function approve(): Promise<void> {
   if (!active.value) return
   try {
     await ElMessageBox.confirm(
-      `确认审核通过「${active.value.title}」？通过后商家可手动上架，绿色资料同步通过。`,
+      `确认审核通过「${active.value.title}」？通过后将实时同步至消费者端商品库，商家可手动上架。`,
       '审核通过',
       { type: 'success', confirmButtonText: '审核通过' }
     )
@@ -102,8 +102,20 @@ async function approve(): Promise<void> {
   }
   acting.value = true
   try {
-    await adminApi.auditProduct(active.value.id, 'approve')
-    ElMessage.success('商品审核通过')
+    const product = await adminApi.auditProduct(active.value.id, 'approve')
+    if (product.syncStatus === 'failed') {
+      ElMessage({
+        type: 'warning',
+        duration: 6000,
+        message:
+          product.syncMessage ||
+          `商品审核已通过，但同步消费者端失败（已重试 ${product.syncAttempts ?? 3} 次）：${
+            product.syncError || '未知错误'
+          }`
+      })
+    } else {
+      ElMessage.success('商品审核通过，已同步至消费者端')
+    }
     drawerVisible.value = false
     await load()
   } catch (err) {

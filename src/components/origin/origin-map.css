@@ -542,6 +542,11 @@
   box-shadow: var(--shadow-sm);
   transition: top 0.3s ease;
 }
+@media (prefers-reduced-motion: reduce) {
+  .origin-filter-bar {
+    transition: none;
+  }
+}
 .origin-filter-chip {
   flex: none;
   padding: 7px 16px;

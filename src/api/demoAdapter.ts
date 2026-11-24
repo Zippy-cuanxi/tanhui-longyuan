@@ -37,8 +37,15 @@ let loading: Promise<Snapshot> | null = null
 /** 把站点根相对的图片路径（/images/...、/uploads/...）补上部署 base（GitHub Pages 子路径）。 */
 function withBaseUrls<T>(value: T): T {
   const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
+  const normalize = (v: string): string =>
+    v
+      .replace(/^\/uploads\/demo\/products\//, '/images/products/')
+      .replace(/^\/uploads\/demo\/banners\//, '/images/banners/')
+      .replace(/^\/uploads\/demo\/categories\//, '/assets/categories/')
   const fix = (v: unknown): unknown => {
-    if (typeof v === 'string' && /^\/(images|uploads)\//.test(v)) return `${base}${v}`
+    if (typeof v === 'string' && /^\/(images|assets|uploads)\//.test(v)) {
+      return `${base}${normalize(v)}`
+    }
     if (Array.isArray(v)) return v.map(fix)
     if (v && typeof v === 'object') {
       const out: Record<string, unknown> = {}
@@ -53,7 +60,7 @@ function withBaseUrls<T>(value: T): T {
 async function getSnapshot(): Promise<Snapshot> {
   if (snap) return snap
   if (!loading) {
-    loading = fetch(`${import.meta.env.BASE_URL || '/'}demo-data.json`)
+    loading = fetch(`${import.meta.env.BASE_URL || '/'}demo-data.json`, { cache: 'no-cache' })
       .then((r) => r.json())
       .then((data) => { snap = withBaseUrls<Snapshot>(data); return snap })
   }

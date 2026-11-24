@@ -167,6 +167,11 @@ export interface Product {
   auditedAt?: string
   auditRecords: AuditRecord[]
   change?: ProductChange[]
+  /** 审核通过后消费者端同步结果（真实后端返回，演示数据为空） */
+  syncStatus?: 'success' | 'failed'
+  syncAttempts?: number
+  syncError?: string
+  syncMessage?: string
   createdAt: string
   updatedAt: string
 }
