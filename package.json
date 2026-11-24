@@ -29,7 +29,7 @@
     "sim:data": "D:/Users/85046/anaconda3/python.exe scripts/generate_sim_data.py",
     "sim:verify": "node scripts/verify-sim-data.mjs",
     "snapshot:export": "D:/Users/85046/anaconda3/python.exe scripts/export_static_snapshot.py",
-    "build:demo": "VITE_STATIC_DEMO=1 vue-tsc --noEmit && VITE_STATIC_DEMO=1 vite build --outDir dist-demo --emptyOutDir false && cp dist-demo/index.html dist-demo/404.html"
+    "build:demo": "vue-tsc --noEmit && vite build --mode demo --outDir dist-demo --emptyOutDir false && node scripts/copy-404.mjs dist-demo"
   },
   "dependencies": {
     "@deck.gl/core": "^9.4.1",

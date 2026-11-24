@@ -200,7 +200,7 @@ onBeforeUnmount(() => {
 <template>
   <div
     class="console-login"
-    :style="{ backgroundImage: `url(assetUrl('/console-assets/images/login-bg.png'))` }"
+    :style="{ backgroundImage: `url(${assetUrl('/console-assets/images/login-bg.png')})` }"
   >
     <RouterLink to="/" class="console-login-brand" aria-label="返回碳惠陇原商城">
       <img :src="assetUrl('/images/logo/logo.png')" alt="碳惠陇原" />

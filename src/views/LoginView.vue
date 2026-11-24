@@ -70,7 +70,10 @@ async function submit(): Promise<void> {
 </script>
 
 <template>
-  <main class="auth-page" :style="{ backgroundImage: 'url(/images/backgrounds/login-bg.webp)' }">
+  <main
+    class="auth-page"
+    :style="{ backgroundImage: `url(${assetUrl('/images/backgrounds/login-bg.webp')})` }"
+  >
     <div class="auth-overlay" />
     <RouterLink to="/" class="auth-back">
       <AppIcon name="chevron-left" :size="16" />返回商城

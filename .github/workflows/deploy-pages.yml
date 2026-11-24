@@ -32,14 +32,9 @@ jobs:
 
       # 静态演示数据快照已随源码提交在 public/demo-data.json；
       # 如需从后端重新生成，可在本地执行 npm run snapshot:export 后提交。
+      # build:demo 内部已执行 Vue Router 的 404.html 回退复制（scripts/copy-404.mjs）
       - name: Build static demo
         run: npm run build:demo
-        env:
-          VITE_STATIC_DEMO: '1'
-
-      # GitHub Pages 对 SPA 深链接返回 404.html，复制 index.html 让 Vue Router 接管渲染
-      - name: Create SPA 404 fallback
-        run: cp dist-demo/index.html dist-demo/404.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
