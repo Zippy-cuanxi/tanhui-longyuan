@@ -25,7 +25,12 @@ function str(value: unknown, fallback = ''): string {
 }
 
 /** 后端 store order 详情 → 管理端 Order。prefix 区分真实订单(r)与演示订单(o)。 */
-export function mapOrder(raw: Record<string, unknown>, storeName: string, merchantId: string, prefix: 'o' | 'r' = 'r'): Order {
+export function mapOrder(
+  raw: Record<string, unknown>,
+  storeName: string,
+  merchantId: string,
+  prefix: 'o' | 'r' = 'r'
+): Order {
   const id = str(raw.id)
   const mockId = mockIdFor(id, prefix)
   const itemsRaw = Array.isArray(raw.items) ? (raw.items as Record<string, unknown>[]) : []
@@ -33,12 +38,26 @@ export function mapOrder(raw: Record<string, unknown>, storeName: string, mercha
   const shippedAt = raw.shipped_at ? toIso(str(raw.shipped_at)) : undefined
   const completedAt = raw.completed_at ? toIso(str(raw.completed_at)) : undefined
   const createdAt = toIso(str(raw.created_at))
-  const statusLogs: Order['statusLogs'] = [{ time: createdAt, action: 'create', status: 'pending_payment', operator: '买家' }]
+  const statusLogs: Order['statusLogs'] = [
+    { time: createdAt, action: 'create', status: 'pending_payment', operator: '买家' }
+  ]
   if (status !== 'pending_payment' && status !== 'cancelled') {
-    statusLogs.push({ time: createdAt, action: 'payment_success', status: 'paid', operator: '系统' })
+    statusLogs.push({
+      time: createdAt,
+      action: 'payment_success',
+      status: 'paid',
+      operator: '系统'
+    })
   }
-  if (shippedAt) statusLogs.push({ time: shippedAt, action: 'ship', status: 'shipped', operator: '商家' })
-  if (completedAt) statusLogs.push({ time: completedAt, action: 'confirm_receipt', status: 'completed', operator: '买家' })
+  if (shippedAt)
+    statusLogs.push({ time: shippedAt, action: 'ship', status: 'shipped', operator: '商家' })
+  if (completedAt)
+    statusLogs.push({
+      time: completedAt,
+      action: 'confirm_receipt',
+      status: 'completed',
+      operator: '买家'
+    })
 
   return {
     id: mockId,
@@ -132,7 +151,11 @@ export function mapProduct(raw: Record<string, unknown>, fallback: Partial<Produ
 }
 
 /** 后端 Refund → 管理端 Aftersale。 */
-export function mapAftersale(raw: Record<string, unknown>, storeName: string, merchantId: string): Aftersale {
+export function mapAftersale(
+  raw: Record<string, unknown>,
+  storeName: string,
+  merchantId: string
+): Aftersale {
   const id = str(raw.id)
   const mockId = mockIdFor(id, 'as')
   const statusMap: Record<string, Aftersale['status']> = {
@@ -211,7 +234,10 @@ function loadMap(): Record<string, string> {
 }
 
 /** 后端 MerchantOut → 管理端 MerchantAccount（状态词汇对齐管理端）。 */
-export function mapMerchant(raw: Record<string, unknown>, fallback: Partial<MerchantAccount> = {}): MerchantAccount {
+export function mapMerchant(
+  raw: Record<string, unknown>,
+  fallback: Partial<MerchantAccount> = {}
+): MerchantAccount {
   const id = str(raw.id)
   const mockId = mockIdFor(id, 'm')
   const statusMap: Record<string, MerchantAccount['status']> = {

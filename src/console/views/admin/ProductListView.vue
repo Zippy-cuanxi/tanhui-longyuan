@@ -324,7 +324,10 @@ onMounted(() => {
 
       <template #product="{ row }">
         <div class="console-product-cell">
-          <img :src="row.cover || assetUrl('/console-assets/images/image-empty.png')" :alt="row.title" />
+          <img
+            :src="row.cover || assetUrl('/console-assets/images/image-empty.png')"
+            :alt="row.title"
+          />
           <div>
             <strong>{{ row.title }}</strong>
             <span>{{ row.subtitle || '—' }}</span>

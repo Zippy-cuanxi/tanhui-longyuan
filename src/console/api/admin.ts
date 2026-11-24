@@ -431,7 +431,8 @@ export const adminApi = {
         body: { action, reason: reason?.trim() || undefined },
         role: 'admin'
       })
-      if (!result.ok) throw new MockApiError('BACKEND_ERROR', `后端审核失败（HTTP ${result.status}）`)
+      if (!result.ok)
+        throw new MockApiError('BACKEND_ERROR', `后端审核失败（HTTP ${result.status}）`)
     }
 
     return mockCall(() => {
@@ -553,7 +554,8 @@ export const adminApi = {
         body: { action, reason: reason?.trim() || undefined },
         role: 'admin'
       })
-      if (!result.ok) throw new MockApiError('BACKEND_ERROR', `后端商品审核失败（HTTP ${result.status}）`)
+      if (!result.ok)
+        throw new MockApiError('BACKEND_ERROR', `后端商品审核失败（HTTP ${result.status}）`)
     }
     return mockCall(() => {
       const db = getDb()
@@ -790,7 +792,8 @@ export const adminApi = {
         body: { action: action === 'refund' ? 'approve' : 'reject', note: reason.trim() },
         role: 'admin'
       })
-      if (!result.ok) throw new MockApiError('BACKEND_ERROR', `后端退款裁决失败（HTTP ${result.status}）`)
+      if (!result.ok)
+        throw new MockApiError('BACKEND_ERROR', `后端退款裁决失败（HTTP ${result.status}）`)
     }
     return mockCall(() => {
       const db = getDb()
@@ -971,7 +974,11 @@ export const adminApi = {
     // 新建公告：先在后端创建草稿，拿到 UUID 后建立 ID 映射，确保发布后消费者可见。
     const createResult = await bridgeRequest<{ data?: { id?: string }; code?: string }>(
       '/cms/announcements',
-      { method: 'POST', body: { title: input.title.trim(), content: input.content.trim() }, role: 'admin' }
+      {
+        method: 'POST',
+        body: { title: input.title.trim(), content: input.content.trim() },
+        role: 'admin'
+      }
     )
     const created = unwrap(createResult)
     if (created?.id) backendUuid = String(created.id)

@@ -387,7 +387,11 @@ onMounted(() => {
 
       <template #footer>
         <el-button @click="drawerVisible = false">关闭</el-button>
-        <template v-if="(active?.status === 'arbitrating' || active?.status === 'requested') && canArbitrate">
+        <template
+          v-if="
+            (active?.status === 'arbitrating' || active?.status === 'requested') && canArbitrate
+          "
+        >
           <el-button
             type="danger"
             plain

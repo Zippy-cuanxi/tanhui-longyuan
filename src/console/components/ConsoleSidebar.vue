@@ -58,7 +58,11 @@ function toOf(item: ConsoleMenuItem) {
   <aside class="console-sidebar" :class="{ collapsed }">
     <RouterLink to="/console" class="console-brand" aria-label="碳惠陇原后台">
       <img
-        :src="collapsed ? assetUrl('/console-assets/icons/points-green.svg') : assetUrl('/images/logo/logo.png')"
+        :src="
+          collapsed
+            ? assetUrl('/console-assets/icons/points-green.svg')
+            : assetUrl('/images/logo/logo.png')
+        "
         alt="碳惠陇原"
       />
     </RouterLink>
