@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -199,10 +200,10 @@ onBeforeUnmount(() => {
 <template>
   <div
     class="console-login"
-    :style="{ backgroundImage: `url('/console-assets/images/login-bg.png')` }"
+    :style="{ backgroundImage: `url(assetUrl('/console-assets/images/login-bg.png'))` }"
   >
     <RouterLink to="/" class="console-login-brand" aria-label="返回碳惠陇原商城">
-      <img src="/images/logo/logo.png" alt="碳惠陇原" />
+      <img :src="assetUrl('/images/logo/logo.png')" alt="碳惠陇原" />
       <div>绿色消费 · 助农增收<br />平台运营与商家服务工作台</div>
     </RouterLink>
 

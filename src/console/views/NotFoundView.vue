@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { useRouter } from 'vue-router'
 import { useConsoleAuth } from '@/console/stores/auth'
 
@@ -9,7 +10,7 @@ const auth = useConsoleAuth()
 <template>
   <section class="console-coming">
     <div class="console-coming-card">
-      <img src="/console-assets/images/error-404.png" alt="页面不存在" />
+      <img :src="assetUrl('/console-assets/images/error-404.png')" alt="页面不存在" />
       <h1>页面不存在</h1>
       <p>你访问的后台页面不存在，可能已被移除或链接有误。</p>
       <div class="console-inline-actions" style="margin-top: 12px">

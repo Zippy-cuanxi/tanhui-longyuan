@@ -2,6 +2,7 @@
  * 后端 DTO → 管理端 mock 类型的映射函数。
  * 只映射桥接权威实体共有的字段；mock 独有字段由调用方保留原值。
  */
+import { assetUrl } from '@/api/http'
 import type {
   Aftersale,
   Announcement,
@@ -238,7 +239,7 @@ export function mapMerchant(raw: Record<string, unknown>, fallback: Partial<Merc
     frozenReason: fallback.frozenReason,
     createdAt: toIso(str(raw.created_at)),
     reviewedAt: raw.reviewed_at ? toIso(str(raw.reviewed_at)) : undefined,
-    avatar: fallback.avatar || '/console-assets/images/avatar-merchant.png'
+    avatar: fallback.avatar || assetUrl('/console-assets/images/avatar-merchant.png')
   }
 }
 

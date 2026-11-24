@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { ElMessage } from 'element-plus'
 import { copyText } from '@/console/utils/format'
 
@@ -20,7 +21,7 @@ async function copyId(): Promise<void> {
 
 <template>
   <div class="console-state">
-    <img src="/console-assets/images/error-404.png" alt="加载失败" loading="lazy" />
+    <img :src="assetUrl('/console-assets/images/error-404.png')" alt="加载失败" loading="lazy" />
     <h3>加载失败</h3>
     <p>{{ message }}</p>
     <p v-if="requestId" class="console-mono">request_id: {{ requestId }}</p>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -14,9 +15,9 @@ const auth = useConsoleAuth()
 const status = computed(() => auth.merchantStatus || 'pending')
 const account = computed(() => auth.merchantAccount)
 const image = computed(() => {
-  if (status.value === 'rejected') return '/console-assets/images/state-rejected.png'
-  if (status.value === 'frozen') return '/console-assets/images/state-frozen.png'
-  return '/console-assets/images/state-pending.png'
+  if (status.value === 'rejected') return assetUrl('/console-assets/images/state-rejected.png')
+  if (status.value === 'frozen') return assetUrl('/console-assets/images/state-frozen.png')
+  return assetUrl('/console-assets/images/state-pending.png')
 })
 const title = computed(() => {
   if (status.value === 'rejected') return '入驻审核未通过'

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 withDefaults(
   defineProps<{
     image?: string
@@ -6,7 +7,7 @@ withDefaults(
     description?: string
   }>(),
   {
-    image: '/console-assets/images/empty-list.png',
+    image: assetUrl('/console-assets/images/empty-list.png'),
     title: '暂无数据',
     description: ''
   }

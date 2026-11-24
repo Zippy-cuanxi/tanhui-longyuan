@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { ref } from 'vue'
 import type { TableColumn } from './types'
 import ConsoleEmptyState from './ConsoleEmptyState.vue'
@@ -32,7 +33,7 @@ withDefaults(
     rowKey: 'id',
     selectable: false,
     emptyText: '暂无数据',
-    emptyImage: '/console-assets/images/empty-list.png',
+    emptyImage: assetUrl('/console-assets/images/empty-list.png'),
     emptyDescription: ''
   }
 )

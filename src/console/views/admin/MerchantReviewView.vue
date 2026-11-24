@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import ConsolePageHeader from '@/console/components/ConsolePageHeader.vue'
@@ -209,7 +210,7 @@ onMounted(load)
       :page-size="query.page_size"
       selectable
       empty-text="暂无待审核商家"
-      empty-image="/console-assets/images/state-pending.png"
+      :empty-image="assetUrl('/console-assets/images/state-pending.png')"
       empty-description="商家提交入驻资料后会进入审核队列。"
       @row-click="openDetail"
       @selection-change="onSelectionChange"

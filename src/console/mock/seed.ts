@@ -2,6 +2,7 @@
  * 所有列表 ≥ 20 条（特殊账号/角色/分类除外），覆盖主要状态。
  * 后续替换真实接口时，只需替换 src/console/api 下的实现，页面与类型不变。
  */
+import { assetUrl } from '@/api/http'
 import originHeat from '@/mocks/mock-origin-heat.json'
 import { ADMIN_ROLE_NAMES, ADMIN_ROLE_PERMISSIONS } from '@/console/constants/permissions'
 import { REFUND_REASONS, REJECT_REASONS } from '@/console/constants/labels'
@@ -57,20 +58,20 @@ const DB_VERSION = 3
 const DAY = 24 * 60 * 60 * 1000
 const NOW = Date.now()
 const IMG = {
-  apple: '/console-assets/images/apple.png',
-  potato: '/console-assets/images/potato.png',
-  melon: '/console-assets/images/melon.png',
-  goji: '/console-assets/images/goji.png',
-  jujube: '/console-assets/images/jujube.png',
-  lily: '/console-assets/images/lily.png',
-  danggui: '/console-assets/images/danggui.png',
-  merchant: '/console-assets/images/avatar-merchant.png',
-  admin: '/console-assets/images/avatar-admin.png'
+  apple: assetUrl('/console-assets/images/apple.png'),
+  potato: assetUrl('/console-assets/images/potato.png'),
+  melon: assetUrl('/console-assets/images/melon.png'),
+  goji: assetUrl('/console-assets/images/goji.png'),
+  jujube: assetUrl('/console-assets/images/jujube.png'),
+  lily: assetUrl('/console-assets/images/lily.png'),
+  danggui: assetUrl('/console-assets/images/danggui.png'),
+  merchant: assetUrl('/console-assets/images/avatar-merchant.png'),
+  admin: assetUrl('/console-assets/images/avatar-admin.png')
 }
 const SHOP_LOGOS = [
-  '/console-assets/images/shop-logo-1.png',
-  '/console-assets/images/shop-logo-2.png',
-  '/console-assets/images/shop-logo-3.png'
+  assetUrl('/console-assets/images/shop-logo-1.png'),
+  assetUrl('/console-assets/images/shop-logo-2.png'),
+  assetUrl('/console-assets/images/shop-logo-3.png')
 ]
 
 function iso(daysAgo = 0, hour = 10, minute = 0): string {

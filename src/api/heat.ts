@@ -58,6 +58,7 @@ export interface HeatData {
 }
 
 // 与 DataV GeoAtlas 对应的 GeoJSON 类型（properties.adcode 可能是数字或字符串）
+import { assetUrl } from '@/api/http'
 import type { Feature, FeatureCollection, Geometry } from 'geojson'
 
 export interface GeoFeatureProps {
@@ -95,7 +96,7 @@ const geoCache = new Map<string, Promise<GeoCollection>>()
 export function loadGeoJson(adcode: string): Promise<GeoCollection> {
   let pending = geoCache.get(adcode)
   if (!pending) {
-    pending = fetch(`/geo/${adcode}_full.json`)
+    pending = fetch(assetUrl(`/geo/${adcode}_full.json`))
       .then((res) => {
         if (!res.ok) throw new Error(`GeoJSON 加载失败：${adcode}（HTTP ${res.status}）`)
         return res.json() as Promise<GeoCollection>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import ConsolePageHeader from '@/console/components/ConsolePageHeader.vue'
@@ -176,14 +177,14 @@ onMounted(load)
       :page="1"
       :page-size="20"
       empty-text="审核队列已清空"
-      empty-image="/console-assets/images/state-pending.png"
+      :empty-image="assetUrl('/console-assets/images/state-pending.png')"
       empty-description="当前筛选下没有待审核商品。"
       @row-click="openDetail"
       @retry="load"
     >
       <template #product="{ row }">
         <div class="console-product-cell">
-          <img :src="row.cover || '/console-assets/images/image-empty.png'" :alt="row.title" />
+          <img :src="row.cover || assetUrl('/console-assets/images/image-empty.png')" :alt="row.title" />
           <div>
             <strong>{{ row.title }}</strong>
             <span>{{ row.subtitle || '—' }}</span>

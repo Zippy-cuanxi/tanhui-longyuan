@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
@@ -77,13 +78,13 @@ const originalSkuSignature = ref('')
 const imageDialog = ref(false)
 
 const imageOptions = [
-  '/console-assets/images/apple.png',
-  '/console-assets/images/potato.png',
-  '/console-assets/images/melon.png',
-  '/console-assets/images/goji.png',
-  '/console-assets/images/jujube.png',
-  '/console-assets/images/lily.png',
-  '/console-assets/images/danggui.png'
+  assetUrl('/console-assets/images/apple.png'),
+  assetUrl('/console-assets/images/potato.png'),
+  assetUrl('/console-assets/images/melon.png'),
+  assetUrl('/console-assets/images/goji.png'),
+  assetUrl('/console-assets/images/jujube.png'),
+  assetUrl('/console-assets/images/lily.png'),
+  assetUrl('/console-assets/images/danggui.png')
 ]
 
 const rules: FormRules = {

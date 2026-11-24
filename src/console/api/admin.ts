@@ -1,3 +1,4 @@
+import { assetUrl } from '@/api/http'
 import { appendLog, clone, getDb, saveDb } from '@/console/mock/db'
 import {
   MockApiError,
@@ -1415,7 +1416,7 @@ export const adminApi = {
         roleName: role.name,
         permissions: role.permissions,
         status: 'active',
-        avatar: '/console-assets/images/avatar-admin.png',
+        avatar: assetUrl('/console-assets/images/avatar-admin.png'),
         lastLoginAt: '—',
         createdAt: new Date().toISOString()
       }

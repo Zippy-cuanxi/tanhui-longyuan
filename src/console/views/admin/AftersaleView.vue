@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import ConsolePageHeader from '@/console/components/ConsolePageHeader.vue'
@@ -243,7 +244,7 @@ onMounted(() => {
       :page-size="query.page_size"
       selectable
       empty-text="暂无售后单"
-      empty-image="/console-assets/images/empty-orders.png"
+      :empty-image="assetUrl('/console-assets/images/empty-orders.png')"
       @row-click="openDetail"
       @selection-change="onSelectionChange"
       @update:page="

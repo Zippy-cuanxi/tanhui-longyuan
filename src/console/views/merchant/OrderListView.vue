@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -258,7 +259,7 @@ onMounted(load)
       :page-size="query.page_size"
       selectable
       empty-text="暂无订单"
-      empty-image="/console-assets/images/empty-orders.png"
+      :empty-image="assetUrl('/console-assets/images/empty-orders.png')"
       empty-description="新订单产生后会出现在这里。"
       @row-click="openDetail"
       @selection-change="onSelectionChange"

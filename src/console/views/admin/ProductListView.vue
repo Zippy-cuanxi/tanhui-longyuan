@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -299,7 +300,7 @@ onMounted(() => {
       :page-size="query.page_size"
       selectable
       empty-text="暂无商品"
-      empty-image="/console-assets/images/empty-goods.png"
+      :empty-image="assetUrl('/console-assets/images/empty-goods.png')"
       @row-click="openDetail"
       @selection-change="onSelectionChange"
       @update:page="
@@ -323,7 +324,7 @@ onMounted(() => {
 
       <template #product="{ row }">
         <div class="console-product-cell">
-          <img :src="row.cover || '/console-assets/images/image-empty.png'" :alt="row.title" />
+          <img :src="row.cover || assetUrl('/console-assets/images/image-empty.png')" :alt="row.title" />
           <div>
             <strong>{{ row.title }}</strong>
             <span>{{ row.subtitle || '—' }}</span>

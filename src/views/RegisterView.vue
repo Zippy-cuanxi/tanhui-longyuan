@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { errorText } from '@/utils/format'
@@ -74,7 +75,7 @@ async function submit(): Promise<void> {
     </RouterLink>
 
     <section class="auth-brand">
-      <img src="/images/logo/logo.png" alt="碳惠陇原" class="auth-logo" />
+      <img :src="assetUrl('/images/logo/logo.png')" alt="碳惠陇原" class="auth-logo" />
       <span class="eyebrow">JOIN TANHUI</span>
       <h1>把陇原好物<br />带回家</h1>
       <p>注册即可查看绿色积分、订单与助农项目。</p>

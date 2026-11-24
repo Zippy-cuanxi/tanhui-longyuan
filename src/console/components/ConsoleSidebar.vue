@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import type { ConsoleMenuGroup, ConsoleMenuItem } from '@/console/constants/menu'
@@ -45,7 +46,7 @@ function isActive(item: ConsoleMenuItem): boolean {
 
 function iconPath(item: ConsoleMenuItem): string {
   const active = isActive(item)
-  return `/console-assets/icons/${item.icon}-${active ? 'green' : 'gray'}.svg`
+  return assetUrl(`/console-assets/icons/${item.icon}-${active ? 'green' : 'gray'}.svg`)
 }
 
 function toOf(item: ConsoleMenuItem) {
@@ -57,7 +58,7 @@ function toOf(item: ConsoleMenuItem) {
   <aside class="console-sidebar" :class="{ collapsed }">
     <RouterLink to="/console" class="console-brand" aria-label="碳惠陇原后台">
       <img
-        :src="collapsed ? '/console-assets/icons/points-green.svg' : '/images/logo/logo.png'"
+        :src="collapsed ? assetUrl('/console-assets/icons/points-green.svg') : assetUrl('/images/logo/logo.png')"
         alt="碳惠陇原"
       />
     </RouterLink>

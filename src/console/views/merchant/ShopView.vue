@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { assetUrl } from '@/api/http'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
@@ -46,9 +47,9 @@ const profileRules: FormRules = {
 const profileSnapshot = ref('')
 
 const logoOptions = [
-  '/console-assets/images/shop-logo-1.png',
-  '/console-assets/images/shop-logo-2.png',
-  '/console-assets/images/shop-logo-3.png'
+  assetUrl('/console-assets/images/shop-logo-1.png'),
+  assetUrl('/console-assets/images/shop-logo-2.png'),
+  assetUrl('/console-assets/images/shop-logo-3.png')
 ]
 
 const templates = ref<ShippingTemplate[]>([])
