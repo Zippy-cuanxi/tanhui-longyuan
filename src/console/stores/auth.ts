@@ -1,8 +1,18 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { authApi } from '@/console/api/auth'
 import { hasPermission } from '@/console/constants/permissions'
 import type { ConsoleRole, ConsoleSession } from '@/console/api/types'
+
+/**
+ * 登录/刷新才用得到完整的管理端 mock 数据层（含 20KB+ 种子数据）。
+ * 这里改为按需动态加载，避免这些代码进入消费者商城首屏入口包。
+ */
+type AuthApiModule = typeof import('@/console/api/auth')
+let authApiPromise: Promise<AuthApiModule> | null = null
+function loadAuthApi(): Promise<AuthApiModule> {
+  if (!authApiPromise) authApiPromise = import('@/console/api/auth')
+  return authApiPromise
+}
 
 const SESSION_KEY = 'tanhui_console_session'
 const REMEMBER_KEY = 'tanhui_console_remember'
@@ -92,6 +102,7 @@ export const useConsoleAuth = defineStore('console-auth', () => {
     username: string,
     password: string
   ): Promise<ConsoleSession> {
+    const { authApi } = await loadAuthApi()
     const result = await authApi.login({ role: roleValue, username, password })
     session.value = result
     lastSync.value = Date.now()
@@ -101,6 +112,7 @@ export const useConsoleAuth = defineStore('console-auth', () => {
 
   async function logout(): Promise<void> {
     try {
+      const { authApi } = await loadAuthApi()
       await authApi.logout()
     } finally {
       session.value = null
@@ -118,6 +130,7 @@ export const useConsoleAuth = defineStore('console-auth', () => {
   async function refresh(): Promise<void> {
     if (!session.value) return
     try {
+      const { authApi } = await loadAuthApi()
       session.value = await authApi.me(session.value)
       lastSync.value = Date.now()
       persist()

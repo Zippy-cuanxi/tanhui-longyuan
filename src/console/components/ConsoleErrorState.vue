@@ -21,7 +21,7 @@ async function copyId(): Promise<void> {
 
 <template>
   <div class="console-state">
-    <img :src="assetUrl('/console-assets/images/error-404.png')" alt="加载失败" loading="lazy" />
+    <img :src="assetUrl('/console-assets/images/error-404.webp')" alt="加载失败" loading="lazy" />
     <h3>加载失败</h3>
     <p>{{ message }}</p>
     <p v-if="requestId" class="console-mono">request_id: {{ requestId }}</p>

@@ -36,31 +36,31 @@ const categoryDefs: CategoryDef[] = [
     key: 'fresh',
     label: '新鲜水果',
     categoryName: '水果生鲜',
-    linear: assetUrl('/images/categories/linear/fruit.png')
+    linear: assetUrl('/images/categories/linear/fruit.webp')
   },
   {
     key: 'grains',
     label: '粮油杂粮',
     categoryName: '粮油杂粮',
-    linear: assetUrl('/images/categories/linear/grains.png')
+    linear: assetUrl('/images/categories/linear/grains.webp')
   },
   {
     key: 'food',
     label: '特色食品',
     categoryName: '特色食品',
-    linear: assetUrl('/images/categories/linear/food.png')
+    linear: assetUrl('/images/categories/linear/food.webp')
   },
   {
     key: 'culture',
     label: '甘味文创',
     categoryName: '文创礼品',
-    linear: assetUrl('/images/categories/linear/culture.png')
+    linear: assetUrl('/images/categories/linear/culture.webp')
   },
   {
     key: 'points',
     label: '绿色积分',
     categoryName: '',
-    linear: assetUrl('/images/categories/linear/points.png'),
+    linear: assetUrl('/images/categories/linear/points.webp'),
     to: '/account/points'
   }
 ]

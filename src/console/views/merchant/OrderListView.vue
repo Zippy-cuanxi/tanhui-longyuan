@@ -259,7 +259,7 @@ onMounted(load)
       :page-size="query.page_size"
       selectable
       empty-text="暂无订单"
-      :empty-image="assetUrl('/console-assets/images/empty-orders.png')"
+      :empty-image="assetUrl('/console-assets/images/empty-orders.webp')"
       empty-description="新订单产生后会出现在这里。"
       @row-click="openDetail"
       @selection-change="onSelectionChange"

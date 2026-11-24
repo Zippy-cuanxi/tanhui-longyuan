@@ -35,30 +35,30 @@ const REGIONS: Record<string, string[]> = {
 }
 
 const STEPS = [
-  { icon: assetUrl('/images/join/step-1-fill.png'), title: '填写主体信息', hint: '约 10 分钟' },
-  { icon: assetUrl('/images/join/step-2-upload.png'), title: '上传资质证照', hint: '1-3 个工作日' },
-  { icon: assetUrl('/images/join/step-3-review.png'), title: '平台审核', hint: '审核结果短信通知' },
-  { icon: assetUrl('/images/join/step-4-success.png'), title: '入驻成功', hint: '开通店铺后台' }
+  { icon: assetUrl('/images/join/step-1-fill.webp'), title: '填写主体信息', hint: '约 10 分钟' },
+  { icon: assetUrl('/images/join/step-2-upload.webp'), title: '上传资质证照', hint: '1-3 个工作日' },
+  { icon: assetUrl('/images/join/step-3-review.webp'), title: '平台审核', hint: '审核结果短信通知' },
+  { icon: assetUrl('/images/join/step-4-success.webp'), title: '入驻成功', hint: '开通店铺后台' }
 ]
 
 const BENEFITS = [
   {
-    icon: assetUrl('/images/join/benefit-origin.png'),
+    icon: assetUrl('/images/join/benefit-origin.webp'),
     title: '源头直采',
     desc: '对接甘肃产地，汇聚特色农产'
   },
   {
-    icon: assetUrl('/images/join/benefit-cert.png'),
+    icon: assetUrl('/images/join/benefit-cert.webp'),
     title: '绿色认证',
     desc: '展示绿色食品认证，突出产品特色'
   },
   {
-    icon: assetUrl('/images/join/benefit-settle.png'),
+    icon: assetUrl('/images/join/benefit-settle.webp'),
     title: '结算保障',
     desc: '规范对账流程，保障商家结算'
   },
   {
-    icon: assetUrl('/images/join/benefit-logistics.png'),
+    icon: assetUrl('/images/join/benefit-logistics.webp'),
     title: '物流扶持',
     desc: '整合产地物流，助力农产品外运'
   }

@@ -21,9 +21,18 @@ from app.modules.orders.schemas import (
 )
 from app.modules.payments import service as payment_service
 from app.modules.payments.schemas import RefundOut
+from app.modules.points import service as points_service
 from app.modules.users.models import User
 
 router = APIRouter(prefix="/orders", tags=["orders"])
+
+
+def _order_out_with_points(db: Session, order: Order) -> OrderOut:
+    """订单详情附带绿色积分预计/已发放数量，供前端明确展示。"""
+    out = service.build_order_out(db, order)
+    out.points_estimate = points_service.estimate_for_order(db, order)
+    out.points_earned = points_service.earned_for_order(db, order)
+    return out
 
 
 @router.post("/preview", response_model=ApiResponse[PreviewOut], summary="订单预览（服务端计价）")
@@ -62,7 +71,7 @@ def my_orders(
     items, pagination = paginate(db, stmt, *page_size_pair)
     return ApiResponse(
         data=PageOut(
-            items=[service.build_order_out(db, o) for o in items], pagination=pagination
+            items=[_order_out_with_points(db, o) for o in items], pagination=pagination
         )
     )
 
@@ -74,7 +83,7 @@ def order_detail(
     db: Session = Depends(get_db),
 ):
     order = service._get_owned(db, user.id, order_id)
-    return ApiResponse(data=service.build_order_out(db, order))
+    return ApiResponse(data=_order_out_with_points(db, order))
 
 
 @router.post("/{order_id}/cancel", response_model=ApiResponse[OrderOut], summary="取消待支付订单")
@@ -99,7 +108,7 @@ def confirm_receipt(
     db: Session = Depends(get_db),
 ):
     order = service.confirm_receipt(db, user.id, order_id)
-    return ApiResponse(data=service.build_order_out(db, order))
+    return ApiResponse(data=_order_out_with_points(db, order))
 
 
 @router.post(

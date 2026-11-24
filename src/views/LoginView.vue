@@ -80,7 +80,7 @@ async function submit(): Promise<void> {
     </RouterLink>
 
     <section class="auth-brand">
-      <img :src="assetUrl('/images/logo/logo.png')" alt="碳惠陇原" class="auth-logo" />
+      <img :src="assetUrl('/images/logo/logo.webp')" alt="碳惠陇原" class="auth-logo" />
       <span class="eyebrow">GANSU GREEN COMMERCE</span>
       <h1>来自陇原的<br />自然好物</h1>
       <p>绿色生态 · 品质优选 · 助力乡村振兴</p>

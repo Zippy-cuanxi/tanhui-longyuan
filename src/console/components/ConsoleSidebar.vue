@@ -61,7 +61,7 @@ function toOf(item: ConsoleMenuItem) {
         :src="
           collapsed
             ? assetUrl('/console-assets/icons/points-green.svg')
-            : assetUrl('/images/logo/logo.png')
+            : assetUrl('/images/logo/logo.webp')
         "
         alt="碳惠陇原"
       />

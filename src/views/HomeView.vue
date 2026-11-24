@@ -20,14 +20,14 @@ const error = ref('')
 const cmsWarning = ref('')
 
 const quickDefs = [
-  { label: '新鲜水果', category: '水果生鲜', icon: assetUrl('/images/categories/flat/fruit.png') },
-  { label: '粮油杂粮', category: '粮油杂粮', icon: assetUrl('/images/categories/flat/grains.png') },
-  { label: '特色食品', category: '特色食品', icon: assetUrl('/images/categories/flat/food.png') },
-  { label: '甘味文创', category: '文创礼品', icon: assetUrl('/images/categories/flat/culture.png') },
+  { label: '新鲜水果', category: '水果生鲜', icon: assetUrl('/images/categories/flat/fruit.webp') },
+  { label: '粮油杂粮', category: '粮油杂粮', icon: assetUrl('/images/categories/flat/grains.webp') },
+  { label: '特色食品', category: '特色食品', icon: assetUrl('/images/categories/flat/food.webp') },
+  { label: '甘味文创', category: '文创礼品', icon: assetUrl('/images/categories/flat/culture.webp') },
   {
     label: '绿色积分',
     category: '',
-    icon: assetUrl('/images/categories/flat/points.png'),
+    icon: assetUrl('/images/categories/flat/points.webp'),
     to: '/account/points'
   }
 ]

@@ -210,7 +210,7 @@ onMounted(load)
       :page="1"
       :page-size="20"
       empty-text="审核队列已清空"
-      :empty-image="assetUrl('/console-assets/images/state-pending.png')"
+      :empty-image="assetUrl('/console-assets/images/state-pending.webp')"
       empty-description="当前筛选下没有待审核商品。"
       @row-click="openDetail"
       @retry="load"

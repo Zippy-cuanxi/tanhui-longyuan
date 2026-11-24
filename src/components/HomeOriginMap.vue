@@ -80,7 +80,10 @@ function walkCoords(coords: unknown, out: number[][]): void {
 }
 
 function projectPt(pt: number[]): [number, number] {
-  return project ? project(pt[0], pt[1]) : [0, 0]
+  const [x, y] = project ? project(pt[0], pt[1]) : [0, 0]
+  // 保留 0.1px 精度：视觉上不可分辨，但能大幅缩短 SVG path 字符串，
+  // 减少首屏 HTML/样式布局与解析开销（整页地图含数万个顶点）。
+  return [Math.round(x * 10) / 10, Math.round(y * 10) / 10]
 }
 
 function polyPath(poly: number[][][]): string {
@@ -190,7 +193,7 @@ function onKey(adcode: string, name: string, event: KeyboardEvent): void {
   }
 }
 
-onMounted(async () => {
+async function loadMap(): Promise<void> {
   try {
     const [collection, data] = await Promise.all([loadGeoJson('620000'), getHeatData()])
     if (disposed) return
@@ -206,10 +209,23 @@ onMounted(async () => {
   } catch (err) {
     console.error('[home-origin-map] 2D 地图加载失败', err)
   }
+}
+
+let mapRaf = 0
+let mapTimer = 0
+
+onMounted(() => {
+  // 地图在首屏下方，晚一帧构建即可；先让轮播/商品完成首次绘制，
+  // 避免数万个 SVG 顶点的解析与布局占用 LCP 的关键帧。
+  mapRaf = window.requestAnimationFrame(() => {
+    mapTimer = window.setTimeout(() => void loadMap(), 0)
+  })
 })
 
 onBeforeUnmount(() => {
   disposed = true
+  window.cancelAnimationFrame(mapRaf)
+  window.clearTimeout(mapTimer)
 })
 </script>
 

@@ -272,7 +272,7 @@ export function mapMerchant(
     frozenReason: fallback.frozenReason,
     createdAt: toIso(str(raw.created_at)),
     reviewedAt: raw.reviewed_at ? toIso(str(raw.reviewed_at)) : undefined,
-    avatar: fallback.avatar || assetUrl('/console-assets/images/avatar-merchant.png')
+    avatar: fallback.avatar || assetUrl('/console-assets/images/avatar-merchant.webp')
   }
 }
 

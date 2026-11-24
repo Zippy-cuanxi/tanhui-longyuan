@@ -170,7 +170,9 @@ def process_callback(db: Session, payload: dict, signature: str | None) -> dict:
         db.commit()
         return {"return_code": "FAIL", "reason": "ORDER_STATE_INVALID"}
 
-    # 5) 入账：支付单成功 + 渠道流水 + 订单状态机 + 台账 + （发货后积分另算）
+    # 5) 入账：支付单成功 + 渠道流水 + 订单状态机 + 台账 + 绿色积分发放
+    # 积分在支付成功即发放（幂等键 order_complete:{id}），确认收货重复调用不会重复发放；
+    # 退款时由 reverse_for_refund 按比例冲正。
     pay.status = "success"
     pay.trade_no = trade_no
     pay.paid_at = utcnow()
@@ -185,6 +187,7 @@ def process_callback(db: Session, payload: dict, signature: str | None) -> dict:
         )
     )
     order_service.mark_paid(db, order)
+    points_service.award_for_order(db, order)
 
     # 平台账流水【仿真佣金比例见 settings.COMMISSION_RATE】
     from app.modules.finance import service as finance_service

@@ -176,6 +176,7 @@ async function submit(): Promise<void> {
       // 订单已创建，购物车清理失败不阻断支付
     }
     toast.show('订单已创建，请完成支付', 'success')
+    window.dispatchEvent(new CustomEvent('points:changed'))
     router.push({ name: 'payment', params: { orderId: order.id } })
   } catch (err) {
     const code = (err as { code?: string }).code

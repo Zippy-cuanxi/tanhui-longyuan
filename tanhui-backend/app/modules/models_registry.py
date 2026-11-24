@@ -15,6 +15,13 @@ from app.modules.catalog.models import (
     ProductImage,
     ProductSku,
 )
+from app.modules.catalog.sync_models import (
+    ConsumerCategory,
+    ConsumerProduct,
+    ConsumerProductImage,
+    ConsumerProductSku,
+    ProductSyncLog,
+)
 from app.modules.finance.models import (
     MerchantSettlement,
     PlatformLedger,

@@ -66,40 +66,57 @@ async function scan(page, routes, label, ignore = []) {
     page.on('requestfailed', onFail)
     page.on('response', onResp)
     await page
-      .goto(BASE + route, { waitUntil: 'networkidle', timeout: 45000 })
+      .goto(BASE + route, { waitUntil: 'domcontentloaded', timeout: 60000 })
       .catch((e) => failed.push('GOTO ' + e.message))
-    // 等页面异步数据渲染出图片，再触发懒加载并等待解码完成（线上大图较慢，避免误判）
-    await page.waitForTimeout(1500)
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight)).catch(() => {})
-    await page.waitForTimeout(400)
-    await page.evaluate(() => window.scrollTo(0, 0)).catch(() => {})
+    // 等页面异步数据渲染出图片，再等待解码完成（线上大图较慢，避免误判）
+    await page.waitForTimeout(1200)
     await page
-      .waitForFunction(() => Array.from(document.images).every((im) => im.complete), null, {
-        timeout: 30000,
-      })
+      .waitForFunction(
+        () => Array.from(document.images).every((im) => im.complete && im.naturalWidth > 0),
+        null,
+        { timeout: 8000 }
+      )
       .catch(() => {})
     const imgs = await page.evaluate(() =>
       Array.from(document.images).map((im) => ({
         src: im.currentSrc || im.src,
-        complete: im.complete,
         w: im.naturalWidth,
       }))
     )
-    // complete 且 naturalWidth=0 → 确定失败；30s 后仍未 complete → 记为pending提示
-    const broken = imgs.filter((i) => i.complete && i.w === 0 && !ignore.some((p) => i.src.includes(p)))
-    const pending = imgs.filter((i) => !i.complete && !ignore.some((p) => i.src.includes(p)))
+    // naturalWidth=0 可能只是弱网下尚未解码，再用一次直连请求判定资源是否真的缺失
+    const suspects = imgs.filter((i) => i.w === 0 && !ignore.some((p) => i.src.includes(p)))
+    const broken = []
+    const slow = []
+    for (const s of suspects) {
+      const resp = await page.request.get(s.src).catch(() => null)
+      if (!resp || resp.status() >= 400) broken.push(s)
+      else slow.push(s)
+    }
     const hardFail = failed.filter((f) => !ignore.some((p) => f.includes(p)))
     results.push({ label, route, total: imgs.length, broken: broken.length, failed: hardFail.length })
     const mark = broken.length || hardFail.length ? 'FAIL' : 'PASS'
     console.log(
       `${mark} | ${label} ${route} | 图 ${imgs.length} 失败 ${broken.length} 请求失败 ${hardFail.length}` +
-        (pending.length ? ` 未完成 ${pending.length}` : '')
+        (slow.length ? ` 未解码 ${slow.length}` : '')
     )
     broken.slice(0, 6).forEach((b) => console.log('     BROKEN ' + b.src))
     hardFail.slice(0, 6).forEach((f) => console.log('     ' + f))
     page.off('requestfailed', onFail)
     page.off('response', onResp)
   }
+}
+
+/** 管理端登录：等表单就绪→切角色页签→填账号密码→等路由跳转 */
+async function login(page, tabName, account) {
+  await page.goto(`${BASE}/console/login`, { waitUntil: 'domcontentloaded', timeout: 60000 })
+  await page.getByPlaceholder('请输入账号').waitFor({ timeout: 30000 })
+  await page.getByRole('tab', { name: tabName }).click().catch(() => {})
+  await page.waitForTimeout(300)
+  await page.getByPlaceholder('请输入账号').fill(account)
+  await page.getByPlaceholder('请输入密码').fill('Demo@123456')
+  await page.getByRole('button', { name: /登.*录|登录/ }).first().click().catch(() => {})
+  await page.waitForURL(/\/console\/(admin|merchant)\//, { timeout: 30000 }).catch(() => {})
+  await page.waitForTimeout(800)
 }
 
 try {
@@ -110,28 +127,19 @@ try {
 
   // 管理端：admin_super
   const admin = await browser.newPage({ viewport: { width: 1440, height: 900 } })
-  await admin.goto(`${BASE}/console/login`, { waitUntil: 'networkidle' })
-  await admin.getByRole('tab', { name: '管理员登录' }).click().catch(() => {})
-  await admin.getByPlaceholder('请输入账号').fill('admin_super')
-  await admin.getByPlaceholder('请输入密码').fill('Demo@123456')
-  await admin.getByRole('button', { name: /登.*录|登录/ }).first().click().catch(() => {})
-  await admin.waitForTimeout(1500)
+  await login(admin, '管理员登录', 'admin_super')
+  console.log(`${admin.url().includes('/console/admin/') ? 'PASS' : 'FAIL'} | 管理员登录 -> ${admin.url()}`)
   await scan(admin, adminRoutes.slice(1), '管理端')
   const adminErrors = []
   admin.on('pageerror', (e) => adminErrors.push(e.message))
-  await admin.goto(`${BASE}/console/admin/dashboard`, { waitUntil: 'networkidle' })
+  await admin.goto(`${BASE}/console/admin/dashboard`, { waitUntil: 'domcontentloaded', timeout: 60000 })
   await admin.waitForTimeout(800)
   console.log(`管理端 JS 错误: ${adminErrors.length ? adminErrors.slice(0, 3).join(' | ') : '无'}`)
   await admin.close()
 
   // 商家端：merchant01
   const merchant = await browser.newPage({ viewport: { width: 1440, height: 900 } })
-  await merchant.goto(`${BASE}/console/login`, { waitUntil: 'networkidle' })
-  await merchant.getByRole('tab', { name: '商家登录' }).click().catch(() => {})
-  await merchant.getByPlaceholder('请输入账号').fill('merchant01')
-  await merchant.getByPlaceholder('请输入密码').fill('Demo@123456')
-  await merchant.getByRole('button', { name: /登.*录|登录/ }).first().click().catch(() => {})
-  await merchant.waitForTimeout(1500)
+  await login(merchant, '商家登录', 'merchant01')
   const loginOk = merchant.url().includes('/console/merchant/')
   console.log(`${loginOk ? 'PASS' : 'FAIL'} | 商家登录 -> ${merchant.url()}`)
   await scan(merchant, merchantRoutes, '商家端')

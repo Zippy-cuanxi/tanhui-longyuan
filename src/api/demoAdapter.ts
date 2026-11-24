@@ -75,6 +75,8 @@ function getSnapshot(): Promise<Snapshot> {
 const DEMO_CART_KEY = 'tanhui_demo_cart'
 const DEMO_ORDERS_KEY = 'tanhui_demo_orders'
 const DEMO_APPLY_KEY = 'tanhui_demo_apply'
+const DEMO_POINTS_KEY = 'tanhui_demo_points'
+const DEMO_DONATIONS_KEY = 'tanhui_demo_donations'
 const DEMO_TOKEN = 'demo.access.token'
 const DEMO_REFRESH = 'demo.refresh.token'
 const DEMO_USER_KEY = 'tanhui_demo_user'
@@ -99,6 +101,76 @@ function uid(prefix = 'd'): string {
 }
 function money(v: number): string {
   return v.toFixed(2)
+}
+
+interface DemoPointTxn {
+  id: string
+  type: string
+  amount: number
+  balance_after: number
+  source_type?: string | null
+  source_id?: string | null
+  note?: string | null
+  created_at: string
+}
+
+interface DemoPointState {
+  balance: number
+  transactions: DemoPointTxn[]
+}
+
+/** 当前演示用户 ID（与快照 point_accounts 对齐）。 */
+function demoUserId(s: Snapshot): string {
+  const email = String(
+    lsGet<{ email?: string }>(DEMO_USER_KEY, {}).email || s.users[0]?.email || ''
+  )
+  return String(s.users.find((u) => u.email === email)?.id || s.users[0]?.id || 'demo-user')
+}
+
+/** 积分账户保存在 localStorage，订单完成/助农资助/兑换都会持久化，刷新页面不丢失。 */
+function demoPointState(s: Snapshot): DemoPointState {
+  const existing = lsGet<DemoPointState | null>(DEMO_POINTS_KEY, null)
+  if (existing && typeof existing.balance === 'number') {
+    if (!Array.isArray(existing.transactions)) existing.transactions = []
+    return existing
+  }
+  const userId = demoUserId(s)
+  const seed = Number(s.point_accounts.find((p) => String(p.user_id) === userId)?.balance ?? 500)
+  const state: DemoPointState = {
+    balance: Number.isFinite(seed) ? seed : 500,
+    transactions: []
+  }
+  lsSet(DEMO_POINTS_KEY, state)
+  return state
+}
+
+function saveDemoPointState(state: DemoPointState): void {
+  lsSet(DEMO_POINTS_KEY, state)
+}
+
+function addDemoPoints(
+  s: Snapshot,
+  amount: number,
+  type: string,
+  note: string,
+  sourceType?: string,
+  sourceId?: string
+): DemoPointTxn {
+  const state = demoPointState(s)
+  state.balance = Math.max(0, state.balance + amount)
+  const txn: DemoPointTxn = {
+    id: uid('pt'),
+    type,
+    amount,
+    balance_after: state.balance,
+    source_type: sourceType || null,
+    source_id: sourceId || null,
+    note,
+    created_at: new Date().toISOString()
+  }
+  state.transactions.unshift(txn)
+  saveDemoPointState(state)
+  return txn
 }
 
 function paginate<T>(items: T[], page = 1, page_size = 6): PageData<T> {
@@ -397,21 +469,25 @@ export async function demoRequest<T>(
 
   // ---- 积分 ----
   if (pathname === '/points/account' && method === 'GET') {
-    const email = String(
-      lsGet<{ email?: string }>(DEMO_USER_KEY, {}).email || s.users[0]?.email || ''
-    )
-    const uidCur = s.users.find((u) => u.email === email)?.id || s.users[0]?.id
-    const bal = Number(s.point_accounts.find((p) => p.user_id === uidCur)?.balance || 500)
+    const state = demoPointState(s)
+    const earned = state.transactions
+      .filter((t) => t.amount > 0)
+      .reduce((sum, t) => sum + t.amount, 0)
+    const spent = state.transactions
+      .filter((t) => t.amount < 0)
+      .reduce((sum, t) => sum + Math.abs(t.amount), 0)
     return {
-      balance: bal,
-      total_earned: bal,
-      total_spent: 0,
+      balance: state.balance,
+      total_earned: earned,
+      total_spent: spent,
       updated_at: new Date().toISOString()
     } as unknown as T
   }
   if (pathname === '/points/transactions' && method === 'GET') {
+    const type = query.get('type_')
+    const items = demoPointState(s).transactions.filter((t) => !type || t.type === type)
     return paginate(
-      [],
+      items,
       Number(query.get('page') || 1),
       Number(query.get('page_size') || 20)
     ) as unknown as T
@@ -550,7 +626,7 @@ export async function demoRequest<T>(
   }
   if (pathname === '/orders' && method === 'GET') {
     const status = query.get('status')
-    let items = allOrders()
+    let items = allOrders().map(demoOrderPoints)
     if (status && status !== 'all') items = items.filter((o) => o.status === status)
     items = items.slice().sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
     return paginate(
@@ -559,11 +635,20 @@ export async function demoRequest<T>(
       Number(query.get('page_size') || 10)
     ) as unknown as T
   }
+  function demoOrderPoints(o: Order): Order {
+    const estimate = Math.max(0, Math.floor(Number(o.pay_amount) || 0))
+    const txn = demoPointState(s).transactions.find(
+      (t) => t.source_type === 'order_completion' && t.source_id === o.id
+    )
+    const earned = txn ? txn.amount : o.status === 'completed' ? estimate : 0
+    return { ...o, points_estimate: estimate, points_earned: earned }
+  }
+
   const orderMatch = pathname.match(/^\/orders\/([^/]+)$/)
   if (orderMatch && method === 'GET') {
     const o = allOrders().find((x) => x.id === decodeURIComponent(orderMatch[1]))
     if (!o) throw new Error('订单不存在')
-    return o as unknown as T
+    return demoOrderPoints(o) as unknown as T
   }
   const orderCancel = pathname.match(/^\/orders\/([^/]+)\/cancel$/)
   if (orderCancel && method === 'POST') {
@@ -576,6 +661,34 @@ export async function demoRequest<T>(
       lsSet(DEMO_ORDERS_KEY, extra)
     }
     return (o || null) as unknown as T
+  }
+  const orderConfirm = pathname.match(/^\/orders\/([^/]+)\/confirm-receipt$/)
+  if (orderConfirm && method === 'POST') {
+    const orderId = decodeURIComponent(orderConfirm[1])
+    const extra = lsGet<Order[]>(DEMO_ORDERS_KEY, [])
+    const o = extra.find((x) => x.id === orderId)
+    if (!o) {
+      const base = allOrders().find((x) => x.id === orderId)
+      if (base) return demoOrderPoints({ ...base, status: 'completed' }) as unknown as T
+      throw new Error('订单不存在')
+    }
+    const now = new Date().toISOString()
+    o.status = 'completed'
+    o.completed_at = now
+    o.store_orders.forEach((so) => {
+      so.status = 'completed'
+      so.completed_at = now
+    })
+    const estimate = Math.max(0, Math.floor(Number(o.pay_amount) || 0))
+    const existed = demoPointState(s).transactions.find(
+      (t) => t.source_type === 'order_completion' && t.source_id === o.id
+    )
+    const earned = existed
+      ? existed.amount
+      : addDemoPoints(s, estimate, 'earn', `订单 ${o.order_no} 完成发放`, 'order_completion', o.id)
+          .amount
+    lsSet(DEMO_ORDERS_KEY, extra)
+    return { ...o, points_estimate: estimate, points_earned: earned } as unknown as T
   }
   const refundMatch = pathname.match(/^\/orders\/([^/]+)\/refunds$/)
   if (refundMatch && method === 'POST') {
@@ -605,7 +718,7 @@ export async function demoRequest<T>(
     } as unknown as T
   }
   if (pathname === '/payments/mock/pay' && method === 'POST') {
-    // 把本地新单标记为已支付
+    // 把本地新单标记为已支付，并按 1 元 = 1 积分发放（幂等）
     const extra = lsGet<Order[]>(DEMO_ORDERS_KEY, [])
     extra.forEach((o) => {
       if (o.status === 'pending_payment') {
@@ -614,6 +727,20 @@ export async function demoRequest<T>(
         o.store_orders.forEach((so) => {
           so.status = 'paid'
         })
+        const existed = demoPointState(s).transactions.find(
+          (t) => t.source_type === 'order_completion' && t.source_id === o.id
+        )
+        if (!existed) {
+          const points = Math.max(0, Math.floor(Number(o.pay_amount) || 0))
+          addDemoPoints(
+            s,
+            points,
+            'earn',
+            `订单 ${o.order_no} 支付成功发放`,
+            'order_completion',
+            o.id
+          )
+        }
       }
     })
     lsSet(DEMO_ORDERS_KEY, extra)
@@ -655,18 +782,79 @@ export async function demoRequest<T>(
   if (pathname === '/merchant/merchants/me' && method === 'GET')
     return lsGet<MerchantApplyResult[]>(DEMO_APPLY_KEY, []) as unknown as T
 
-  // ---- 助农捐赠 / 积分兑换（模拟）----
-  if (pathname === '/aid/donations/me' && method === 'GET') return [] as unknown as T
-  if (pathname.match(/^\/aid\/projects\/[^/]+\/donations$/) && method === 'GET')
-    return [] as unknown as T
+  // ---- 助农捐赠 / 积分兑换（模拟并持久化到 localStorage）----
+  if (pathname === '/aid/donations/me' && method === 'GET')
+    return lsGet<Array<Record<string, unknown>>>(DEMO_DONATIONS_KEY, []) as unknown as T
+  if (pathname.match(/^\/aid\/projects\/[^/]+\/donations$/) && method === 'GET') {
+    const projectId = decodeURIComponent(pathname.split('/')[3] || '')
+    const items = lsGet<Array<Record<string, unknown>>>(DEMO_DONATIONS_KEY, [])
+      .filter((d) => String(d.project_id) === projectId)
+      .map((d) => ({
+        id: d.id,
+        donor: d.display_mode === 'named' ? d.display_name || '爱心人士' : '匿名爱心人士',
+        display_mode: d.display_mode,
+        amount: d.amount,
+        created_at: d.created_at
+      }))
+    return items as unknown as T
+  }
+  if (pathname.match(/^\/aid\/projects\/[^/]+\/donations$/) && method === 'POST') {
+    const projectId = decodeURIComponent(pathname.split('/')[3] || '')
+    const amount = Number(body.amount)
+    if (!Number.isFinite(amount) || amount <= 0) {
+      throw new Error('请输入有效的资助金额')
+    }
+    const project = s.aid_projects.find((p) => String(p.id) === projectId)
+    const points = Math.floor(amount * 3)
+    const donation = {
+      id: uid('don'),
+      project_id: projectId,
+      project_title: String(project?.title || '助农项目'),
+      amount: money(amount),
+      points_earned: points,
+      display_mode: body.display_mode === 'named' ? 'named' : 'anonymous',
+      display_name: body.display_name ? String(body.display_name) : null,
+      created_at: new Date().toISOString()
+    }
+    const all = lsGet<Array<Record<string, unknown>>>(DEMO_DONATIONS_KEY, [])
+    all.unshift(donation)
+    lsSet(DEMO_DONATIONS_KEY, all)
+    const txn = addDemoPoints(
+      s,
+      points,
+      'earn',
+      `资助助农项目获得 ${points} 绿色积分`,
+      'aid_donation',
+      donation.id
+    )
+    return { ...donation, balance: txn.balance_after } as unknown as T
+  }
+  // 兼容旧版 /donate 路径
   if (pathname.match(/^\/aid\/projects\/[^/]+\/donate$/) && method === 'POST') {
     return { id: uid('don'), points_earned: 10, mock: true } as unknown as T
   }
   if (pathname === '/points/redemptions' && method === 'POST') {
+    const code = String(body.reward_code || '')
+    const reward = s.point_catalog.find((r) => String(r.reward_code) === code)
+    const cost = Number(reward?.points || 500)
+    if (demoPointState(s).balance < cost) {
+      const error = new Error('绿色积分余额不足') as Error & { code?: string }
+      error.code = 'POINTS_INSUFFICIENT'
+      throw error
+    }
+    const txn = addDemoPoints(
+      s,
+      -cost,
+      'spend',
+      `兑换「${String(reward?.name || code)}」`,
+      'redemption'
+    )
     return {
-      id: uid('redeem'),
-      points_spent: 500,
+      reward_code: code,
+      reward_name: String(reward?.name || '演示权益'),
+      points_spent: cost,
       voucher_code: 'DEMO-2026',
+      balance: txn.balance_after,
       mock: true
     } as unknown as T
   }

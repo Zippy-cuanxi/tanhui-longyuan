@@ -148,10 +148,17 @@ def test_full_refund_flow_with_points_reversal(client):
     )
     assert resp.status_code == 200, resp.text
 
-    # 确认收货 → 订单完成 → 发放绿豆（99 元 → 99 绿豆，1元=1绿豆）
+    # 支付成功后绿色积分即到账（确认收货不会重复发放）
+    resp = client.get(f"/api/v1/orders/{order_id}", headers=headers)
+    assert resp.status_code == 200
+    assert resp.json()["data"]["points_estimate"] == 99
+    assert resp.json()["data"]["points_earned"] == 99
+
+    # 确认收货 → 订单完成；幂等，不会重复发放积分
     resp = client.post(f"/api/v1/orders/{order_id}/confirm-receipt", headers=headers)
     assert resp.status_code == 200, resp.text
     assert resp.json()["data"]["status"] == "completed"
+    assert resp.json()["data"]["points_earned"] == 99
 
     resp = client.get("/api/v1/points/account", headers=headers)
     assert resp.json()["data"]["balance"] == 99

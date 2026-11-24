@@ -65,6 +65,7 @@ export interface Sku {
   code?: string | null
   price: string
   is_active: boolean
+  stock?: number | null
 }
 
 export interface ProductImage {
@@ -207,6 +208,8 @@ export interface Order {
   shipping_fee: string
   points_deduct: string
   points_used: number
+  points_estimate?: number
+  points_earned?: number
   pay_amount: string
   currency: string
   remark?: string | null

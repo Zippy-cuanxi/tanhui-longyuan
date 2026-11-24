@@ -44,6 +44,14 @@ function act(type: string): void {
 
     <footer class="order-card-foot">
       <span class="order-count">共 {{ itemCount }} 件</span>
+      <span
+        v-if="
+          order.points_earned &&
+          !['refunding', 'refunded', 'partially_refunded', 'cancelled'].includes(order.status)
+        "
+        class="order-count"
+        >+{{ order.points_earned }} 绿色积分</span
+      >
       <span class="order-total"
         >实付 <strong>¥{{ money(order.pay_amount) }}</strong></span
       >

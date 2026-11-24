@@ -123,20 +123,20 @@ export const DESIGN_CATEGORY_ORDER = [
 
 export function categoryIcon(name?: string | null): string {
   const text = name || ''
-  if (/水果|生鲜|苹果|蜜瓜/.test(text)) return assetUrl('/images/categories/flat/fruit.png')
-  if (/粮油|杂粮|马铃薯|土豆|米面/.test(text)) return assetUrl('/images/categories/flat/grains.png')
-  if (/文创|礼品|非遗/.test(text)) return assetUrl('/images/categories/flat/culture.png')
-  if (/积分|绿色/.test(text)) return assetUrl('/images/categories/flat/points.png')
-  return assetUrl('/images/categories/flat/food.png')
+  if (/水果|生鲜|苹果|蜜瓜/.test(text)) return assetUrl('/images/categories/flat/fruit.webp')
+  if (/粮油|杂粮|马铃薯|土豆|米面/.test(text)) return assetUrl('/images/categories/flat/grains.webp')
+  if (/文创|礼品|非遗/.test(text)) return assetUrl('/images/categories/flat/culture.webp')
+  if (/积分|绿色/.test(text)) return assetUrl('/images/categories/flat/points.webp')
+  return assetUrl('/images/categories/flat/food.webp')
 }
 
 export function linearCategoryIcon(name?: string | null): string {
   const text = name || ''
-  if (/水果|生鲜|苹果|蜜瓜/.test(text)) return assetUrl('/images/categories/linear/fruit.png')
-  if (/粮油|杂粮|马铃薯|土豆|米面/.test(text)) return assetUrl('/images/categories/linear/grains.png')
-  if (/文创|礼品|非遗/.test(text)) return assetUrl('/images/categories/linear/culture.png')
-  if (/积分|绿色/.test(text)) return assetUrl('/images/categories/linear/points.png')
-  return assetUrl('/images/categories/linear/food.png')
+  if (/水果|生鲜|苹果|蜜瓜/.test(text)) return assetUrl('/images/categories/linear/fruit.webp')
+  if (/粮油|杂粮|马铃薯|土豆|米面/.test(text)) return assetUrl('/images/categories/linear/grains.webp')
+  if (/文创|礼品|非遗/.test(text)) return assetUrl('/images/categories/linear/culture.webp')
+  if (/积分|绿色/.test(text)) return assetUrl('/images/categories/linear/points.webp')
+  return assetUrl('/images/categories/linear/food.webp')
 }
 
 export function productFallbackImage(title?: string | null): string {

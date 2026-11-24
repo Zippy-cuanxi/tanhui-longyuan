@@ -33,6 +33,7 @@ let suggestSeq = 0
 
 const SCROLL_THRESHOLD = 50
 const headerHidden = ref(false)
+const headerScrolled = ref(false)
 let lastScrollY = 0
 let downTravel = 0
 let upTravel = 0
@@ -101,6 +102,7 @@ function resetHeaderScroll(): void {
 
 function updateHeaderOnScroll(): void {
   const y = Math.max(0, window.scrollY)
+  headerScrolled.value = y > 8
   if (y <= SCROLL_THRESHOLD) {
     headerHidden.value = false
     downTravel = 0
@@ -393,10 +395,19 @@ function badgeText(count: number): string {
 </script>
 
 <template>
-  <header class="site-header" :class="{ 'header-hidden': headerHidden }">
+  <header
+    class="site-header"
+    :class="{ 'header-hidden': headerHidden, 'header-scrolled': headerScrolled }"
+  >
     <div class="header-inner">
       <RouterLink to="/" class="brand" aria-label="碳惠陇原首页">
-        <img :src="assetUrl('/images/logo/logo.png')" alt="碳惠陇原 · 甘肃特色农产品绿色电商平台" />
+        <img
+          :src="assetUrl('/images/logo/logo.webp')"
+          alt="碳惠陇原 · 甘肃特色农产品绿色电商平台"
+          width="420"
+          height="163"
+          decoding="async"
+        />
       </RouterLink>
 
       <nav class="main-nav" aria-label="主导航">

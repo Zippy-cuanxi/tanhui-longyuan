@@ -244,7 +244,7 @@ onMounted(() => {
       :page-size="query.page_size"
       selectable
       empty-text="暂无售后单"
-      :empty-image="assetUrl('/console-assets/images/empty-orders.png')"
+      :empty-image="assetUrl('/console-assets/images/empty-orders.webp')"
       @row-click="openDetail"
       @selection-change="onSelectionChange"
       @update:page="

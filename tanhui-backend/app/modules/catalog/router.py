@@ -9,35 +9,42 @@ from app.core.database import get_db
 from app.core.deps import page_params
 from app.core.responses import ApiResponse, PageOut, paginate
 from app.modules.catalog import service
-from app.modules.catalog.models import Product, ProductImage, ProductSku
 from app.modules.catalog.schemas import (
     ProductDetailOut,
     ProductImageOut,
     ProductOut,
     SkuOut,
 )
+from app.modules.catalog.sync_models import (
+    ConsumerProduct,
+    ConsumerProductImage,
+    ConsumerProductSku,
+)
 from app.modules.stores.models import Store
 
 router = APIRouter(tags=["catalog"])
 
 
-def _decorate(db: Session, products: list[Product]) -> list[ProductOut]:
+def _decorate(db: Session, products: list[ConsumerProduct]) -> list[ProductOut]:
     """补充列表展示字段：最低 SKU 价、封面图、店铺名（避免 N+1 用批量查询）。"""
     if not products:
         return []
     ids = [p.id for p in products]
     min_prices = dict(
         db.execute(
-            select(ProductSku.product_id, func.min(ProductSku.price))
-            .where(ProductSku.product_id.in_(ids), ProductSku.is_active == True)  # noqa: E712
-            .group_by(ProductSku.product_id)
+            select(ConsumerProductSku.product_id, func.min(ConsumerProductSku.price))
+            .where(
+                ConsumerProductSku.product_id.in_(ids),
+                ConsumerProductSku.is_active == True,  # noqa: E712
+            )
+            .group_by(ConsumerProductSku.product_id)
         ).all()
     )
     covers = dict(
         db.execute(
-            select(ProductImage.product_id, func.min(ProductImage.url))
-            .where(ProductImage.product_id.in_(ids))
-            .group_by(ProductImage.product_id)
+            select(ConsumerProductImage.product_id, func.min(ConsumerProductImage.url))
+            .where(ConsumerProductImage.product_id.in_(ids))
+            .group_by(ConsumerProductImage.product_id)
         ).all()
     )
     store_ids = {p.store_id for p in products}
@@ -83,17 +90,18 @@ def get_product(product_id: uuid.UUID, db: Session = Depends(get_db)):
     detail.skus = [
         SkuOut.model_validate(s)
         for s in db.execute(
-            select(ProductSku).where(
-                ProductSku.product_id == product.id, ProductSku.is_active == True  # noqa: E712
+            select(ConsumerProductSku).where(
+                ConsumerProductSku.product_id == product.id,
+                ConsumerProductSku.is_active == True,  # noqa: E712
             )
         ).scalars()
     ]
     detail.images = [
         ProductImageOut.model_validate(i)
         for i in db.execute(
-            select(ProductImage)
-            .where(ProductImage.product_id == product.id)
-            .order_by(ProductImage.sort)
+            select(ConsumerProductImage)
+            .where(ConsumerProductImage.product_id == product.id)
+            .order_by(ConsumerProductImage.sort)
         ).scalars()
     ]
     detail.store_name = db.get(Store, product.store_id).name if db.get(Store, product.store_id) else None

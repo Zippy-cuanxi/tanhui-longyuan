@@ -3,6 +3,8 @@ dist
 dist-demo
 dist-verify
 dist-ssr
+.analyze
+.bench-build
 .env.local
 .env.*.local
 *.local

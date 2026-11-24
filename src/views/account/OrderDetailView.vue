@@ -189,6 +189,14 @@ onMounted(load)
               <dt>积分抵扣</dt>
               <dd>-¥{{ money(order.points_deduct) }}</dd>
             </div>
+            <div v-if="order.points_earned && !isAfterSale && !isCancelled">
+              <dt>绿色积分</dt>
+              <dd>+{{ order.points_earned }}（已到账）</dd>
+            </div>
+            <div v-else-if="order.points_estimate && !isCancelled && !isAfterSale">
+              <dt>预计绿色积分</dt>
+              <dd>+{{ order.points_estimate }}（确认收货后到账）</dd>
+            </div>
             <div class="total-row">
               <dt>实付金额</dt>
               <dd>¥{{ money(order.pay_amount) }}</dd>

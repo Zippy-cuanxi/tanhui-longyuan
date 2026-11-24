@@ -44,6 +44,30 @@ def get_balance(db: Session, user_id: uuid.UUID) -> int:
     return get_or_create_account(db, user_id).balance
 
 
+def estimate_for_order(db: Session, order) -> int:
+    """按当前规则预估订单可获得的绿色积分（用于支付/订单页展示）。"""
+    config, _ = get_rule_config(db, "order_earn")
+    if not config.get("enabled", False):
+        return 0
+    rate = Decimal(str(config.get("rate", "1")))
+    amount = int(
+        (Decimal(str(order.pay_amount)) * rate).to_integral_value(rounding="ROUND_DOWN")
+    )
+    return max(0, amount)
+
+
+def earned_for_order(db: Session, order) -> int:
+    """查询订单实际已发放的绿色积分（订单完成后才有值）。"""
+    txn = db.execute(
+        select(PointTransaction).where(
+            PointTransaction.user_id == order.user_id,
+            PointTransaction.source_type == "order_completion",
+            PointTransaction.source_id == order.id,
+        )
+    ).scalar_one_or_none()
+    return txn.amount if txn is not None and txn.amount > 0 else 0
+
+
 def _apply(
     db: Session,
     account: PointAccount,
@@ -172,7 +196,10 @@ def update_rule(db: Session, code: str, config: dict, operator_id: uuid.UUID) ->
 
 # ---------------- 业务操作 ----------------
 def award_for_order(db: Session, order) -> PointTransaction | None:
-    """订单完成发放绿豆（幂等：order_complete:{order_id}）。"""
+    """订单支付成功发放绿色积分（幂等：order_complete:{order_id}）。
+
+    确认收货会再次调用，但同一幂等键只入账一次。
+    """
     config, rule_version_id = get_rule_config(db, "order_earn")
     if not config.get("enabled", False):
         return None
@@ -187,7 +214,7 @@ def award_for_order(db: Session, order) -> PointTransaction | None:
         source_type="order_completion", source_id=order.id,
         idempotency_key=f"order_complete:{order.id}",
         rule_version_id=rule_version_id,
-        note=f"订单 {order.order_no} 完成发放",
+        note=f"订单 {order.order_no} 支付成功发放",
     )
 
 

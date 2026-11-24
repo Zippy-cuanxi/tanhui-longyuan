@@ -1440,7 +1440,7 @@ export const adminApi = {
         roleName: role.name,
         permissions: role.permissions,
         status: 'active',
-        avatar: assetUrl('/console-assets/images/avatar-admin.png'),
+        avatar: assetUrl('/console-assets/images/avatar-admin.webp'),
         lastLoginAt: '—',
         createdAt: new Date().toISOString()
       }

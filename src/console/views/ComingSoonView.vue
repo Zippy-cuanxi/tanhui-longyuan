@@ -18,7 +18,7 @@ function back(): void {
 <template>
   <section class="console-coming">
     <div class="console-coming-card">
-      <img :src="assetUrl('/console-assets/images/coming-soon.png')" alt="功能建设中" />
+      <img :src="assetUrl('/console-assets/images/coming-soon.webp')" alt="功能建设中" />
       <h1>{{ title }}</h1>
       <p>
         该模块已列入{{

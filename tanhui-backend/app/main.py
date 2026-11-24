@@ -22,6 +22,25 @@ from app.modules import register_routers
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # 开发环境挂载本地上传目录静态服务【仿真存储】；生产使用对象存储 CDN
+    # 旧开发库自愈：补齐消费者端镜像表并把存量已审核商品对齐到消费者库，
+    # 避免上线同步机制后原有商品在消费者端"消失"。
+    from app.core.database import SessionLocal
+    from app.modules.catalog import sync_service
+
+    try:
+        # 生产环境以 alembic 迁移为准；SQLite 开发库做 checkfirst 自愈
+        if engine.dialect.name == "sqlite":
+            sync_service.ensure_sync_tables(engine)
+        db = SessionLocal()
+        try:
+            sync_service.backfill_consumer_catalog(db)
+            db.commit()
+        finally:
+            db.close()
+    except Exception:  # noqa: BLE001 - 启动自愈失败不阻断服务
+        import logging
+
+        logging.getLogger("startup").exception("consumer catalog backfill skipped")
     yield
     engine.dispose()
 

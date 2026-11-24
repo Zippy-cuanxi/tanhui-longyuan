@@ -24,6 +24,7 @@ const error = ref('')
 const donateOpen = ref(false)
 const donating = ref(false)
 const donateError = ref('')
+const lastDonation = ref<{ amount: string; points_earned: number } | null>(null)
 const donateForm = reactive({
   amount: 50,
   mode: 'anonymous' as 'anonymous' | 'named',
@@ -112,6 +113,11 @@ async function submitDonation(): Promise<void> {
     })
     donateOpen.value = false
     now.value = Date.now()
+    lastDonation.value = {
+      amount: result.amount,
+      points_earned: result.points_earned
+    }
+    if (result.balance != null) points.setBalance(result.balance)
     toast.show(`感谢您的资助，获得 ${result.points_earned} 绿色积分`, 'success')
     await points.fetchBalance()
     window.dispatchEvent(new CustomEvent('points:changed'))
@@ -211,6 +217,10 @@ onBeforeUnmount(() => window.clearInterval(clockTimer))
               <AppIcon name="leaf" :size="14" />
               资助每 1 元可获得 3 绿色积分（仿真展示）。
             </p>
+            <p v-if="points.balance !== null" class="aid-point-rule">
+              <AppIcon name="leaf" :size="14" />
+              当前绿色积分：{{ points.balance }}
+            </p>
           </div>
           <div class="aid-support-side">
             <div>
@@ -220,6 +230,24 @@ onBeforeUnmount(() => window.clearInterval(clockTimer))
             <button type="button" class="primary-button" @click="openDonate">
               <AppIcon name="heart" :size="15" />我要资助
             </button>
+          </div>
+        </section>
+
+        <section v-if="lastDonation" class="aid-support-panel">
+          <div>
+            <span class="eyebrow">THANK YOU</span>
+            <h2>资助成功，绿色积分已到账</h2>
+            <p>
+              本次资助 ¥{{ amount(lastDonation.amount) }}，获得
+              <strong>+{{ lastDonation.points_earned }}</strong> 绿色积分。
+            </p>
+            <p v-if="points.balance !== null" class="aid-point-rule">
+              <AppIcon name="leaf" :size="14" />
+              当前绿色积分：{{ points.balance }}
+            </p>
+          </div>
+          <div class="aid-support-side">
+            <RouterLink to="/account/points" class="primary-button"> 查看积分明细 </RouterLink>
           </div>
         </section>
 

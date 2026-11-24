@@ -47,9 +47,9 @@ const profileRules: FormRules = {
 const profileSnapshot = ref('')
 
 const logoOptions = [
-  assetUrl('/console-assets/images/shop-logo-1.png'),
-  assetUrl('/console-assets/images/shop-logo-2.png'),
-  assetUrl('/console-assets/images/shop-logo-3.png')
+  assetUrl('/console-assets/images/shop-logo-1.webp'),
+  assetUrl('/console-assets/images/shop-logo-2.webp'),
+  assetUrl('/console-assets/images/shop-logo-3.webp')
 ]
 
 const templates = ref<ShippingTemplate[]>([])

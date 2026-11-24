@@ -22,8 +22,8 @@ const title = computed(() => String(route.meta.title || ''))
 const defaultAvatar = computed(() =>
   assetUrl(
     auth.isMerchant
-      ? '/console-assets/images/avatar-merchant.png'
-      : '/console-assets/images/avatar-admin.png'
+      ? '/console-assets/images/avatar-merchant.webp'
+      : '/console-assets/images/avatar-admin.webp'
   )
 )
 const avatarFailed = ref(false)

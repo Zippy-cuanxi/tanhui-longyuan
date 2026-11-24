@@ -32,6 +32,7 @@ class SkuOut(BaseModel):
     code: str | None = None
     price: MoneyOut
     is_active: bool
+    stock: int | None = None
 
 
 class ProductCreateIn(BaseModel):
@@ -86,6 +87,15 @@ class ProductDetailOut(ProductOut):
     audited_at: datetime | None = None
     skus: list[SkuOut] = []
     images: list[ProductImageOut] = []
+    # 商品审核后的消费者端同步结果（仅管理端审核接口返回，其余接口为 None）
+    sync_status: str | None = None
+    sync_attempts: int | None = None
+    sync_error: str | None = None
+    sync_message: str | None = None
+    sync_log_id: uuid.UUID | None = None
+    synced_at: datetime | None = None
+    source_hash: str | None = None
+    consumer_hash: str | None = None
 
 
 class AuditIn(BaseModel):
@@ -102,4 +112,23 @@ class ProductAuditRecordOut(BaseModel):
     action: str
     reason: str | None = None
     operator_id: uuid.UUID | None = None
+    created_at: datetime
+
+
+class ProductSyncLogOut(BaseModel):
+    class Config:
+        from_attributes = True
+
+    id: uuid.UUID
+    product_id: uuid.UUID
+    operator_id: uuid.UUID | None = None
+    trigger_type: str
+    target_category_id: uuid.UUID | None = None
+    status: str
+    attempts: int
+    max_attempts: int
+    duration_ms: int
+    source_hash: str | None = None
+    target_hash: str | None = None
+    error_message: str | None = None
     created_at: datetime

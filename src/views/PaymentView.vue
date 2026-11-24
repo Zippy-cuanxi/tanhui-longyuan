@@ -71,7 +71,13 @@ async function pay(): Promise<void> {
       payError.value = '支付未完成，请稍后重试'
       return
     }
-    toast.show('沙箱支付成功，订单状态已更新', 'success')
+    const pointsTip = order.value.points_earned
+      ? `，已获得 ${order.value.points_earned} 绿色积分`
+      : order.value.points_estimate
+        ? `，预计获得 ${order.value.points_estimate} 绿色积分`
+        : ''
+    toast.show(`沙箱支付成功，订单状态已更新${pointsTip}`, 'success')
+    window.dispatchEvent(new CustomEvent('points:changed'))
   } catch (err) {
     payError.value = errorText(err)
   } finally {
@@ -98,6 +104,10 @@ onMounted(loadOrder)
           <div class="payment-result-meta">
             <span>订单状态 <OrderStatusTag :status="order.status" /></span>
             <span>商品 {{ itemCount }} 件</span>
+            <span v-if="order.points_earned">已获得 +{{ order.points_earned }} 绿色积分</span>
+            <span v-else-if="order.points_estimate"
+              >预计 +{{ order.points_estimate }} 绿色积分（确认收货后到账）</span
+            >
             <span>{{ order.receiver_name }} · {{ order.address }}</span>
           </div>
           <div class="payment-result-actions">
@@ -203,6 +213,10 @@ onMounted(loadOrder)
                 <div v-if="order.points_deduct !== '0.00'">
                   <dt>积分抵扣</dt>
                   <dd>-¥{{ money(order.points_deduct) }}</dd>
+                </div>
+                <div v-if="order.points_estimate">
+                  <dt>预计绿色积分</dt>
+                  <dd>+{{ order.points_estimate }}</dd>
                 </div>
                 <div class="total-row">
                   <dt>应付</dt>

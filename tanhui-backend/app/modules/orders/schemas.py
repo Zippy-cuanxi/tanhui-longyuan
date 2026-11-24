@@ -92,6 +92,9 @@ class OrderOut(BaseModel):
     shipping_fee: MoneyOut
     points_deduct: MoneyOut
     points_used: int
+    # 绿色积分展示：预计可得 / 实际已发放（订单详情与确认收货接口填充）
+    points_estimate: int = 0
+    points_earned: int = 0
     pay_amount: MoneyOut
     currency: str
     remark: str | None = None

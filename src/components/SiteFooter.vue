@@ -7,7 +7,14 @@ import AppIcon from './AppIcon.vue'
   <footer class="site-footer">
     <div class="footer-main">
       <div class="footer-brand">
-        <img :src="assetUrl('/images/logo/logo.png')" alt="碳惠陇原" loading="lazy" decoding="async" />
+        <img
+          :src="assetUrl('/images/logo/logo.webp')"
+          alt="碳惠陇原"
+          width="420"
+          height="163"
+          loading="lazy"
+          decoding="async"
+        />
         <p>绿色生态 · 品质优选 · 助力乡村振兴</p>
       </div>
       <div class="footer-links">

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.core.errors import AppError
 from app.modules.audit import service as audit_service
+from app.modules.catalog import sync_service
 from app.modules.catalog.models import (
     Category,
     Product,
@@ -15,6 +16,11 @@ from app.modules.catalog.models import (
     ProductSku,
 )
 from app.modules.catalog.schemas import ProductCreateIn, ProductUpdateIn, SkuIn
+from app.modules.catalog.sync_models import (
+    ConsumerProduct,
+    ConsumerProductImage,
+    ConsumerProductSku,
+)
 from app.modules.inventory import service as inventory_service
 
 
@@ -52,6 +58,7 @@ def update_product(
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(product, field, value)
     db.flush()
+    _sync_if_mirrored(db, product, "product_update")
     return product
 
 
@@ -65,6 +72,7 @@ def add_sku(db: Session, store_id: uuid.UUID, product_id: uuid.UUID, sku_in: Sku
     db.add(sku)
     db.flush()
     inventory_service.ensure_inventory(db, sku.id, sku_in.initial_stock)
+    _sync_if_mirrored(db, product, "sku_update")
     return sku
 
 
@@ -80,6 +88,7 @@ def update_sku_price(
         _audit_record(db, product.id, "submit", "价格变更触发重新审核")
     sku.price = price
     db.flush()
+    _sync_if_mirrored(db, product, "sku_price_update")
     return sku
 
 
@@ -102,6 +111,7 @@ def toggle_listing(
     product.is_listed = listed
     _audit_record(db, product.id, "relist" if listed else "delist")
     db.flush()
+    sync_service.sync_product(db, product.id, None, "listing_change")
     return product
 
 
@@ -110,6 +120,7 @@ def delete_product(db: Session, store_id: uuid.UUID, product_id: uuid.UUID) -> N
     product = _get_owned(db, store_id, product_id)
     if product.status not in ("draft", "rejected"):
         raise AppError("CONFLICT", "已进入审核流程的商品只能下架，不能删除")
+    sync_service.delete_consumer_product(db, product.id)
     db.delete(product)
     db.flush()
 
@@ -122,6 +133,9 @@ def add_image(db: Session, store_id: uuid.UUID, product_id: uuid.UUID, url: str)
     img = ProductImage(product_id=product_id, url=url, sort=count)
     db.add(img)
     db.flush()
+    product = db.get(Product, product_id)
+    if product is not None:
+        _sync_if_mirrored(db, product, "image_update")
     return img
 
 
@@ -130,8 +144,11 @@ def delete_image(db: Session, store_id: uuid.UUID, image_id: uuid.UUID) -> None:
     if img is None:
         raise AppError("NOT_FOUND", "图片不存在")
     _get_owned(db, store_id, img.product_id)
+    product = db.get(Product, img.product_id)
     db.delete(img)
     db.flush()
+    if product is not None:
+        _sync_if_mirrored(db, product, "image_update")
 
 
 # ---------------- 管理员侧 ----------------
@@ -167,6 +184,14 @@ def audit_product(
         resource="product", resource_id=str(product_id), detail={"reason": reason},
     )
     db.flush()
+    # 审核通过：全量同步消费者端镜像；平台下架：仅在已存在镜像时同步移除状态。
+    outcome = None
+    if action == "approve":
+        outcome = sync_service.sync_product(db, product.id, operator_id, "audit_approve")
+    elif action == "remove":
+        outcome = _sync_if_mirrored(db, product, "audit_remove")
+    if outcome is not None:
+        setattr(product, "sync_outcome", outcome)
     return product
 
 
@@ -179,31 +204,31 @@ def list_consumer_products(
     keyword: str | None = None,
     sort: str = "created_desc",
 ):
+    """消费者商品列表：只读消费者端镜像库（由同步服务写入）。"""
     stmt = (
-        select(Product)
-        .where(Product.status == "approved", Product.is_listed == True)  # noqa: E712
-        .order_by(Product.created_at.desc())
+        select(ConsumerProduct)
+        .where(ConsumerProduct.status == "approved", ConsumerProduct.is_listed == True)  # noqa: E712
+        .order_by(ConsumerProduct.created_at.desc())
     )
     if category_id:
-        stmt = stmt.where(Product.category_id == category_id)
+        stmt = stmt.where(ConsumerProduct.category_id == category_id)
     if store_id:
-        stmt = stmt.where(Product.store_id == store_id)
+        stmt = stmt.where(ConsumerProduct.store_id == store_id)
     if keyword:
-        stmt = stmt.where(Product.title.like(f"%{keyword}%"))
+        stmt = stmt.where(ConsumerProduct.title.like(f"%{keyword}%"))
     if sort == "price_asc":
-        # 简化排序：按最低 SKU 价（用子查询近似）
         stmt = stmt.order_by(
-            select(func.min(ProductSku.price))
-            .where(ProductSku.product_id == Product.id)
-            .correlate(Product)
+            select(func.min(ConsumerProductSku.price))
+            .where(ConsumerProductSku.product_id == ConsumerProduct.id)
+            .correlate(ConsumerProduct)
             .scalar_subquery()
             .asc()
         )
     return stmt
 
 
-def get_consumer_product(db: Session, product_id: uuid.UUID) -> Product:
-    product = db.get(Product, product_id)
+def get_consumer_product(db: Session, product_id: uuid.UUID) -> ConsumerProduct:
+    product = db.get(ConsumerProduct, product_id)
     if product is None or product.status != "approved" or not product.is_listed:
         raise AppError("NOT_FOUND", "商品不存在或未上架")
     return product
@@ -216,6 +241,15 @@ def list_categories(db: Session) -> list[Category]:
 
 
 # ---------------- 内部 ----------------
+def _sync_if_mirrored(
+    db: Session, product: Product, trigger_type: str
+) -> sync_service.SyncOutcome | None:
+    """仅对已建立消费者镜像的商品做增量同步，避免草稿商品提前进入消费者库。"""
+    if db.get(ConsumerProduct, product.id) is None:
+        return None
+    return sync_service.sync_product(db, product.id, None, trigger_type)
+
+
 def _get_owned(db: Session, store_id: uuid.UUID, product_id: uuid.UUID) -> Product:
     """越权防护：商品必须属于当前店铺。"""
     product = db.get(Product, product_id)

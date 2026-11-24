@@ -257,7 +257,7 @@ onMounted(load)
       :page-size="query.page_size"
       selectable
       empty-text="暂无售后单"
-      :empty-image="assetUrl('/console-assets/images/empty-orders.png')"
+      :empty-image="assetUrl('/console-assets/images/empty-orders.webp')"
       empty-description="买家发起退款后会展示在这里。"
       @row-click="openDetail"
       @selection-change="onSelectionChange"

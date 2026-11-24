@@ -285,7 +285,7 @@ onMounted(() => {
       :page-size="query.page_size"
       selectable
       empty-text="还没有商品"
-      :empty-image="assetUrl('/console-assets/images/empty-goods.png')"
+      :empty-image="assetUrl('/console-assets/images/empty-goods.webp')"
       empty-description="提交第一个甘肃特色商品，审核通过后即可上架销售。"
       @update:page="
         (value: number) => {

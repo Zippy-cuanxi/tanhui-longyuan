@@ -203,7 +203,7 @@ onBeforeUnmount(() => {
     :style="{ backgroundImage: `url(${assetUrl('/console-assets/images/login-bg.webp')})` }"
   >
     <RouterLink to="/" class="console-login-brand" aria-label="返回碳惠陇原商城">
-      <img :src="assetUrl('/images/logo/logo.png')" alt="碳惠陇原" />
+      <img :src="assetUrl('/images/logo/logo.webp')" alt="碳惠陇原" />
       <div>绿色消费 · 助农增收<br />平台运营与商家服务工作台</div>
     </RouterLink>
 

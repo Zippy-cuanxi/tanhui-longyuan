@@ -321,7 +321,7 @@ onMounted(() => {
       :page-size="query.page_size"
       selectable
       empty-text="暂无商品"
-      :empty-image="assetUrl('/console-assets/images/empty-goods.png')"
+      :empty-image="assetUrl('/console-assets/images/empty-goods.webp')"
       @row-click="openDetail"
       @selection-change="onSelectionChange"
       @update:page="

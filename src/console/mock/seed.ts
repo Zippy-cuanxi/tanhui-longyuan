@@ -65,13 +65,13 @@ const IMG = {
   jujube: assetUrl('/console-assets/images/jujube.webp'),
   lily: assetUrl('/console-assets/images/lily.webp'),
   danggui: assetUrl('/console-assets/images/danggui.webp'),
-  merchant: assetUrl('/console-assets/images/avatar-merchant.png'),
-  admin: assetUrl('/console-assets/images/avatar-admin.png')
+  merchant: assetUrl('/console-assets/images/avatar-merchant.webp'),
+  admin: assetUrl('/console-assets/images/avatar-admin.webp')
 }
 const SHOP_LOGOS = [
-  assetUrl('/console-assets/images/shop-logo-1.png'),
-  assetUrl('/console-assets/images/shop-logo-2.png'),
-  assetUrl('/console-assets/images/shop-logo-3.png')
+  assetUrl('/console-assets/images/shop-logo-1.webp'),
+  assetUrl('/console-assets/images/shop-logo-2.webp'),
+  assetUrl('/console-assets/images/shop-logo-3.webp')
 ]
 
 function iso(daysAgo = 0, hour = 10, minute = 0): string {

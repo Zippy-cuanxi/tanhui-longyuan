@@ -33,7 +33,7 @@ withDefaults(
     rowKey: 'id',
     selectable: false,
     emptyText: '暂无数据',
-    emptyImage: assetUrl('/console-assets/images/empty-list.png'),
+    emptyImage: assetUrl('/console-assets/images/empty-list.webp'),
     emptyDescription: ''
   }
 )

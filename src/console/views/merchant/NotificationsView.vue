@@ -112,7 +112,7 @@ onMounted(load)
       <template v-else-if="tab === 'notices'">
         <div v-if="!notices.length" class="console-card">
           <ConsoleEmptyState
-            :image="assetUrl('/console-assets/images/empty-list.png')"
+            :image="assetUrl('/console-assets/images/empty-list.webp')"
             title="暂无平台公告"
             description="平台发布公告后会出现在这里。"
           />
@@ -132,7 +132,7 @@ onMounted(load)
       <template v-else>
         <div v-if="!visibleNotifications.length" class="console-card">
           <ConsoleEmptyState
-            :image="assetUrl('/console-assets/images/empty-list.png')"
+            :image="assetUrl('/console-assets/images/empty-list.webp')"
             :title="tab === 'unread' ? '没有未读消息' : '暂无消息'"
             description="订单、售后和结算消息会实时出现在这里。"
           />

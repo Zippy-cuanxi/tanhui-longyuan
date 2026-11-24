@@ -2,12 +2,14 @@ import { useRouter } from 'vue-router'
 import { orderApi } from '@/api'
 import type { Order } from '@/api/types'
 import { useConfirmStore } from '@/stores/confirm'
+import { usePointsStore } from '@/stores/points'
 import { useToastStore } from '@/stores/toast'
 import { errorText } from '@/utils/format'
 
 export function useOrderActions(refresh: () => void | Promise<void>) {
   const router = useRouter()
   const confirm = useConfirmStore()
+  const points = usePointsStore()
   const toast = useToastStore()
 
   function fail(error: unknown): void {
@@ -45,8 +47,13 @@ export function useOrderActions(refresh: () => void | Promise<void>) {
     })
     if (!ok) return
     try {
-      await orderApi.confirmReceipt(order.id)
-      toast.show('已确认收货，订单完成', 'success')
+      const updated = await orderApi.confirmReceipt(order.id)
+      const earned = updated.points_earned || 0
+      toast.show(
+        earned > 0 ? `已确认收货，绿色积分已到账（+${earned}）` : '已确认收货，订单完成',
+        'success'
+      )
+      await points.fetchBalance()
       await refresh()
       window.dispatchEvent(new CustomEvent('points:changed'))
     } catch (error) {

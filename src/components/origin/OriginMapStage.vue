@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // 地图舞台：3D/2D 双视图、占位骨架、镜头旋转轮盘、数据兜底、四组浮层。
 // 3D 走 maplibre + deck（异步分包）；2D 是纯 SVG，不依赖 WebGL，供非 Chromium 浏览器兜底。
-import { defineAsyncComponent, onBeforeUnmount, ref, watch } from 'vue'
+import { defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useHeatData } from '@/composables/useHeatData'
 import MetricSwitch from './MetricSwitch.vue'
 import OriginRank from './OriginRank.vue'
@@ -21,6 +21,9 @@ const DEFAULT_BEARING = -15
 const heat = useHeatData()
 const ready = ref(false)
 const failed = ref(false)
+// 3D/2D 地图（maplibre + deck 约 1.7MB）推迟到首屏绘制后的空闲帧再挂载，
+// 避免与关键 JS/CSS 抢带宽；期间显示骨架，视觉上仍是"加载中"。
+const mapMount = ref(false)
 // 3D 初始化失败（瞬时资源/上下文问题）先自动重建一次；仍失败就切 2D，而不是退回旧版式
 const attempts = ref(0)
 const mountToken = ref(0)
@@ -59,6 +62,19 @@ function startWatchdog(): void {
 }
 
 watch(view, startWatchdog, { immediate: true })
+
+onMounted(() => {
+  const kick = (): void => {
+    mapMount.value = true
+  }
+  const idle = (
+    window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number
+    }
+  ).requestIdleCallback
+  if (idle) idle(kick, { timeout: 600 })
+  else setTimeout(kick, 200)
+})
 
 onBeforeUnmount(() => {
   stopWatchdog()
@@ -159,13 +175,13 @@ watch(
     </div>
 
     <HeatMap3D
-      v-if="view === '3d'"
+      v-if="mapMount && view === '3d'"
       ref="map3d"
       :key="`3d-${mountToken}`"
       @ready="onReady"
       @error="on3dError"
     />
-    <HeatMap2D v-else :key="'2d'" @ready="onReady" @error="on2dError" />
+    <HeatMap2D v-else-if="mapMount" :key="'2d'" @ready="onReady" @error="on2dError" />
 
     <div class="stage-overlay stage-title">
       <span class="eyebrow">GANSU ORIGIN</span>

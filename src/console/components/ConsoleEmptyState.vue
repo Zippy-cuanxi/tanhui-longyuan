@@ -7,7 +7,7 @@ withDefaults(
     description?: string
   }>(),
   {
-    image: assetUrl('/console-assets/images/empty-list.png'),
+    image: assetUrl('/console-assets/images/empty-list.webp'),
     title: '暂无数据',
     description: ''
   }

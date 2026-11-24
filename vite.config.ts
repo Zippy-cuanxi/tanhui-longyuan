@@ -55,6 +55,12 @@ export default defineConfig(({ mode }) => {
     preview: {
       port: 4173,
       strictPort: true
+    },
+    build: {
+      // 现代浏览器目标：更少的语法降级体积
+      target: 'es2020',
+      // 供 scripts/prerender-shell.mjs 读取产物图，向 index.html 注入首屏 modulepreload
+      manifest: true
     }
   }
 })

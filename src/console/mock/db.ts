@@ -15,10 +15,10 @@ function repairDb(target: ConsoleDb): ConsoleDb {
     if (!product.images || !product.images.length) product.images = [product.cover]
   }
   for (const merchant of target.merchants || []) {
-    if (!merchant.avatar) merchant.avatar = assetUrl('/console-assets/images/avatar-merchant.png')
+    if (!merchant.avatar) merchant.avatar = assetUrl('/console-assets/images/avatar-merchant.webp')
   }
   for (const admin of target.admins || []) {
-    if (!admin.avatar) admin.avatar = assetUrl('/console-assets/images/avatar-admin.png')
+    if (!admin.avatar) admin.avatar = assetUrl('/console-assets/images/avatar-admin.webp')
   }
   return target
 }

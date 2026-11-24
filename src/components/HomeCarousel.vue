@@ -20,9 +20,19 @@ const props = withDefaults(
 
 const current = ref(0)
 const paused = ref(false)
+// 非首张图延迟到空闲再下载：避免 4 张横幅（约 250KB）在入口 JS 下载时抢带宽
+const warm = ref(false)
 let timer = 0
 let remaining = props.interval
 let startedAt = 0
+let warmTimer = 0
+
+function warmImages(): void {
+  if (warm.value) return
+  warm.value = true
+  window.clearTimeout(warmTimer)
+  warmTimer = 0
+}
 
 function clearTimer(): void {
   window.clearTimeout(timer)
@@ -39,6 +49,7 @@ function schedule(ms: number): void {
 
 function advance(): void {
   if (!props.slides.length) return
+  warmImages()
   current.value = (current.value + 1) % props.slides.length
   remaining = props.interval
   schedule(remaining)
@@ -46,6 +57,7 @@ function advance(): void {
 
 function goToSlide(index: number): void {
   if (!props.slides.length) return
+  warmImages()
   current.value = (index + props.slides.length) % props.slides.length
   remaining = props.interval
   schedule(remaining)
@@ -96,10 +108,12 @@ watch(
 onMounted(() => {
   schedule(remaining)
   document.addEventListener('visibilitychange', handleVisibilityChange)
+  warmTimer = window.setTimeout(warmImages, 900)
 })
 
 onBeforeUnmount(() => {
   clearTimer()
+  window.clearTimeout(warmTimer)
   document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 </script>
@@ -126,6 +140,7 @@ onBeforeUnmount(() => {
         :src="slide.image"
         :alt="slide.alt"
         :loading="index === 0 ? 'eager' : 'lazy'"
+        :fetchpriority="index === 0 ? 'high' : 'auto'"
         decoding="async"
       />
     </RouterLink>

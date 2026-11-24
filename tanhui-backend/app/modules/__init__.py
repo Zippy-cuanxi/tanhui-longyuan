@@ -20,6 +20,7 @@ def register_routers(app: FastAPI) -> None:
     from app.modules.catalog.admin_router import router as catalog_admin_router
     from app.modules.catalog.merchant_router import router as catalog_merchant_router
     from app.modules.catalog.router import router as catalog_router
+    from app.modules.catalog.sync_router import router as catalog_sync_router
     from app.modules.users.router import router as users_router
     from app.modules.cms.router import admin_router as cms_admin_router
     from app.modules.cms.router import client_router as cms_client_router
@@ -73,6 +74,7 @@ def register_routers(app: FastAPI) -> None:
         merchants_admin_router,
         stores_admin_router,
         catalog_admin_router,
+        catalog_sync_router,
         orders_admin_router,
         finance_admin_router,
         points_admin_router,

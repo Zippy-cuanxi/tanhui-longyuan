@@ -85,6 +85,66 @@ def test_points_rules_seeded(client):
         db.close()
 
 
+def test_aid_donation_awards_points_and_returns_balance(client):
+    """助农资助：按 1 元 = 3 积分发放，响应返回所得积分与最新余额。"""
+    from decimal import Decimal
+
+    from app.core.base import utcnow
+    from app.core.database import SessionLocal
+    from app.modules.aid.models import AidProject, Cooperative
+    from tests.conftest import login_headers, register_user
+
+    register_user("aid-donor@example.com")
+    headers = login_headers(client, "aid-donor@example.com")
+
+    db = SessionLocal()
+    try:
+        coop = Cooperative(name="积分测试合作社", region="甘肃省定西市")
+        db.add(coop)
+        db.flush()
+        project = AidProject(
+            cooperative_id=coop.id,
+            title="积分测试助农项目",
+            description="仿真项目",
+            goal_amount=Decimal("10000.00"),
+            raised_amount=Decimal("0.00"),
+            status="published",
+            published_at=utcnow(),
+        )
+        db.add(project)
+        db.commit()
+        project_id = project.id
+    finally:
+        db.close()
+
+    resp = client.post(
+        f"/api/v1/aid/projects/{project_id}/donations",
+        json={"amount": "50.00", "display_mode": "anonymous"},
+        headers=headers,
+    )
+    assert resp.status_code == 200, resp.text
+    data = resp.json()["data"]
+    assert data["points_earned"] == 150
+    assert data["balance"] == 150
+    assert data["amount"] == "50.00"
+
+    # 个人中心余额实时反映
+    resp = client.get("/api/v1/points/account", headers=headers)
+    assert resp.json()["data"]["balance"] == 150
+
+    # 积分流水记录本次资助
+    resp = client.get("/api/v1/points/transactions", headers=headers)
+    page = resp.json()["data"]
+    assert page["pagination"]["total"] == 1
+    assert page["items"][0]["amount"] == 150
+    assert page["items"][0]["source_type"] == "aid_donation"
+
+    # 我的资助记录返回获得积分
+    resp = client.get("/api/v1/aid/donations/me", headers=headers)
+    records = resp.json()["data"]
+    assert records and records[0]["points_earned"] == 150
+
+
 def test_openapi_generated_and_consistent(client):
     """OpenAPI 契约生成且包含统一响应结构。"""
     resp = client.get("/openapi.json")
