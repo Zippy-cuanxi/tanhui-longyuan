@@ -65,6 +65,9 @@ def audit(
     db: Session = Depends(get_db),
 ):
     product = service.audit_product(db, product_id, payload.action, payload.reason, admin.id)
+    # 审核与消费者镜像必须同事务落库后再响应；前端收到成功即广播刷新，
+    # 避免「响应已返回但事务尚未提交」导致消费者端瞬时读到旧数据。
+    db.commit()
     data = ProductDetailOut.model_validate(product)
     outcome = getattr(product, "sync_outcome", None)
     if outcome is not None:

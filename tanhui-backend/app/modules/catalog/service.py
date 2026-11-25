@@ -155,7 +155,10 @@ def delete_image(db: Session, store_id: uuid.UUID, image_id: uuid.UUID) -> None:
 def audit_product(
     db: Session, product_id: uuid.UUID, action: str, reason: str | None, operator_id: uuid.UUID
 ) -> Product:
-    product = db.get(Product, product_id)
+    # 行锁避免多个管理员同时审核同一商品导致重复状态流转。
+    product = db.execute(
+        select(Product).where(Product.id == product_id).with_for_update()
+    ).scalar_one_or_none()
     if product is None:
         raise AppError("NOT_FOUND", "商品不存在")
     if action == "approve":
@@ -186,12 +189,19 @@ def audit_product(
         resource="product", resource_id=str(product_id), detail={"reason": reason},
     )
     db.flush()
-    # 审核通过：全量同步消费者端镜像；平台下架：仅在已存在镜像时同步移除状态。
+    # 审核通过：全量同步消费者端镜像；驳回/平台下架：同步隐藏已存在的镜像。
+    # 同步失败时抛错回滚整个审核事务，保证「审核已生效但商城未同步」不会出现。
     outcome = None
     if action == "approve":
         outcome = sync_service.sync_product(db, product.id, operator_id, "audit_approve")
-    elif action == "remove":
-        outcome = _sync_if_mirrored(db, product, "audit_remove")
+    elif action in ("reject", "remove"):
+        outcome = _sync_if_mirrored(db, product, f"audit_{action}")
+    if outcome is not None and not outcome.success:
+        raise AppError(
+            "CONFLICT",
+            outcome.message or "审核结果同步消费者端失败，请稍后重试",
+            data=outcome.as_dict(),
+        )
     if outcome is not None:
         setattr(product, "sync_outcome", outcome)
     return product

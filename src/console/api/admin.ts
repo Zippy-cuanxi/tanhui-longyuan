@@ -32,6 +32,7 @@ import { ensureSynced } from './bridge'
 import { bridgeRequest, unwrap } from './bridge/client'
 import { bindId, uuidFor as toUuid } from './bridge/identity'
 import { publishDemoProduct, unpublishDemoProduct } from '@/api/demoCatalog'
+import { notifyCatalogChanged } from '@/utils/catalogBus'
 
 export interface AdminMerchantRow extends MerchantAccount {
   storeId: string
@@ -564,7 +565,12 @@ export const adminApi = {
         role: 'admin'
       })
       if (!result.ok)
-        throw new MockApiError('BACKEND_ERROR', `后端商品审核失败（HTTP ${result.status}）`)
+        throw new MockApiError(
+          'BACKEND_ERROR',
+          result.message
+            ? `后端商品审核失败：${result.message}`
+            : `后端商品审核失败（HTTP ${result.status}）`
+        )
       const payload = result.data?.data
       if (payload?.sync_status === 'success' || payload?.sync_status === 'failed') {
         syncInfo = {
@@ -575,7 +581,7 @@ export const adminApi = {
         }
       }
     }
-    return mockCall(() => {
+    const updated = await mockCall(() => {
       const db = getDb()
       const product = db.products.find((item) => item.id === id)
       if (!product) throw new MockApiError('NOT_FOUND', '商品不存在')
@@ -612,7 +618,7 @@ export const adminApi = {
       }
       product.auditedAt = now
       product.updatedAt = now
-      // 静态演示（GitHub Pages）没有后端：把审核结果写入消费者端发布区。
+      // 静态演示（GitHub Pages）没有后端：把审核结果写入消费者端发布区并广播。
       if (import.meta.env.VITE_STATIC_DEMO === '1') {
         if (action === 'approve') publishDemoProduct(product)
         else unpublishDemoProduct(product.id)
@@ -620,6 +626,9 @@ export const adminApi = {
       saveDb()
       return clone({ ...product, ...syncInfo })
     })
+    // 真实后端：本地管理端与消费者端同源时立即广播，其他客户端由版本轮询兜底。
+    if (backendId !== id) notifyCatalogChanged()
+    return updated
   },
 
   async removeProduct(id: string, reason: string): Promise<Product> {
@@ -632,7 +641,7 @@ export const adminApi = {
       })
       if (!result.ok) throw new MockApiError('BACKEND_ERROR', '后端强制下架失败')
     }
-    return mockCall(() => {
+    const removed = await mockCall(() => {
       const db = getDb()
       const product = db.products.find((item) => item.id === id)
       if (!product) throw new MockApiError('NOT_FOUND', '商品不存在')
@@ -654,6 +663,8 @@ export const adminApi = {
       adminLog('product.remove', '商品', product.title, `平台强制下架：${reason}`, 'high')
       return clone(product)
     })
+    if (backendId !== id) notifyCatalogChanged()
+    return removed
   },
 
   async categories(): Promise<Category[]> {

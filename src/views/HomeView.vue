@@ -11,6 +11,7 @@ import ProductGridSection from '@/components/sections/ProductGridSection.vue'
 import ProductCard from '@/components/ProductCard.vue'
 import StateBlock from '@/components/StateBlock.vue'
 import CmsSectionRenderer from '@/components/CmsSectionRenderer.vue'
+import { useCatalogLive } from '@/composables/useCatalogLive'
 
 const config = ref<CmsConfig | null>(null)
 const categories = ref<Category[]>([])
@@ -21,9 +22,17 @@ const cmsWarning = ref('')
 
 const quickDefs = [
   { label: '新鲜水果', category: '水果生鲜', icon: assetUrl('/images/categories/flat/fruit.webp') },
-  { label: '粮油杂粮', category: '粮油杂粮', icon: assetUrl('/images/categories/flat/grains.webp') },
+  {
+    label: '粮油杂粮',
+    category: '粮油杂粮',
+    icon: assetUrl('/images/categories/flat/grains.webp')
+  },
   { label: '特色食品', category: '特色食品', icon: assetUrl('/images/categories/flat/food.webp') },
-  { label: '甘味文创', category: '文创礼品', icon: assetUrl('/images/categories/flat/culture.webp') },
+  {
+    label: '甘味文创',
+    category: '文创礼品',
+    icon: assetUrl('/images/categories/flat/culture.webp')
+  },
   {
     label: '绿色积分',
     category: '',
@@ -110,6 +119,7 @@ async function load(): Promise<void> {
 }
 
 onMounted(load)
+useCatalogLive(load)
 </script>
 
 <template>

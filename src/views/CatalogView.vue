@@ -6,7 +6,7 @@ import { assetUrl } from '@/api/http'
 import type { Category, GreenDetail, Pagination, Product } from '@/api/types'
 import { errorText, money, productFallbackImage } from '@/utils/format'
 import { useToastStore } from '@/stores/toast'
-import { useRefreshOnFocus } from '@/composables/useRefreshOnFocus'
+import { useCatalogLive } from '@/composables/useCatalogLive'
 import AppIcon from '@/components/AppIcon.vue'
 import ProductCard from '@/components/ProductCard.vue'
 import PaginationBar from '@/components/PaginationBar.vue'
@@ -273,8 +273,8 @@ onMounted(() => {
   loadCategories()
   loadReviewPicks()
 })
-useRefreshOnFocus(() => {
-  loadProducts()
+useCatalogLive(async () => {
+  await Promise.all([loadProducts(), loadReviewPicks(), loadCategories()])
 })
 </script>
 

@@ -97,7 +97,12 @@ export const catalogApi = {
     page_size?: number
   }) => request<PageData<Product>>(`/products${queryString(params)}`),
   product: (id: string) => request<ProductDetail>(`/products/${encodeURIComponent(id)}`),
-  categories: () => request<Category[]>('/categories')
+  categories: () => request<Category[]>('/categories'),
+  /** 可见商品目录指纹：用于消费者端感知管理端审核/下架变更。 */
+  version: () =>
+    request<{ version: string; count: number; updated_at: string | null }>('/catalog/version').then(
+      (data) => data.version
+    )
 }
 
 export const cartApi = {

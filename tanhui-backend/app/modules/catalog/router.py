@@ -64,6 +64,34 @@ def _decorate(db: Session, products: list[ConsumerProduct]) -> list[ProductOut]:
 
 
 @router.get(
+    "/catalog/version",
+    response_model=ApiResponse[dict],
+    summary="消费者商品目录版本（前端实时刷新）",
+)
+def catalog_version(db: Session = Depends(get_db)):
+    """返回可见商品（已通过且已上架）的轻量指纹，供消费者端轮询感知变更。"""
+    count, last_synced, sync_version = db.execute(
+        select(
+            func.count(ConsumerProduct.id),
+            func.max(ConsumerProduct.synced_at),
+            func.max(ConsumerProduct.sync_version),
+        ).where(
+            ConsumerProduct.status == "approved",
+            ConsumerProduct.is_listed == True,  # noqa: E712
+        )
+    ).one()
+    stamp = last_synced.isoformat() if last_synced is not None else "-"
+    total = int(count or 0)
+    return ApiResponse(
+        data={
+            "version": f"{total}:{stamp}:{int(sync_version or 0)}",
+            "count": total,
+            "updated_at": last_synced,
+        }
+    )
+
+
+@router.get(
     "/products", response_model=ApiResponse[PageOut[ProductOut]], summary="商品列表（分页/筛选/排序）"
 )
 def list_products(

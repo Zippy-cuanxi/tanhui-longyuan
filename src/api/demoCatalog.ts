@@ -4,10 +4,11 @@
  * GitHub Pages 没有后端，管理端使用 console mock 数据（localStorage），
  * 消费者端使用构建时快照。两者原本互不相通，导致“管理端审核通过”的商品
  * 不会出现在消费者端「全部商品」。这里用独立 localStorage 作为发布通道：
- * - 管理端审核通过 → publishDemoProduct 写入；
+ * - 管理端审核通过 → publishDemoProduct 写入并广播；
  * - 消费者端列表/详情 → demoAdapter 合并读取；
- * - 驳回/强制下架 → unpublishDemoProduct 移除。
+ * - 驳回/强制下架 → unpublishDemoProduct 移除并广播。
  */
+import { notifyCatalogChanged } from '@/utils/catalogBus'
 
 const STORAGE_KEY = 'tanhui_demo_published_products'
 
@@ -104,6 +105,7 @@ export function publishDemoProduct(source: PublishSource): void {
   const all = readRaw()
   all[record.id] = record
   writeRaw(all)
+  notifyCatalogChanged()
 }
 
 /** 驳回/下架：从消费者端目录移除。 */
@@ -112,4 +114,5 @@ export function unpublishDemoProduct(id: string): void {
   if (!(id in all)) return
   delete all[id]
   writeRaw(all)
+  notifyCatalogChanged()
 }

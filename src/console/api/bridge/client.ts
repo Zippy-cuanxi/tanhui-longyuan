@@ -38,7 +38,11 @@ export function getBackendToken(role?: 'admin' | 'merchant'): string {
     if (role) return localStorage.getItem(tokenKeyFor(role)) || ''
     // 兼容旧调用：优先返回当前 auth 角色的 token
     const current = getBackendAuth()?.role
-    return (current && localStorage.getItem(tokenKeyFor(current))) || localStorage.getItem(TOKEN_KEY) || ''
+    return (
+      (current && localStorage.getItem(tokenKeyFor(current))) ||
+      localStorage.getItem(TOKEN_KEY) ||
+      ''
+    )
   } catch {
     return ''
   }
@@ -96,6 +100,20 @@ export interface BridgeResult<T> {
   ok: boolean
   data: T | null
   status: number
+  /** 后端失败时的可读错误信息（用于审核/同步等需要明确原因的页面）。 */
+  message?: string
+}
+
+async function readErrorMessage(response: Response): Promise<string> {
+  try {
+    const payload = (await response.json()) as {
+      message?: string
+      data?: { message?: string }
+    }
+    return payload?.message || payload?.data?.message || ''
+  } catch {
+    return ''
+  }
 }
 
 /**
@@ -137,11 +155,25 @@ export async function bridgeRequest<T>(
         headers,
         body: options.body !== undefined ? JSON.stringify(options.body) : undefined
       })
-      if (!retry.ok) return { ok: false, data: null, status: retry.status }
+      if (!retry.ok) {
+        return {
+          ok: false,
+          data: null,
+          status: retry.status,
+          message: await readErrorMessage(retry)
+        }
+      }
       const text = await retry.text()
       return { ok: true, data: text ? (JSON.parse(text) as T) : null, status: retry.status }
     }
-    if (!response.ok) return { ok: false, data: null, status: response.status }
+    if (!response.ok) {
+      return {
+        ok: false,
+        data: null,
+        status: response.status,
+        message: await readErrorMessage(response)
+      }
+    }
     const text = await response.text()
     return { ok: true, data: text ? (JSON.parse(text) as T) : null, status: response.status }
   } catch {
