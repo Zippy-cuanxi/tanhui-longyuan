@@ -69,6 +69,13 @@ const heroSlides = [
     image: assetUrl('/images/banners/aid.webp'),
     to: '/aid',
     alt: '助农公益——每一份订单，都是一份助农力量'
+  },
+  {
+    key: 'join',
+    label: '商家入驻',
+    image: assetUrl('/images/banners/join.webp'),
+    to: '/join',
+    alt: '商家入驻——产地直供、平台赋能、共赢陇原'
   }
 ]
 const sections = computed(() =>

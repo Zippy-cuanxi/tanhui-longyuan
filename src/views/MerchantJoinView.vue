@@ -445,6 +445,20 @@ async function submit(): Promise<void> {
                 <span>入驻问题请联系平台客服</span>
               </div>
             </RouterLink>
+
+            <RouterLink
+              class="join-help join-console-entry"
+              :to="{
+                path: '/console/login',
+                query: { redirect: '/console/admin/products/review' }
+              }"
+            >
+              <span class="join-help-icon"><AppIcon name="shield" :size="30" /></span>
+              <div>
+                <strong>商品审核后台</strong>
+                <span>管理员登录后进入待审商品列表</span>
+              </div>
+            </RouterLink>
           </aside>
         </div>
 

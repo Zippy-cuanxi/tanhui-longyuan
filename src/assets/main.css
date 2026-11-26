@@ -7700,6 +7700,10 @@ html.header-hidden {
   color: #8a9a8e;
   font-size: 12px;
 }
+.join-console-entry {
+  border-color: #d5e7d3;
+  background: linear-gradient(135deg, #f4faf3 0%, #ffffff 70%);
+}
 .join-benefits {
   margin-top: 26px;
   display: grid;
