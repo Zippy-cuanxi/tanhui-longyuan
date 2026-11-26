@@ -10,8 +10,8 @@ import AppIcon from './AppIcon.vue'
         <img
           :src="assetUrl('/images/logo/logo.webp')"
           alt="碳惠陇原"
-          width="420"
-          height="163"
+          width="720"
+          height="279"
           loading="lazy"
           decoding="async"
         />

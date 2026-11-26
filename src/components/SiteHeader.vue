@@ -404,8 +404,8 @@ function badgeText(count: number): string {
         <img
           :src="assetUrl('/images/logo/logo.webp')"
           alt="碳惠陇原 · 甘肃特色农产品绿色电商平台"
-          width="420"
-          height="163"
+          width="720"
+          height="279"
           decoding="async"
         />
       </RouterLink>

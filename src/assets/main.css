@@ -1011,6 +1011,7 @@ html.header-hidden {
 }
 .footer-brand img {
   width: 210px;
+  height: auto;
 }
 .footer-brand p {
   margin: 16px 0 0;
