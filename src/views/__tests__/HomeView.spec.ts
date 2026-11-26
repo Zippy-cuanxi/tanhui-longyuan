@@ -34,6 +34,7 @@ async function mountHome() {
       { path: '/green', component: { template: '<div />' } },
       { path: '/aid', component: { template: '<div />' } },
       { path: '/join', component: { template: '<div />' } },
+      { path: '/coupons', component: { template: '<div />' } },
       { path: '/account/points', component: { template: '<div />' } }
     ]
   })

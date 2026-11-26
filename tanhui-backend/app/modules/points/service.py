@@ -24,7 +24,10 @@ from app.modules.points.models import (
 # 兑换目录【仿真数据】：业务确认兑换权益后替换或接入真实权益系统
 REDEMPTION_CATALOG: dict[str, dict] = {
     "coupon_5": {"name": "5元无门槛优惠券(Mock)", "points": 500},
+    "coupon_6": {"name": "6元优惠券·满59可用(Mock)", "points": 600},
     "coupon_10": {"name": "10元无门槛优惠券(Mock)", "points": 900},
+    "coupon_30": {"name": "30元优惠券·满199可用(Mock)", "points": 1800},
+    "coupon_50": {"name": "50元优惠券·满299可用(Mock)", "points": 2500},
     "green_donation": {"name": "绿色积分捐助助农项目(Mock)", "points": 100},
 }
 

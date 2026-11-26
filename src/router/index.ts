@@ -146,6 +146,12 @@ const router = createRouter({
       meta: { title: '绿色消费专区' }
     },
     {
+      path: '/coupons',
+      name: 'coupon-store',
+      component: () => import('@/views/CouponStoreView.vue'),
+      meta: { title: '优惠券商店' }
+    },
+    {
       path: '/notices',
       name: 'notices',
       component: () => import('@/views/NoticesView.vue'),

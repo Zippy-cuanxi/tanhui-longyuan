@@ -22,6 +22,7 @@ import type {
 import type { MerchantApplyResult } from './index'
 import demoSnapshot from 'virtual:demo-snapshot'
 import { readPublishedProducts, type DemoPublishedProduct } from './demoCatalog'
+import { COUPON_STORE } from '@/utils/couponWallet'
 
 interface Snapshot {
   generated_at: string
@@ -264,9 +265,7 @@ export async function demoRequest<T>(
   /** 管理端分类名 → 消费者端分类（演示快照中个别命名不同）。 */
   const CATEGORY_ALIAS: Record<string, string> = { 甘味文创: '文创礼品' }
   function resolvePublishedCategoryId(name: string): string | null {
-    const hit = s.categories.find(
-      (c) => String(c.name) === (CATEGORY_ALIAS[name] || name)
-    )
+    const hit = s.categories.find((c) => String(c.name) === (CATEGORY_ALIAS[name] || name))
     return hit ? String(hit.id) : null
   }
   function toPublishedProduct(p: DemoPublishedProduct): Product {
@@ -420,13 +419,9 @@ export async function demoRequest<T>(
         id: uid('g'),
         product_id: greenId,
         origin: String(g.origin || published?.origin || '甘肃'),
-        planting_mode: g.planting_mode
-          ? String(g.planting_mode)
-          : published?.planting_mode || null,
+        planting_mode: g.planting_mode ? String(g.planting_mode) : published?.planting_mode || null,
         certifications: [],
-        description: g.description
-          ? String(g.description)
-          : published?.green_description || null,
+        description: g.description ? String(g.description) : published?.green_description || null,
         status: 'approved'
       },
       carbon_assessment: {
@@ -898,7 +893,8 @@ export async function demoRequest<T>(
   if (pathname === '/points/redemptions' && method === 'POST') {
     const code = String(body.reward_code || '')
     const reward = s.point_catalog.find((r) => String(r.reward_code) === code)
-    const cost = Number(reward?.points || 500)
+    const storeItem = COUPON_STORE.find((item) => item.reward_code === code)
+    const cost = Number(storeItem?.points ?? reward?.points ?? 500)
     if (demoPointState(s).balance < cost) {
       const error = new Error('绿色积分余额不足') as Error & { code?: string }
       error.code = 'POINTS_INSUFFICIENT'
@@ -908,12 +904,12 @@ export async function demoRequest<T>(
       s,
       -cost,
       'spend',
-      `兑换「${String(reward?.name || code)}」`,
+      `兑换「${String(storeItem?.coupon.title || reward?.name || code)}」`,
       'redemption'
     )
     return {
       reward_code: code,
-      reward_name: String(reward?.name || '演示权益'),
+      reward_name: String(storeItem?.coupon.title || reward?.name || '演示权益'),
       points_spent: cost,
       voucher_code: 'DEMO-2026',
       balance: txn.balance_after,

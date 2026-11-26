@@ -38,6 +38,12 @@ const quickDefs = [
     category: '',
     icon: assetUrl('/images/categories/flat/points.webp'),
     to: '/account/points'
+  },
+  {
+    label: '优惠券商店',
+    category: '',
+    icon: assetUrl('/images/coupons/coupon-icon.webp'),
+    to: '/coupons'
   }
 ]
 

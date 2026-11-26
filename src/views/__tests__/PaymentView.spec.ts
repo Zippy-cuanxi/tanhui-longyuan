@@ -4,7 +4,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import PaymentView from '../PaymentView.vue'
 import { orderApi, paymentApi } from '@/api'
-import { usedCouponIds } from '@/utils/couponWallet'
+import { ownedCouponCount } from '@/utils/couponWallet'
 import { useToastStore } from '@/stores/toast'
 import type { Order, Payment } from '@/api/types'
 
@@ -120,7 +120,7 @@ describe('PaymentView 优惠券减金', () => {
     expect(wrapper.find('.payment-result-amount').text()).toContain('140.00')
     expect(wrapper.find('.payment-result-meta').text()).toContain('优惠券减金')
     expect(toast.message).toContain('优惠券减 ¥10.00')
-    expect(usedCouponIds()).toContain('full-99-10')
+    expect(ownedCouponCount('full-99-10')).toBe(0)
 
     wrapper.unmount()
   })
