@@ -2,8 +2,19 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { orderApi, paymentApi } from '@/api'
+import { assetUrl } from '@/api/http'
 import type { Order, Payment } from '@/api/types'
 import { errorText, formatDateTime, money } from '@/utils/format'
+import {
+  appliedCouponId,
+  consumeCoupon,
+  couponDiscountAmount,
+  findCoupon,
+  isCouponEligible,
+  listCouponOptions,
+  rememberAppliedCoupon,
+  type CouponOption
+} from '@/utils/couponWallet'
 import { useToastStore } from '@/stores/toast'
 import AppIcon from '@/components/AppIcon.vue'
 import OrderStatusTag from '@/components/OrderStatusTag.vue'
@@ -21,6 +32,26 @@ const error = ref('')
 const initError = ref('')
 const paying = ref(false)
 const payError = ref('')
+const selectedCouponId = ref('')
+
+const couponOptions = computed(() =>
+  order.value ? listCouponOptions(Number(order.value.items_total)) : []
+)
+const eligibleCouponCount = computed(
+  () => couponOptions.value.filter((option) => option.eligible).length
+)
+const selectedCoupon = computed(() => findCoupon(selectedCouponId.value))
+const couponDeduct = computed(() => {
+  if (!order.value || !selectedCoupon.value) return 0
+  if (!isCouponEligible(selectedCoupon.value, Number(order.value.items_total))) return 0
+  return couponDiscountAmount(selectedCoupon.value, Number(order.value.pay_amount))
+})
+const payableAmount = computed(() => {
+  if (!order.value) return 0
+  const cents =
+    Math.round(Number(order.value.pay_amount) * 100) - Math.round(couponDeduct.value * 100)
+  return Math.max(0, cents) / 100
+})
 
 const isPaid = computed(() =>
   Boolean(order.value && order.value.status !== 'pending_payment' && order.value.paid_at)
@@ -38,6 +69,11 @@ async function loadOrder(): Promise<void> {
   error.value = ''
   try {
     order.value = await orderApi.detail(orderId.value)
+    const savedCoupon = findCoupon(appliedCouponId(order.value.id))
+    selectedCouponId.value =
+      savedCoupon && isCouponEligible(savedCoupon, Number(order.value.items_total))
+        ? savedCoupon.id
+        : ''
     if (order.value.status === 'pending_payment') {
       await initPayment()
     }
@@ -57,10 +93,24 @@ async function initPayment(): Promise<void> {
   }
 }
 
+function selectCoupon(option: CouponOption): void {
+  if (!order.value || !option.eligible) return
+  selectedCouponId.value = option.coupon.id
+  rememberAppliedCoupon(order.value.id, option.coupon.id)
+}
+
+function clearCoupon(): void {
+  if (!order.value) return
+  selectedCouponId.value = ''
+  rememberAppliedCoupon(order.value.id, null)
+}
+
 async function pay(): Promise<void> {
   if (!payment.value || paying.value) return
   paying.value = true
   payError.value = ''
+  const couponId = selectedCoupon.value?.id || ''
+  const couponCut = couponDeduct.value
   try {
     const result = await paymentApi.mockPay(payment.value.pay_no)
     if (result.return_code && result.return_code !== 'SUCCESS') {
@@ -71,12 +121,14 @@ async function pay(): Promise<void> {
       payError.value = '支付未完成，请稍后重试'
       return
     }
+    if (couponId) consumeCoupon(order.value.id, couponId)
+    const couponTip = couponCut > 0 ? `，优惠券减 ¥${money(couponCut)}` : ''
     const pointsTip = order.value.points_earned
       ? `，已获得 ${order.value.points_earned} 绿色积分`
       : order.value.points_estimate
         ? `，预计获得 ${order.value.points_estimate} 绿色积分`
         : ''
-    toast.show(`沙箱支付成功，订单状态已更新${pointsTip}`, 'success')
+    toast.show(`沙箱支付成功，订单状态已更新${couponTip}${pointsTip}`, 'success')
     window.dispatchEvent(new CustomEvent('points:changed'))
   } catch (err) {
     payError.value = errorText(err)
@@ -100,10 +152,13 @@ onMounted(loadOrder)
           <span class="eyebrow">PAYMENT SUCCESS</span>
           <h1>支付成功</h1>
           <p>订单 {{ order.order_no }} 已完成支付，商家将尽快为您发货。</p>
-          <div class="payment-result-amount">¥{{ money(order.pay_amount) }}</div>
+          <div class="payment-result-amount">¥{{ money(payableAmount) }}</div>
           <div class="payment-result-meta">
             <span>订单状态 <OrderStatusTag :status="order.status" /></span>
             <span>商品 {{ itemCount }} 件</span>
+            <span v-if="couponDeduct > 0"
+              >优惠券减金 -¥{{ money(couponDeduct) }}（{{ selectedCoupon?.title }}）</span
+            >
             <span v-if="order.points_earned">已获得 +{{ order.points_earned }} 绿色积分</span>
             <span v-else-if="order.points_estimate"
               >预计 +{{ order.points_estimate }} 绿色积分（确认收货后到账）</span
@@ -147,9 +202,82 @@ onMounted(loadOrder)
             <section class="payment-card">
               <div class="payment-amount">
                 <span>应付金额</span>
-                <strong><small>¥</small>{{ money(order.pay_amount) }}</strong>
+                <strong><small>¥</small>{{ money(payableAmount) }}</strong>
+                <em v-if="couponDeduct > 0" class="payment-amount-cut"
+                  >已用优惠券减 ¥{{ money(couponDeduct) }}</em
+                >
                 <em v-if="payment" class="sandbox-badge">Mock 沙箱</em>
               </div>
+
+              <section v-if="couponOptions.length" class="payment-coupon" aria-label="优惠券减金">
+                <header class="payment-coupon-head">
+                  <div class="payment-coupon-title">
+                    <img
+                      :src="assetUrl('/images/coupons/coupon-icon.webp')"
+                      alt=""
+                      width="38"
+                      height="33"
+                      loading="lazy"
+                    />
+                    <div>
+                      <strong>优惠券减金</strong>
+                      <span>本单可用 {{ eligibleCouponCount }} 张，选择 1 张抵扣</span>
+                    </div>
+                  </div>
+                  <button
+                    v-if="selectedCouponId"
+                    type="button"
+                    class="coupon-clear"
+                    @click="clearCoupon"
+                  >
+                    不使用
+                  </button>
+                </header>
+
+                <div class="coupon-options" role="radiogroup" aria-label="选择优惠券">
+                  <button
+                    v-for="option in couponOptions"
+                    :key="option.coupon.id"
+                    type="button"
+                    role="radio"
+                    :aria-checked="selectedCouponId === option.coupon.id"
+                    class="coupon-ticket"
+                    :class="{
+                      active: selectedCouponId === option.coupon.id,
+                      disabled: !option.eligible
+                    }"
+                    :disabled="!option.eligible"
+                    @click="selectCoupon(option)"
+                  >
+                    <span class="coupon-ticket-amount">
+                      <small>¥</small>{{ option.coupon.discount }}
+                    </span>
+                    <span class="coupon-ticket-copy">
+                      <strong>{{ option.coupon.title }}</strong>
+                      <span>{{ option.coupon.description }}</span>
+                      <em v-if="option.eligible">有效期至 {{ option.coupon.valid_until }}</em>
+                      <em v-else>满 {{ option.coupon.threshold }} 元可用</em>
+                    </span>
+                    <span class="coupon-ticket-check" aria-hidden="true">
+                      <AppIcon
+                        v-if="selectedCouponId === option.coupon.id"
+                        name="check"
+                        :size="14"
+                      />
+                      <template v-else-if="option.eligible">选用</template>
+                    </span>
+                  </button>
+                </div>
+
+                <div class="payment-coupon-foot">
+                  <img
+                    :src="assetUrl('/images/coupons/coupon-ticket.webp')"
+                    alt=""
+                    loading="lazy"
+                  />
+                  <span>优惠券可与绿色积分同时使用，每单限用一张；演示优惠券仅用于流程展示。</span>
+                </div>
+              </section>
               <dl class="payment-meta">
                 <div>
                   <dt>支付单号</dt>
@@ -182,7 +310,7 @@ onMounted(loadOrder)
               >
                 <span v-if="paying" class="mini-spinner" />
                 <AppIcon v-else name="card" :size="18" />
-                {{ paying ? '支付处理中…' : '沙箱支付（演示）' }}
+                {{ paying ? '支付处理中…' : `沙箱支付 ¥${money(payableAmount)}（演示）` }}
               </button>
               <button
                 v-if="initError"
@@ -210,9 +338,15 @@ onMounted(loadOrder)
                   <dt>运费</dt>
                   <dd>¥{{ money(order.shipping_fee) }}</dd>
                 </div>
-                <div v-if="order.points_deduct !== '0.00'">
+                <div v-if="Number(order.points_deduct) > 0">
                   <dt>积分抵扣</dt>
                   <dd>-¥{{ money(order.points_deduct) }}</dd>
+                </div>
+                <div v-if="couponDeduct > 0">
+                  <dt>
+                    优惠券减金 <small v-if="selectedCoupon">({{ selectedCoupon.title }})</small>
+                  </dt>
+                  <dd>-¥{{ money(couponDeduct) }}</dd>
                 </div>
                 <div v-if="order.points_estimate">
                   <dt>预计绿色积分</dt>
@@ -220,7 +354,7 @@ onMounted(loadOrder)
                 </div>
                 <div class="total-row">
                   <dt>应付</dt>
-                  <dd>¥{{ money(order.pay_amount) }}</dd>
+                  <dd>¥{{ money(payableAmount) }}</dd>
                 </div>
               </dl>
               <div v-for="store in order.store_orders" :key="store.id" class="payment-store">
