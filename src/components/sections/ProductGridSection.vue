@@ -8,10 +8,17 @@ import ProductCard from '../ProductCard.vue'
 import StateBlock from '../StateBlock.vue'
 import AppIcon from '../AppIcon.vue'
 
-const props = defineProps<{
-  config: Record<string, unknown>
-  columns?: number
-}>()
+const props = withDefaults(
+  defineProps<{
+    config: Record<string, unknown>
+    columns?: number
+    showHeading?: boolean
+  }>(),
+  {
+    columns: 4,
+    showHeading: true
+  }
+)
 
 const products = ref<Product[]>([])
 const loading = ref(true)
@@ -47,7 +54,7 @@ onMounted(load)
 
 <template>
   <section class="section-block cms-product-grid">
-    <header class="section-heading">
+    <header v-if="showHeading" class="section-heading">
       <h2>{{ title }}</h2>
       <RouterLink to="/products" class="more-link">
         更多 <AppIcon name="chevron-right" :size="14" />

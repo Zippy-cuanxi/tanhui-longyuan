@@ -82,3 +82,27 @@ describe('HomeView 轮播配置', () => {
     wrapper.unmount()
   })
 })
+
+describe('HomeView 首页改版结构', () => {
+  it('保留独立且醒目的甘肃产地地图模块', async () => {
+    const wrapper = await mountHome()
+
+    const mapSection = wrapper.find('.home-map-section')
+    expect(mapSection.exists()).toBe(true)
+    expect(mapSection.find('h2').text()).toContain('沿着地图')
+    expect(mapSection.find('home-origin-map-stub').exists()).toBe(true)
+    expect(mapSection.findAll('a[href="/origin"]').length).toBeGreaterThan(0)
+
+    wrapper.unmount()
+  })
+
+  it('保留全部快捷分类并包含优惠券商店入口', async () => {
+    const wrapper = await mountHome()
+
+    const entries = wrapper.findAll('.quick-category')
+    expect(entries).toHaveLength(6)
+    expect(entries[entries.length - 1].attributes('href')).toBe('/coupons')
+
+    wrapper.unmount()
+  })
+})

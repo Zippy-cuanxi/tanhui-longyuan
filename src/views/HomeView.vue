@@ -143,64 +143,128 @@ useCatalogLive(load)
         首页动态配置暂不可用，已使用设计稿静态内容展示。
       </div>
 
-      <HomeCarousel :slides="heroSlides" />
-
-      <section class="quick-categories" aria-label="快捷分类">
-        <RouterLink
-          v-for="category in quickCategories"
-          :key="category.label"
-          :to="category.to"
-          class="quick-category"
-        >
-          <span class="category-icon">
-            <img :src="category.iconUrl" :alt="category.label" loading="lazy" decoding="async" />
-          </span>
-          <strong>{{ category.label }}</strong>
-        </RouterLink>
-      </section>
-
-      <div class="home-content-grid">
-        <section class="featured-section">
-          <ProductGridSection v-if="gridSection" :config="gridSection.config" :columns="4" />
-          <template v-else>
-            <header class="section-heading">
-              <h2>精选推荐</h2>
-              <RouterLink to="/products" class="more-link">
-                更多 <AppIcon name="chevron-right" :size="14" />
-              </RouterLink>
-            </header>
-            <StateBlock
-              :loading="loading"
-              :error="error"
-              :empty="!loading && !error && !featured.length"
-              empty-text="暂无推荐商品"
-              @retry="load"
-            />
-            <div v-if="!loading && !error && featured.length" class="product-grid columns-4">
-              <ProductCard v-for="product in featured" :key="product.id" :product="product" />
-            </div>
-          </template>
-        </section>
-
-        <aside class="origin-card">
-          <header class="section-heading">
-            <h2>甘肃产地地图</h2>
-            <RouterLink to="/origin" class="more-link">
-              探索更多 <AppIcon name="chevron-right" :size="14" />
-            </RouterLink>
-          </header>
-          <HomeOriginMap />
-        </aside>
+      <div class="home-announcement">
+        <span>甘肃产地直供 · 让陇原好物走进日常</span>
+        <RouterLink to="/green">绿色消费可累计绿色积分</RouterLink>
+        <RouterLink to="/aid">公益助农进度 <AppIcon name="chevron-right" :size="12" /></RouterLink>
       </div>
 
-      <RouterLink to="/green" class="green-banner" aria-label="绿色消费专区">
-        <img
-          :src="assetUrl('/images/banners/green.webp')"
-          alt="绿色消费专区——每一次购物，都在为地球减负"
-          loading="lazy"
-          decoding="async"
+      <HomeCarousel :slides="heroSlides" />
+
+      <div class="home-hero-actions">
+        <RouterLink to="/products" class="primary-button">
+          逛精选好物 <AppIcon name="arrow-right" :size="15" />
+        </RouterLink>
+        <RouterLink to="/origin" class="outline-button">
+          探索甘肃产地 <AppIcon name="map" :size="15" />
+        </RouterLink>
+        <span class="home-hero-note">好产地 · 好味道 · 看得见的绿色价值</span>
+      </div>
+
+      <section class="home-category-block" aria-label="按品类逛陇原">
+        <header class="home-section-head">
+          <div>
+            <span class="eyebrow">按品类逛陇原</span>
+            <h2>找到你的家乡味</h2>
+          </div>
+          <RouterLink to="/products" class="home-section-link">
+            全部商品 <AppIcon name="chevron-right" :size="14" />
+          </RouterLink>
+        </header>
+        <div class="quick-categories">
+          <RouterLink
+            v-for="category in quickCategories"
+            :key="category.label"
+            :to="category.to"
+            class="quick-category"
+          >
+            <span class="category-icon">
+              <img :src="category.iconUrl" :alt="category.label" loading="lazy" decoding="async" />
+            </span>
+            <strong>{{ category.label }}</strong>
+          </RouterLink>
+        </div>
+      </section>
+
+      <section class="featured-section home-featured">
+        <header class="home-section-head">
+          <div>
+            <span class="eyebrow">陇原人气好物</span>
+            <h2>从产地到餐桌，把当季鲜味带回家</h2>
+          </div>
+          <RouterLink to="/products" class="home-section-link">
+            查看全部商品 <AppIcon name="chevron-right" :size="14" />
+          </RouterLink>
+        </header>
+        <ProductGridSection
+          v-if="gridSection"
+          :config="gridSection.config"
+          :columns="4"
+          :show-heading="false"
         />
-      </RouterLink>
+        <template v-else>
+          <StateBlock
+            :loading="loading"
+            :error="error"
+            :empty="!loading && !error && !featured.length"
+            empty-text="暂无推荐商品"
+            @retry="load"
+          />
+          <div v-if="!loading && !error && featured.length" class="product-grid columns-4">
+            <ProductCard v-for="product in featured" :key="product.id" :product="product" />
+          </div>
+        </template>
+      </section>
+
+      <section class="home-map-section" aria-labelledby="home-map-title">
+        <header class="home-section-head">
+          <div>
+            <span class="eyebrow">甘肃特产 · 一县一品</span>
+            <h2 id="home-map-title">沿着地图，去看甘肃好产地</h2>
+            <p>从河西走廊到陇东高原，悬停查看市州产地信息，点击进入对应商品列表。</p>
+          </div>
+          <RouterLink to="/origin" class="outline-button small">
+            探索产地 <AppIcon name="arrow-right" :size="14" />
+          </RouterLink>
+        </header>
+        <div class="home-map-layout">
+          <div class="home-map-panel">
+            <HomeOriginMap />
+          </div>
+          <aside class="home-map-aside">
+            <span class="eyebrow">从一方水土，发现更多陇原好物</span>
+            <h3>点一点地图，找到家乡味</h3>
+            <ul class="home-map-points">
+              <li><AppIcon name="location" :size="16" />悬停市州可查看年销与产地好物</li>
+              <li><AppIcon name="arrow-right" :size="16" />点击市州直达对应产地商品列表</li>
+              <li><AppIcon name="leaf" :size="16" />产地信息来自平台商品数据</li>
+            </ul>
+            <p class="home-map-note">地图支持鼠标与键盘操作，Tab 聚焦后按回车即可跳转。</p>
+            <RouterLink to="/origin" class="primary-button">
+              探索甘肃产地 <AppIcon name="map" :size="15" />
+            </RouterLink>
+          </aside>
+        </div>
+      </section>
+
+      <section class="home-topic-grid" aria-label="绿色消费与助农公益">
+        <RouterLink to="/green" class="home-topic-card">
+          <img
+            :src="assetUrl('/images/banners/green.webp')"
+            alt="绿色消费专区——每一次购物，都在为地球减负"
+            loading="lazy"
+            decoding="async"
+          />
+        </RouterLink>
+        <RouterLink to="/aid" class="home-topic-card">
+          <img
+            :src="assetUrl('/images/banners/aid.webp')"
+            alt="助农项目——每一份订单，都是一份助农力量"
+            loading="lazy"
+            decoding="async"
+          />
+        </RouterLink>
+      </section>
 
       <CmsSectionRenderer
         v-for="(section, index) in otherSections"
